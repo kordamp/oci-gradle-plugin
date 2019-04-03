@@ -1,0 +1,151 @@
+/*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Copyright 2019 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+plugins {
+    id 'org.kordamp.gradle.build-scan' version '0.16.0'
+    id 'org.kordamp.gradle.project'    version '0.16.0'
+    id 'org.kordamp.gradle.bintray'    version '0.16.0'
+    id 'org.kordamp.gradle.plugin'     version '0.16.0' apply false
+}
+
+buildScan {
+    termsOfServiceAgree = 'yes'
+}
+
+if (!project.hasProperty('bintrayUsername')) ext.bintrayUsername = '**UNDEFINED**'
+if (!project.hasProperty('bintrayApiKey'))   ext.bintrayApiKey   = '**UNDEFINED**'
+
+config {
+    release = (rootProject.findProperty('release') ?: false).toBoolean()
+
+    info {
+        name          = rootProject.name
+        vendor        = 'Kordamp'
+        description   = project.project_description
+        inceptionYear = '2019'
+        tags          = ['project', 'oci', 'sdk']
+
+        links {
+            website      = 'https://github.com/aalmiray/oci-gradle-plugin'
+            issueTracker = 'https://github.com/aalmiray/oci-gradle-plugin/issues'
+            scm          = 'https://github.com/aalmiray/oci-gradle-plugin.git'
+        }
+
+        specification {
+            enabled = false
+        }
+
+        implementation {
+            enabled = false
+        }
+
+        people {
+            person {
+                id    = 'aalmiray'
+                name  = 'Andres Almiray'
+                roles = ['developer']
+            }
+        }
+    }
+
+    javadoc {
+        enabled = false
+    }
+
+    groovydoc {
+        enabled        = true
+        replaceJavadoc = true
+        options {
+            link 'https://docs.gradle.org/4.0/javadoc/', 'org.gradle.'
+        }
+    }
+
+    licensing {
+        licenses {
+            license {
+                id = 'Apache-2.0'
+            }
+        }
+    }
+
+    bintray {
+        credentials {
+            username = project.bintrayUsername
+            password = project.bintrayApiKey
+        }
+        repo    = 'kordamp'
+        userOrg = 'aalmiray'
+        name    = 'oci-gradle-plugin'
+    }
+}
+
+allprojects {
+    apply plugin: 'idea'
+
+    repositories {
+        jcenter()
+        gradlePluginPortal()
+    }
+
+    dependencyUpdates.resolutionStrategy = {
+        componentSelection { rules ->
+            rules.all { selection ->
+                boolean rejected = ['alpha', 'beta', 'rc', 'cr'].any { qualifier ->
+                    selection.candidate.version ==~ /(?i).*[.-]${qualifier}[.\d-]*/
+                }
+                if (rejected) {
+                    selection.reject('Release candidate')
+                }
+            }
+        }
+    }
+}
+
+subprojects {
+    if (project.name.endsWith('-plugin')) {
+        apply plugin: 'groovy'
+        apply plugin: 'org.kordamp.gradle.plugin'
+
+        config {
+            bintray { enabled = true }
+
+            plugin {
+                enabled             = true
+                id                  = project.pluginId
+                implementationClass = project.pluginImplementationClass
+            }
+        }
+
+        normalization {
+            runtimeClasspath {
+                ignore('/META-INF/MANIFEST.MF')
+            }
+        }
+
+        dependencies {
+            compile gradleApi()
+        }
+
+        compileGroovy {
+            sourceCompatibility = project.sourceCompatibility
+            targetCompatibility = project.targetCompatibility
+        }
+
+        task publishRelease(dependsOn: [bintrayUpload, publishPlugins]) {}
+    }
+}

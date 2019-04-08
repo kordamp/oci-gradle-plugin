@@ -21,6 +21,7 @@ Option #1
 buildscript {
     repositories {
         jcenter()
+        gradlePluginPortal()
     }
     dependencies {
         classpath 'org.kordamp.gradle:{project-name}:{plugin-version}'

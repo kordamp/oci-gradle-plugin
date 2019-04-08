@@ -1,4 +1,4 @@
-= jdeps-gradle-plugin
+= oci-gradle-plugin
 :linkattrs:
 :project-name: oci-gradle-plugin
 :plugin-version: 0.1.0-SNAPSHOT

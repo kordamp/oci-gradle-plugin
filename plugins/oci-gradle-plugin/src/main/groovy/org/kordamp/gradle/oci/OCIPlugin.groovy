@@ -17,15 +17,19 @@
  */
 package org.kordamp.gradle.oci
 
-import groovy.transform.CompileStatic
+import org.gradle.api.Action
 import org.gradle.api.Project
+import org.gradle.api.Task
+import org.kordamp.gradle.oci.tasks.ResourceSearchTask
 import org.kordamp.gradle.plugin.AbstractKordampPlugin
 
 /**
  * @author Andres Almiray
+ * @since 0.1.0
  */
-@CompileStatic
 class OCIPlugin extends AbstractKordampPlugin {
+    private static final GROUP = 'OCI'
+
     Project project
 
     void apply(Project project) {
@@ -44,5 +48,16 @@ class OCIPlugin extends AbstractKordampPlugin {
             return
         }
         setVisited(project, true)
+
+        [ResourceSearchTask].each { taskType ->
+            project.tasks.register(taskType.NAME, taskType,
+                new Action<Task>() {
+                    @Override
+                    void execute(Task t) {
+                        t.group = GROUP
+                        t.description = taskType.DESCRIPTION
+                    }
+                })
+        }
     }
 }

@@ -1,0 +1,40 @@
+= jdeps-gradle-plugin
+:linkattrs:
+:project-name: oci-gradle-plugin
+:plugin-version: 0.1.0-SNAPSHOT
+
+image:http://img.shields.io/travis/aalmiray/{project-name}/master.svg["Build Status", link="https://travis-ci.org/aalmiray/{project-name}"]
+image:http://img.shields.io/badge/license-ASF2-blue.svg["Apache License 2", link="http://www.apache.org/licenses/LICENSE-2.0.txt"]
+image:https://api.bintray.com/packages/aalmiray/kordamp/{project-name}/images/download.svg[link="https://bintray.com/aalmiray/kordamp/{project-name}/_latestVersion"]
+image:https://img.shields.io/badge/donations-Patreon-orange.svg[link="https://www.patreon.com/user?u=6609318"]
+
+---
+
+A Gradle plugin for the link:https://github.com/oracle/oci-java-sdk[Java SDK for Oracle Cloud Infrastructure]
+
+== Usage
+
+Option #1
+[source,groovy]
+[subs="attributes"]
+----
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'org.kordamp.gradle:{project-name}:{plugin-version}'
+    }
+}
+apply plugin: 'org.kordamp.gradle.oci'
+----
+
+Option #2
+[source,groovy]
+[subs="attributes"]
+----
+plugins {
+    id 'org.kordamp.gradle.oci' version '{plugin-version}'
+}
+----
+

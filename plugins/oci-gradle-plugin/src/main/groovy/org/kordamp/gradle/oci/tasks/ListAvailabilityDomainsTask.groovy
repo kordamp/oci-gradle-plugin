@@ -18,10 +18,10 @@
 package org.kordamp.gradle.oci.tasks
 
 import com.oracle.bmc.auth.AuthenticationDetailsProvider
-import com.oracle.bmc.core.ComputeClient
-import com.oracle.bmc.core.model.Image
-import com.oracle.bmc.core.requests.ListImagesRequest
-import com.oracle.bmc.core.responses.ListImagesResponse
+import com.oracle.bmc.identity.IdentityClient
+import com.oracle.bmc.identity.model.AvailabilityDomain
+import com.oracle.bmc.identity.requests.ListAvailabilityDomainsRequest
+import com.oracle.bmc.identity.responses.ListAvailabilityDomainsResponse
 import groovy.transform.CompileStatic
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.options.Option
@@ -34,9 +34,9 @@ import static org.kordamp.gradle.StringUtils.isBlank
  * @since 0.1.0
  */
 @CompileStatic
-class ListImagesTask extends AbstractOCITask {
-    static final String NAME = 'listImages'
-    static final String DESCRIPTION = 'Lists images available on a compartment'
+class ListAvailabilityDomainsTask extends AbstractOCITask {
+    static final String NAME = 'listAvailabilityDomains'
+    static final String DESCRIPTION = 'Lists domains available on a compartment'
 
     private String compartmentId
     private boolean verbose
@@ -46,36 +46,36 @@ class ListImagesTask extends AbstractOCITask {
         this.compartmentId = compartmentId
     }
 
-    @Option(option = 'verbose', description = 'Display additional information per image (OPTIONAL).')
+    @Option(option = 'verbose', description = 'Display additional information per availability domain (OPTIONAL).')
     void setVerbose(boolean verbose) {
         this.verbose = verbose
     }
 
     @TaskAction
-    void listImages() {
+    void listAvailabilityDomains() {
         if (isBlank(compartmentId)) {
             throw new IllegalStateException("Missing value of 'compartmentId' in $path")
         }
 
         AuthenticationDetailsProvider provider = resolveAuthenticationDetailsProvider()
-        ComputeClient client = ComputeClient.builder().build(provider)
-        ListImagesResponse response = client.listImages(ListImagesRequest.builder().compartmentId(compartmentId).build())
+        IdentityClient client = IdentityClient.builder().build(provider)
+        ListAvailabilityDomainsResponse response = client.listAvailabilityDomains(ListAvailabilityDomainsRequest.builder().compartmentId(compartmentId).build())
         client.close()
 
         AnsiConsole console = new AnsiConsole(project)
-        println("Total images available at ${compartmentId}: " + console.cyan(response.items.size().toString()))
-        for (Image image : response.items) {
-            println(image.displayName + (verbose ? ':' : ''))
+        println("Total availability domains available at ${compartmentId}: " + console.cyan(response.items.size().toString()))
+        for (AvailabilityDomain domain : response.items) {
+            println(domain.name + (verbose ? ':' : ''))
             if (verbose) {
-                doPrint(console, image, 0)
+                doPrint(console, domain, 0)
             }
         }
     }
 
     @Override
     protected void doPrint(AnsiConsole console, Object value, int offset) {
-        if (value instanceof Image) {
-            printImageDetails(console, (Image) value, offset)
+        if (value instanceof AvailabilityDomain) {
+            printAvailabilityDomainDetails(console, (AvailabilityDomain) value, offset)
         } else {
             super.doPrint(console, value, offset)
         }
@@ -83,18 +83,14 @@ class ListImagesTask extends AbstractOCITask {
 
     @Override
     protected void doPrintElement(AnsiConsole console, Object value, int offset) {
-        if (value instanceof Image) {
-            printImageDetails(console, (Image) value, offset)
+        if (value instanceof AvailabilityDomain) {
+            printAvailabilityDomainDetails(console, (AvailabilityDomain) value, offset)
         } else {
             super.doPrintElement(console, value, offset)
         }
     }
 
-    private void printImageDetails(AnsiConsole console, Image image, int offset) {
-        doPrintMapEntry(console, 'Id', image.id, offset + 1)
-        doPrintMapEntry(console, 'Size (MBs)', image.sizeInMBs, offset + 1)
-        doPrintMapEntry(console, 'Time Created', image.timeCreated, offset + 1)
-        doPrintMapEntry(console, 'Operating System', image.operatingSystem, offset + 1)
-        doPrintMapEntry(console, 'Operating System Version', image.operatingSystemVersion, offset + 1)
+    private void printAvailabilityDomainDetails(AnsiConsole console, AvailabilityDomain domain, int offset) {
+        doPrintMapEntry(console, 'Id', domain.id, offset + 1)
     }
 }

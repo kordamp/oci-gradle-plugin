@@ -54,6 +54,7 @@ class ListShapesTask extends AbstractOCITask {
         AuthenticationDetailsProvider provider = resolveAuthenticationDetailsProvider()
         ComputeClient client = ComputeClient.builder().build(provider)
         ListShapesResponse response = client.listShapes(ListShapesRequest.builder().compartmentId(compartmentId).build())
+        client.close()
 
         AnsiConsole console = new AnsiConsole(project)
         List<Shape> shapes = response.items.unique().sort { it.shape }

@@ -20,6 +20,7 @@ package org.kordamp.gradle.oci
 import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.kordamp.gradle.oci.tasks.ListAvailabilityDomainsTask
 import org.kordamp.gradle.oci.tasks.ListImagesTask
 import org.kordamp.gradle.oci.tasks.ListShapesTask
 import org.kordamp.gradle.oci.tasks.SearchResourcesTask
@@ -52,6 +53,7 @@ class OCIPlugin extends AbstractKordampPlugin {
         setVisited(project, true)
 
         [
+            ListAvailabilityDomainsTask,
             ListImagesTask,
             ListShapesTask,
             SearchResourcesTask

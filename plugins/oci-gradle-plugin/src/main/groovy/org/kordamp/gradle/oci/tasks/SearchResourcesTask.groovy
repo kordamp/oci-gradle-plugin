@@ -44,7 +44,7 @@ class SearchResourcesTask extends AbstractOCITask {
 
     private String type
 
-    @Option(option = 'type', description = 'The type to searchResources (optional).')
+    @Option(option = 'type', description = 'The type to searchResources (OPTIONAL).')
     void setType(String type) {
         this.type = type
     }

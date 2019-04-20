@@ -20,7 +20,7 @@ package org.kordamp.gradle.oci
 import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.Task
-import org.kordamp.gradle.oci.tasks.ResourceSearchTask
+import org.kordamp.gradle.oci.tasks.SearchResourcesTask
 import org.kordamp.gradle.plugin.AbstractKordampPlugin
 
 /**
@@ -49,7 +49,7 @@ class OCIPlugin extends AbstractKordampPlugin {
         }
         setVisited(project, true)
 
-        [ResourceSearchTask].each { taskType ->
+        [SearchResourcesTask].each { taskType ->
             project.tasks.register(taskType.NAME, taskType,
                 new Action<Task>() {
                     @Override

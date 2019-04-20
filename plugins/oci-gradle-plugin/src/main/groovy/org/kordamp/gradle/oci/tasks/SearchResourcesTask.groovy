@@ -17,9 +17,7 @@
  */
 package org.kordamp.gradle.oci.tasks
 
-import com.oracle.bmc.ConfigFileReader
 import com.oracle.bmc.auth.AuthenticationDetailsProvider
-import com.oracle.bmc.auth.ConfigFileAuthenticationDetailsProvider
 import com.oracle.bmc.resourcesearch.ResourceSearch
 import com.oracle.bmc.resourcesearch.ResourceSearchClient
 import com.oracle.bmc.resourcesearch.model.QueryableFieldDescription
@@ -40,23 +38,20 @@ import static org.kordamp.gradle.StringUtils.isBlank
  * @since 0.1.0
  */
 @CompileStatic
-class ResourceSearchTask extends AbstractOCITask {
+class SearchResourcesTask extends AbstractOCITask {
     static final String NAME = 'searchResources'
     static final String DESCRIPTION = 'Lists information on resource types'
 
-    private static final String CONFIG_LOCATION = '~/.oci/config'
-
     private String type
 
-    @Option(option = 'type', description = 'The type to search (optional).')
+    @Option(option = 'type', description = 'The type to searchResources (optional).')
     void setType(String type) {
         this.type = type
     }
 
     @TaskAction
-    void search() {
-        ConfigFileReader.ConfigFile configFile = ConfigFileReader.parse(CONFIG_LOCATION, profile)
-        AuthenticationDetailsProvider provider = new ConfigFileAuthenticationDetailsProvider(configFile)
+    void searchResources() {
+        AuthenticationDetailsProvider provider = resolveAuthenticationDetailsProvider()
 
         ResourceSearch client = ResourceSearchClient.builder().build(provider)
         if (isBlank(type)) {

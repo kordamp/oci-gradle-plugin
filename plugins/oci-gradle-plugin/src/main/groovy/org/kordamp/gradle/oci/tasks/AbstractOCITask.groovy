@@ -17,130 +17,76 @@
  */
 package org.kordamp.gradle.oci.tasks
 
+import com.google.common.base.Supplier
+import com.oracle.bmc.ConfigFileReader
+import com.oracle.bmc.Region
+import com.oracle.bmc.auth.AuthenticationDetailsProvider
+import com.oracle.bmc.auth.ConfigFileAuthenticationDetailsProvider
+import com.oracle.bmc.auth.SimpleAuthenticationDetailsProvider
 import groovy.transform.CompileStatic
-import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.options.Option
-import org.kordamp.gradle.AnsiConsole
-
-import static org.kordamp.gradle.StringUtils.isNotBlank
+import org.kordamp.gradle.oci.OCIConfigExtension
+import org.kordamp.gradle.plugin.base.tasks.AbstractReportingTask
 
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
 @CompileStatic
-abstract class AbstractOCITask extends DefaultTask {
+abstract class AbstractOCITask extends AbstractReportingTask {
+    protected static final String CONFIG_LOCATION = '~/.oci/config'
+
+    protected final OCIConfigExtension ociConfig
     protected String profile = 'DEFAULT'
+
+    AbstractOCITask() {
+        ociConfig = project.extensions.create('ociConfig', OCIConfigExtension, project)
+    }
 
     @Option(option = 'profile', description = 'The profile to use. Defaults to DEFAULT.')
     void setProfile(String profile) {
         this.profile = profile
     }
 
-    protected void doPrint(AnsiConsole console, value, int offset) {
-        if (value instanceof Map) {
-            doPrintMap(console, (Map) value, offset)
-        } else if (value instanceof Collection) {
-            doPrintCollection(console, value, offset)
-        } else {
-            doPrintElement(console, value, offset)
+    protected AuthenticationDetailsProvider resolveAuthenticationDetailsProvider() {
+        if (ociConfig.empty) {
+            ConfigFileReader.ConfigFile configFile = ConfigFileReader.parse(CONFIG_LOCATION, profile)
+            return new ConfigFileAuthenticationDetailsProvider(configFile)
         }
-    }
 
-    protected void doPrintMap(AnsiConsole console, Map<String, ?> map, int offset) {
-        map.each { key, value ->
-            if (value instanceof Map) {
-                if (!value.isEmpty()) {
-                    println(('    ' * offset) + key + ':')
-                    doPrintMap(console, value, offset + 1)
+        List<String> errors = []
+        if (!ociConfig.userId.present) {
+            errors << "Missing value for 'ociConfig.userId' for Task $path".toString()
+        }
+        if (!ociConfig.tenantId.present) {
+            errors << "Missing value for 'ociConfig.tenantId' for Task $path".toString()
+        }
+        if (!ociConfig.fingerprint.present) {
+            errors << "Missing value for 'ociConfig.fingerprint' for Task $path".toString()
+        }
+        if (!ociConfig.region.present) {
+            errors << "Missing value for 'ociConfig.region' for Task $path".toString()
+        }
+        if (!ociConfig.keyfile.present) {
+            errors << "Missing value for 'ociConfig.keyfile' for Task $path".toString()
+        }
+
+        if (errors.size() > 0) {
+            throw new IllegalStateException(errors.join('\n'))
+        }
+
+        SimpleAuthenticationDetailsProvider.builder()
+            .userId(ociConfig.userId.get())
+            .tenantId(ociConfig.tenantId.get())
+            .fingerprint(ociConfig.fingerprint.get())
+            .region(Region.fromRegionId(ociConfig.region.get()))
+            .privateKeySupplier(new Supplier<InputStream>() {
+                @Override
+                InputStream get() {
+                    new FileInputStream(ociConfig.keyfile.asFile.get())
                 }
-            } else if (value instanceof Collection) {
-                if (!value.isEmpty()) {
-                    println(('    ' * offset) + key + ':')
-                    doPrintCollection(console, (Collection) value, offset + 1)
-                }
-            } else if (isNotNullNorBlank(value)) {
-                doPrintMapEntry(console, key, value, offset)
-            }
-
-            if (offset == 0) {
-                println(' ')
-            }
-        }
-    }
-
-    protected void doPrintMapEntry(AnsiConsole console, String key, value, int offset) {
-        println(('    ' * offset) + key + ': ' + formatValue(console, value, offset))
-    }
-
-    protected void doPrintCollection(AnsiConsole console, Collection<?> collection, int offset) {
-        collection.each { value ->
-            if (value instanceof Map) {
-                if (!value.isEmpty()) {
-                    doPrintMap(console, value, offset)
-                }
-            } else if (value instanceof Collection && !((Collection) value).empty) {
-                if (!value.isEmpty()) {
-                    doPrintCollection(console, (Collection) value, offset + 1)
-                }
-            } else if (isNotNullNorBlank(value)) {
-                doPrintElement(console, value, offset)
-            }
-        }
-    }
-
-    protected void doPrintElement(AnsiConsole console, value, int offset) {
-        println(('    ' * offset) + formatValue(console, value, offset))
-    }
-
-    protected boolean isNotNullNorBlank(value) {
-        value != null || (value instanceof CharSequence && isNotBlank(String.valueOf(value)))
-    }
-
-    protected String formatValue(AnsiConsole console, value, int offset) {
-        if (value instanceof Boolean) {
-            Boolean b = (Boolean) value
-            return b ? console.green(String.valueOf(b)) : console.red(String.valueOf(b))
-        } else if (value instanceof Number) {
-            return console.cyan(String.valueOf(value))
-        } else {
-            String s = String.valueOf(value)
-
-            String r = parseAsBoolean(console, s)
-            if (r != null) return r
-            r = parseAsInteger(console, s)
-            if (r != null) return r
-            r = parseAsDouble(console, s)
-            if (r != null) return r
-
-            return console.yellow(s)
-        }
-    }
-
-    protected String parseAsBoolean(AnsiConsole console, String s) {
-        if ('true'.equalsIgnoreCase(s) || 'false'.equalsIgnoreCase(s)) {
-            boolean b = Boolean.valueOf(s)
-            return b ? console.green(String.valueOf(b)) : console.red(String.valueOf(b))
-        } else {
-            return null
-        }
-    }
-
-    protected String parseAsInteger(AnsiConsole console, String s) {
-        try {
-            Integer.parseInt(s)
-            return console.cyan(s)
-        } catch (Exception e) {
-            return null
-        }
-    }
-
-    protected String parseAsDouble(AnsiConsole console, String s) {
-        try {
-            Double.parseDouble(s)
-            return console.cyan(s)
-        } catch (Exception e) {
-            return null
-        }
+            })
+            .passPhrase(ociConfig.passphrase.present ? ociConfig.passphrase.get() : '')
+            .build()
     }
 }

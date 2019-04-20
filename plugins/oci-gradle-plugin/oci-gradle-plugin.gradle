@@ -71,7 +71,6 @@ dependencies {
     compile 'org.slf4j:slf4j-api:1.7.25'
     compile 'javax.validation:validation-api:1.1.0.Final'
     compile 'javax.activation:activation:1.1.1'
-
 }
 
 sourceSets {

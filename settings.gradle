@@ -20,7 +20,6 @@ pluginManagement {
     repositories {
         jcenter()
         maven { url 'https://plugins.gradle.org/m2/' }
-        mavenLocal()
     }
 }
 
@@ -29,7 +28,7 @@ buildscript {
         gradlePluginPortal()
     }
     dependencies {
-        classpath 'org.kordamp.gradle:settings-gradle-plugin:0.16.0'
+        classpath 'org.kordamp.gradle:settings-gradle-plugin:0.18.0'
     }
 }
 apply plugin: 'org.kordamp.gradle.settings'

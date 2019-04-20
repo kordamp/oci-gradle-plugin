@@ -21,7 +21,9 @@ import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.kordamp.gradle.oci.tasks.CreateInstanceTask
+import org.kordamp.gradle.oci.tasks.DisplayCompartmentTask
 import org.kordamp.gradle.oci.tasks.ListAvailabilityDomainsTask
+import org.kordamp.gradle.oci.tasks.ListCompartmentsTask
 import org.kordamp.gradle.oci.tasks.ListImagesTask
 import org.kordamp.gradle.oci.tasks.ListShapesTask
 import org.kordamp.gradle.oci.tasks.ListVcnsTask
@@ -56,7 +58,9 @@ class OCIPlugin extends AbstractKordampPlugin {
 
         [
             CreateInstanceTask,
+            DisplayCompartmentTask,
             ListAvailabilityDomainsTask,
+            ListCompartmentsTask,
             ListImagesTask,
             ListShapesTask,
             ListVcnsTask,

@@ -27,6 +27,7 @@ import groovy.transform.CompileStatic
 import org.gradle.api.tasks.options.Option
 import org.kordamp.gradle.AnsiConsole
 import org.kordamp.gradle.oci.OCIConfigExtension
+import org.kordamp.gradle.oci.tasks.interfaces.PathAware
 import org.kordamp.gradle.plugin.base.tasks.AbstractReportingTask
 
 /**
@@ -34,7 +35,7 @@ import org.kordamp.gradle.plugin.base.tasks.AbstractReportingTask
  * @since 0.1.0
  */
 @CompileStatic
-abstract class AbstractOCITask extends AbstractReportingTask {
+abstract class AbstractOCITask extends AbstractReportingTask implements PathAware {
     protected static final String CONFIG_LOCATION = '~/.oci/config'
 
     protected final OCIConfigExtension ociConfig

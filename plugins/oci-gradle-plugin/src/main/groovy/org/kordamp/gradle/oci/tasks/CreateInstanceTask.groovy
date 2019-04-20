@@ -3,7 +3,7 @@
  *
  * Copyright 2019 Andres Almiray.
  *
- * Licensed under the Apache License, Version 2.0 (the "License")
+ * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
@@ -84,7 +84,6 @@ class CreateInstanceTask extends AbstractOCITask implements CompartmentAwareTrai
     private String image
     private String shape
     private String availabilityDomain
-
 
     @Option(option = 'instanceName', description = 'The name of the instance to be created (REQUIRED).')
     void setInstanceName(String instanceName) {

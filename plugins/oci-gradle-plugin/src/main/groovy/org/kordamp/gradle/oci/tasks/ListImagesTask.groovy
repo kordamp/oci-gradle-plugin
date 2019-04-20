@@ -24,8 +24,9 @@ import com.oracle.bmc.core.requests.ListImagesRequest
 import com.oracle.bmc.core.responses.ListImagesResponse
 import groovy.transform.CompileStatic
 import org.gradle.api.tasks.TaskAction
-import org.gradle.api.tasks.options.Option
 import org.kordamp.gradle.AnsiConsole
+import org.kordamp.gradle.oci.tasks.traits.CompartmentAwareTrait
+import org.kordamp.gradle.oci.tasks.traits.VerboseAwareTrait
 
 import static org.kordamp.gradle.StringUtils.isBlank
 
@@ -34,22 +35,9 @@ import static org.kordamp.gradle.StringUtils.isBlank
  * @since 0.1.0
  */
 @CompileStatic
-class ListImagesTask extends AbstractOCITask {
+class ListImagesTask extends AbstractOCITask implements CompartmentAwareTrait, VerboseAwareTrait {
     static final String NAME = 'listImages'
     static final String DESCRIPTION = 'Lists images available on a compartment'
-
-    private String compartmentId
-    private boolean verbose
-
-    @Option(option = 'compartmentId', description = 'The id of the compartment to query (REQUIRED).')
-    void setCompartmentId(String compartmentId) {
-        this.compartmentId = compartmentId
-    }
-
-    @Option(option = 'verbose', description = 'Display additional information per image (OPTIONAL).')
-    void setVerbose(boolean verbose) {
-        this.verbose = verbose
-    }
 
     @TaskAction
     void listImages() {
@@ -64,6 +52,7 @@ class ListImagesTask extends AbstractOCITask {
 
         AnsiConsole console = new AnsiConsole(project)
         println("Total images available at ${compartmentId}: " + console.cyan(response.items.size().toString()))
+        println(' ')
         for (Image image : response.items) {
             println(image.displayName + (verbose ? ':' : ''))
             if (verbose) {

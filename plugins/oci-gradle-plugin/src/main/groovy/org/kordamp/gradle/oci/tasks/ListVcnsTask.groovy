@@ -18,10 +18,10 @@
 package org.kordamp.gradle.oci.tasks
 
 import com.oracle.bmc.auth.AuthenticationDetailsProvider
-import com.oracle.bmc.identity.IdentityClient
-import com.oracle.bmc.identity.model.AvailabilityDomain
-import com.oracle.bmc.identity.requests.ListAvailabilityDomainsRequest
-import com.oracle.bmc.identity.responses.ListAvailabilityDomainsResponse
+import com.oracle.bmc.core.VirtualNetworkClient
+import com.oracle.bmc.core.model.Vcn
+import com.oracle.bmc.core.requests.ListVcnsRequest
+import com.oracle.bmc.core.responses.ListVcnsResponse
 import groovy.transform.CompileStatic
 import org.gradle.api.tasks.TaskAction
 import org.kordamp.gradle.AnsiConsole
@@ -35,36 +35,36 @@ import static org.kordamp.gradle.StringUtils.isBlank
  * @since 0.1.0
  */
 @CompileStatic
-class ListAvailabilityDomainsTask extends AbstractOCITask implements CompartmentAwareTrait, VerboseAwareTrait {
-    static final String NAME = 'listAvailabilityDomains'
-    static final String DESCRIPTION = 'Lists domains available on a compartment'
+class ListVcnsTask extends AbstractOCITask implements CompartmentAwareTrait, VerboseAwareTrait {
+    static final String NAME = 'listVcns'
+    static final String DESCRIPTION = 'Lists vcns available on a compartment'
 
     @TaskAction
-    void listAvailabilityDomains() {
+    void listVcns() {
         if (isBlank(compartmentId)) {
             throw new IllegalStateException("Missing value of 'compartmentId' in $path")
         }
 
         AuthenticationDetailsProvider provider = resolveAuthenticationDetailsProvider()
-        IdentityClient client = IdentityClient.builder().build(provider)
-        ListAvailabilityDomainsResponse response = client.listAvailabilityDomains(ListAvailabilityDomainsRequest.builder().compartmentId(compartmentId).build())
+        VirtualNetworkClient client = new VirtualNetworkClient(provider)
+        ListVcnsResponse response = client.listVcns(ListVcnsRequest.builder().compartmentId(compartmentId).build())
         client.close()
 
         AnsiConsole console = new AnsiConsole(project)
-        println("Total availability domains available at ${compartmentId}: " + console.cyan(response.items.size().toString()))
+        println("Total vcns available at ${compartmentId}: " + console.cyan(response.items.size().toString()))
         println(' ')
-        for (AvailabilityDomain domain : response.items) {
-            println(domain.name + (verbose ? ':' : ''))
+        for (Vcn vcn : response.items) {
+            println(vcn.displayName + (verbose ? ':' : ''))
             if (verbose) {
-                doPrint(console, domain, 0)
+                doPrint(console, vcn, 0)
             }
         }
     }
 
     @Override
     protected void doPrint(AnsiConsole console, Object value, int offset) {
-        if (value instanceof AvailabilityDomain) {
-            printAvailabilityDomainDetails(console, (AvailabilityDomain) value, offset)
+        if (value instanceof Vcn) {
+            printVcnDetails(console, (Vcn) value, offset)
         } else {
             super.doPrint(console, value, offset)
         }
@@ -72,14 +72,18 @@ class ListAvailabilityDomainsTask extends AbstractOCITask implements Compartment
 
     @Override
     protected void doPrintElement(AnsiConsole console, Object value, int offset) {
-        if (value instanceof AvailabilityDomain) {
-            printAvailabilityDomainDetails(console, (AvailabilityDomain) value, offset)
+        if (value instanceof Vcn) {
+            printVcnDetails(console, (Vcn) value, offset)
         } else {
             super.doPrintElement(console, value, offset)
         }
     }
 
-    private void printAvailabilityDomainDetails(AnsiConsole console, AvailabilityDomain domain, int offset) {
-        doPrintMapEntry(console, 'Id', domain.id, offset + 1)
+    private void printVcnDetails(AnsiConsole console, Vcn vcn, int offset) {
+        doPrintMapEntry(console, 'Id', vcn.id, offset + 1)
+        doPrintMapEntry(console, 'CIDR Block', vcn.cidrBlock, offset + 1)
+        doPrintMapEntry(console, 'DNS Label', vcn.dnsLabel, offset + 1)
+        doPrintMapEntry(console, 'Time Created', vcn.timeCreated, offset + 1)
+        doPrintMapEntry(console, 'VCN Domain Name', vcn.vcnDomainName, offset + 1)
     }
 }

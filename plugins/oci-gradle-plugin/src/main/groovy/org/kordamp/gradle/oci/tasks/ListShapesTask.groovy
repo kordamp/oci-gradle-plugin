@@ -24,8 +24,8 @@ import com.oracle.bmc.core.requests.ListShapesRequest
 import com.oracle.bmc.core.responses.ListShapesResponse
 import groovy.transform.CompileStatic
 import org.gradle.api.tasks.TaskAction
-import org.gradle.api.tasks.options.Option
 import org.kordamp.gradle.AnsiConsole
+import org.kordamp.gradle.oci.tasks.traits.CompartmentAwareTrait
 
 import static org.kordamp.gradle.StringUtils.isBlank
 
@@ -34,16 +34,9 @@ import static org.kordamp.gradle.StringUtils.isBlank
  * @since 0.1.0
  */
 @CompileStatic
-class ListShapesTask extends AbstractOCITask {
+class ListShapesTask extends AbstractOCITask implements CompartmentAwareTrait {
     static final String NAME = 'listShapes'
     static final String DESCRIPTION = 'Lists shapes available on a compartment'
-
-    private String compartmentId
-
-    @Option(option = 'compartmentId', description = 'The id of the compartment to query (REQUIRED).')
-    void setCompartmentId(String compartmentId) {
-        this.compartmentId = compartmentId
-    }
 
     @TaskAction
     void listShapes() {
@@ -59,6 +52,7 @@ class ListShapesTask extends AbstractOCITask {
         AnsiConsole console = new AnsiConsole(project)
         List<Shape> shapes = response.items.unique().sort { it.shape }
         println("Total shapes available at ${compartmentId}: " + console.cyan(shapes.size().toString()))
+        println(' ')
         for (Shape shape : shapes) {
             println(shape.shape)
         }

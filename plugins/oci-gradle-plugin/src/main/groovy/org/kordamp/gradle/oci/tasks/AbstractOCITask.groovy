@@ -25,6 +25,7 @@ import com.oracle.bmc.auth.ConfigFileAuthenticationDetailsProvider
 import com.oracle.bmc.auth.SimpleAuthenticationDetailsProvider
 import groovy.transform.CompileStatic
 import org.gradle.api.tasks.options.Option
+import org.kordamp.gradle.AnsiConsole
 import org.kordamp.gradle.oci.OCIConfigExtension
 import org.kordamp.gradle.plugin.base.tasks.AbstractReportingTask
 
@@ -40,7 +41,7 @@ abstract class AbstractOCITask extends AbstractReportingTask {
     protected String profile = 'DEFAULT'
 
     AbstractOCITask() {
-        ociConfig = project.extensions.create('ociConfig', OCIConfigExtension, project)
+        ociConfig = extensions.create('ociConfig', OCIConfigExtension, project)
     }
 
     @Option(option = 'profile', description = 'The profile to use. Defaults to DEFAULT.')
@@ -88,5 +89,12 @@ abstract class AbstractOCITask extends AbstractReportingTask {
             })
             .passPhrase(ociConfig.passphrase.present ? ociConfig.passphrase.get() : '')
             .build()
+    }
+
+    @Override
+    protected void doPrintMapEntry(AnsiConsole console, String key, value, int offset) {
+        if (null != value) {
+            super.doPrintMapEntry(console, key, value, offset)
+        }
     }
 }

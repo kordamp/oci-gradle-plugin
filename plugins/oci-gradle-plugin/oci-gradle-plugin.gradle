@@ -29,6 +29,10 @@ configurations {
 }
 
 dependencies {
+    compile     "org.kordamp.jipsy:jipsy-annotations:$jipsyVersion"
+    compile     "org.kordamp.jipsy:jipsy-util:$jipsyVersion"
+    compileOnly "org.kordamp.gipsy:gipsy:$jipsyVersion"
+
     compile 'org.kordamp.gradle:base-gradle-plugin:0.18.0'
 
     uberjar 'com.oracle:oci-java-sdk-full:1.5.2'

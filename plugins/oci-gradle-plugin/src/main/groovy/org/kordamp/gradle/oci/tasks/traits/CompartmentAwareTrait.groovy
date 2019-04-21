@@ -18,6 +18,8 @@
 package org.kordamp.gradle.oci.tasks.traits
 
 import groovy.transform.CompileStatic
+import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.options.Option
 import org.kordamp.gradle.oci.tasks.interfaces.PathAware
 
@@ -31,6 +33,8 @@ import static org.kordamp.gradle.StringUtils.isBlank
 trait CompartmentAwareTrait implements PathAware {
     private String compartmentId
 
+    @Optional
+    @Input
     @Option(option = 'compartmentId', description = 'The id of the compartment to query (REQUIRED).')
     void setCompartmentId(String compartmentId) {
         this.compartmentId = compartmentId

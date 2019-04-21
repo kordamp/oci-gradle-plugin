@@ -20,23 +20,16 @@ package org.kordamp.gradle.oci
 import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.Task
-import org.kordamp.gradle.oci.tasks.CreateInstanceTask
-import org.kordamp.gradle.oci.tasks.DisplayCompartmentTask
-import org.kordamp.gradle.oci.tasks.ListAvailabilityDomainsTask
-import org.kordamp.gradle.oci.tasks.ListCompartmentsTask
-import org.kordamp.gradle.oci.tasks.ListImagesTask
-import org.kordamp.gradle.oci.tasks.ListShapesTask
-import org.kordamp.gradle.oci.tasks.ListVcnsTask
-import org.kordamp.gradle.oci.tasks.SearchResourcesTask
+import org.kordamp.gradle.StringUtils
+import org.kordamp.gradle.oci.tasks.interfaces.OCITask
 import org.kordamp.gradle.plugin.AbstractKordampPlugin
+import org.kordamp.jipsy.util.TypeLoader
 
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
 class OCIPlugin extends AbstractKordampPlugin {
-    private static final GROUP = 'OCI'
-
     Project project
 
     void apply(Project project) {
@@ -56,24 +49,22 @@ class OCIPlugin extends AbstractKordampPlugin {
         }
         setVisited(project, true)
 
-        [
-            CreateInstanceTask,
-            DisplayCompartmentTask,
-            ListAvailabilityDomainsTask,
-            ListCompartmentsTask,
-            ListImagesTask,
-            ListShapesTask,
-            ListVcnsTask,
-            SearchResourcesTask
-        ].each { taskType ->
-            project.tasks.register(taskType.NAME, taskType,
-                new Action<Task>() {
-                    @Override
-                    void execute(Task t) {
-                        t.group = GROUP
-                        t.description = taskType.DESCRIPTION
-                    }
-                })
-        }
+        TypeLoader.load(this.class.classLoader, 'META-INF/types', OCITask, new TypeLoader.LineProcessor() {
+            @Override
+            void process(ClassLoader classLoader, Class<?> clazz, String line) {
+                Class taskType = classLoader.loadClass(line.trim(), true)
+                String taskName = StringUtils.getPropertyName(taskType.simpleName - 'Task')
+                String group = taskType.package.name.split('\\.')[-1]
+
+                project.tasks.register(taskName, taskType,
+                    new Action<Task>() {
+                        @Override
+                        void execute(Task t) {
+                            t.group = 'OCI ' + group.capitalize()
+                            t.description = taskType.DESCRIPTION
+                        }
+                    })
+            }
+        })
     }
 }

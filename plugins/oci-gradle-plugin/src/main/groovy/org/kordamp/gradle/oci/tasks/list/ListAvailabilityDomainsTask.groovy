@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kordamp.gradle.oci.tasks
+package org.kordamp.gradle.oci.tasks.list
 
 import com.oracle.bmc.auth.AuthenticationDetailsProvider
 import com.oracle.bmc.identity.IdentityClient
@@ -25,20 +25,23 @@ import com.oracle.bmc.identity.responses.ListAvailabilityDomainsResponse
 import groovy.transform.CompileStatic
 import org.gradle.api.tasks.TaskAction
 import org.kordamp.gradle.AnsiConsole
+import org.kordamp.gradle.oci.tasks.AbstractOCITask
+import org.kordamp.gradle.oci.tasks.interfaces.OCITask
 import org.kordamp.gradle.oci.tasks.traits.CompartmentAwareTrait
 import org.kordamp.gradle.oci.tasks.traits.VerboseAwareTrait
+import org.kordamp.jipsy.TypeProviderFor
 
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
 @CompileStatic
+@TypeProviderFor(OCITask)
 class ListAvailabilityDomainsTask extends AbstractOCITask implements CompartmentAwareTrait, VerboseAwareTrait {
-    static final String NAME = 'listAvailabilityDomains'
-    static final String DESCRIPTION = 'Lists domains available on a compartment'
+    static final String DESCRIPTION = 'Lists domains available on a compartment.'
 
     @TaskAction
-    void listAvailabilityDomains() {
+    void executeTask() {
         validateCompartmentId()
 
         AuthenticationDetailsProvider provider = resolveAuthenticationDetailsProvider()
@@ -76,6 +79,7 @@ class ListAvailabilityDomainsTask extends AbstractOCITask implements Compartment
     }
 
     private void printAvailabilityDomainDetails(AnsiConsole console, AvailabilityDomain domain, int offset) {
-        doPrintMapEntry(console, 'Id', domain.id, offset + 1)
+        doPrintMapEntry(console, 'ID', domain.id, offset + 1)
+        doPrintMapEntry(console, 'Compartment ID', domain.compartmentId, offset + 1)
     }
 }

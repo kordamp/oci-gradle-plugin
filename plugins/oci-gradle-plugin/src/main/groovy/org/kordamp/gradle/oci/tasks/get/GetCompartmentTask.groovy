@@ -15,48 +15,45 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kordamp.gradle.oci.tasks
+package org.kordamp.gradle.oci.tasks.get
 
 import com.oracle.bmc.auth.AuthenticationDetailsProvider
 import com.oracle.bmc.identity.IdentityClient
 import com.oracle.bmc.identity.model.Compartment
-import com.oracle.bmc.identity.requests.ListCompartmentsRequest
-import com.oracle.bmc.identity.responses.ListCompartmentsResponse
+import com.oracle.bmc.identity.requests.GetCompartmentRequest
+import com.oracle.bmc.identity.responses.GetCompartmentResponse
 import groovy.transform.CompileStatic
 import org.gradle.api.tasks.TaskAction
 import org.kordamp.gradle.AnsiConsole
+import org.kordamp.gradle.oci.tasks.AbstractOCITask
+import org.kordamp.gradle.oci.tasks.interfaces.OCITask
 import org.kordamp.gradle.oci.tasks.traits.CompartmentAwareTrait
-import org.kordamp.gradle.oci.tasks.traits.VerboseAwareTrait
+import org.kordamp.jipsy.TypeProviderFor
 
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
 @CompileStatic
-class ListCompartmentsTask extends AbstractOCITask implements CompartmentAwareTrait, VerboseAwareTrait {
-    static final String NAME = 'listCompartments'
-    static final String DESCRIPTION = 'Lists available compartments'
+@TypeProviderFor(OCITask)
+class GetCompartmentTask extends AbstractOCITask implements CompartmentAwareTrait {
+    static final String DESCRIPTION = 'Displays information for an specific compartment.'
 
     @TaskAction
-    void listCompartments() {
+    void executeTask() {
         validateCompartmentId()
 
         AuthenticationDetailsProvider provider = resolveAuthenticationDetailsProvider()
         IdentityClient client = IdentityClient.builder().build(provider)
-        ListCompartmentsResponse response = client.listCompartments(ListCompartmentsRequest.builder()
+        GetCompartmentResponse response = client.getCompartment(GetCompartmentRequest.builder()
             .compartmentId(compartmentId)
             .build())
         client.close()
 
         AnsiConsole console = new AnsiConsole(project)
-        println("Total compartments available at ${compartmentId}: " + console.cyan(response.items.size().toString()))
-        println(' ')
-        for (Compartment compartment : response.items) {
-            println(compartment.name + (verbose ? ':' : ''))
-            if (verbose) {
-                doPrint(console, compartment, 0)
-            }
-        }
+
+        println(response.compartment.name + ':')
+        doPrint(console, response.compartment, 0)
     }
 
     @Override
@@ -78,10 +75,9 @@ class ListCompartmentsTask extends AbstractOCITask implements CompartmentAwareTr
     }
 
     private void printCompartmentDetails(AnsiConsole console, Compartment compartment, int offset) {
+        doPrintMapEntry(console, 'Description', compartment.description, offset + 1)
         doPrintMapEntry(console, 'Id', compartment.id, offset + 1)
         doPrintMapEntry(console, 'Compartment Id', compartment.compartmentId, offset + 1)
-        doPrintMapEntry(console, 'Name', compartment.name, offset + 1)
-        doPrintMapEntry(console, 'Description', compartment.description, offset + 1)
         doPrintMapEntry(console, 'Time Created', compartment.timeCreated, offset + 1)
     }
 }

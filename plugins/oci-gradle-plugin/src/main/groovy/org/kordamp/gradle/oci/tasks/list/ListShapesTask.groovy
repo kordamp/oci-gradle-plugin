@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kordamp.gradle.oci.tasks
+package org.kordamp.gradle.oci.tasks.list
 
 import com.oracle.bmc.auth.AuthenticationDetailsProvider
 import com.oracle.bmc.core.ComputeClient
@@ -25,7 +25,10 @@ import com.oracle.bmc.core.responses.ListShapesResponse
 import groovy.transform.CompileStatic
 import org.gradle.api.tasks.TaskAction
 import org.kordamp.gradle.AnsiConsole
+import org.kordamp.gradle.oci.tasks.AbstractOCITask
+import org.kordamp.gradle.oci.tasks.interfaces.OCITask
 import org.kordamp.gradle.oci.tasks.traits.CompartmentAwareTrait
+import org.kordamp.jipsy.TypeProviderFor
 
 import static org.kordamp.gradle.StringUtils.isBlank
 
@@ -34,12 +37,12 @@ import static org.kordamp.gradle.StringUtils.isBlank
  * @since 0.1.0
  */
 @CompileStatic
+@TypeProviderFor(OCITask)
 class ListShapesTask extends AbstractOCITask implements CompartmentAwareTrait {
-    static final String NAME = 'listShapes'
-    static final String DESCRIPTION = 'Lists shapes available on a compartment'
+    static final String DESCRIPTION = 'Lists shapes available on a compartment.'
 
     @TaskAction
-    void listShapes() {
+    void executeTask() {
         if (isBlank(compartmentId)) {
             throw new IllegalStateException("Missing value of 'compartmentId' in $path")
         }

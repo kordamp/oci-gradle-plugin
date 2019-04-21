@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kordamp.gradle.oci.tasks
+package org.kordamp.gradle.oci.tasks.list
 
 import com.oracle.bmc.auth.AuthenticationDetailsProvider
 import com.oracle.bmc.core.ComputeClient
@@ -25,8 +25,11 @@ import com.oracle.bmc.core.responses.ListImagesResponse
 import groovy.transform.CompileStatic
 import org.gradle.api.tasks.TaskAction
 import org.kordamp.gradle.AnsiConsole
+import org.kordamp.gradle.oci.tasks.AbstractOCITask
+import org.kordamp.gradle.oci.tasks.interfaces.OCITask
 import org.kordamp.gradle.oci.tasks.traits.CompartmentAwareTrait
 import org.kordamp.gradle.oci.tasks.traits.VerboseAwareTrait
+import org.kordamp.jipsy.TypeProviderFor
 
 import static org.kordamp.gradle.StringUtils.isBlank
 
@@ -35,12 +38,12 @@ import static org.kordamp.gradle.StringUtils.isBlank
  * @since 0.1.0
  */
 @CompileStatic
+@TypeProviderFor(OCITask)
 class ListImagesTask extends AbstractOCITask implements CompartmentAwareTrait, VerboseAwareTrait {
-    static final String NAME = 'listImages'
-    static final String DESCRIPTION = 'Lists images available on a compartment'
+    static final String DESCRIPTION = 'Lists images available on a compartment.'
 
     @TaskAction
-    void listImages() {
+    void executeTask() {
         if (isBlank(compartmentId)) {
             throw new IllegalStateException("Missing value of 'compartmentId' in $path")
         }
@@ -81,6 +84,7 @@ class ListImagesTask extends AbstractOCITask implements CompartmentAwareTrait, V
 
     private void printImageDetails(AnsiConsole console, Image image, int offset) {
         doPrintMapEntry(console, 'Id', image.id, offset + 1)
+        doPrintMapEntry(console, 'Compartment ID', image.compartmentId, offset + 1)
         doPrintMapEntry(console, 'Size (MBs)', image.sizeInMBs, offset + 1)
         doPrintMapEntry(console, 'Time Created', image.timeCreated, offset + 1)
         doPrintMapEntry(console, 'Operating System', image.operatingSystem, offset + 1)

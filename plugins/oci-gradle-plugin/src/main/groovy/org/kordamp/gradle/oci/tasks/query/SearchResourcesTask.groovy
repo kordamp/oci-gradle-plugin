@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kordamp.gradle.oci.tasks
+package org.kordamp.gradle.oci.tasks.query
 
 import com.oracle.bmc.auth.AuthenticationDetailsProvider
 import com.oracle.bmc.resourcesearch.ResourceSearch
@@ -30,6 +30,9 @@ import groovy.transform.CompileStatic
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.options.Option
 import org.kordamp.gradle.AnsiConsole
+import org.kordamp.gradle.oci.tasks.AbstractOCITask
+import org.kordamp.gradle.oci.tasks.interfaces.OCITask
+import org.kordamp.jipsy.TypeProviderFor
 
 import static org.kordamp.gradle.StringUtils.isBlank
 
@@ -38,9 +41,9 @@ import static org.kordamp.gradle.StringUtils.isBlank
  * @since 0.1.0
  */
 @CompileStatic
+@TypeProviderFor(OCITask)
 class SearchResourcesTask extends AbstractOCITask {
-    static final String NAME = 'searchResources'
-    static final String DESCRIPTION = 'Lists information on resource types'
+    static final String DESCRIPTION = 'Lists information on resource types.'
 
     private String type
 
@@ -50,7 +53,7 @@ class SearchResourcesTask extends AbstractOCITask {
     }
 
     @TaskAction
-    void searchResources() {
+    void executeTask() {
         AuthenticationDetailsProvider provider = resolveAuthenticationDetailsProvider()
 
         ResourceSearch client = ResourceSearchClient.builder().build(provider)
@@ -67,6 +70,7 @@ class SearchResourcesTask extends AbstractOCITask {
 
         AnsiConsole console = new AnsiConsole(project)
         println('Total resources: ' + console.cyan(response.items.size().toString()))
+        println(' ')
         for (ResourceType type : response.items) {
             println('Resource: ' + console.yellow(type.name))
         }

@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kordamp.gradle.oci.tasks
+package org.kordamp.gradle.oci.tasks.list
 
 import com.oracle.bmc.auth.AuthenticationDetailsProvider
 import com.oracle.bmc.core.VirtualNetworkClient
@@ -25,25 +25,24 @@ import com.oracle.bmc.core.responses.ListVcnsResponse
 import groovy.transform.CompileStatic
 import org.gradle.api.tasks.TaskAction
 import org.kordamp.gradle.AnsiConsole
+import org.kordamp.gradle.oci.tasks.AbstractOCITask
+import org.kordamp.gradle.oci.tasks.interfaces.OCITask
 import org.kordamp.gradle.oci.tasks.traits.CompartmentAwareTrait
 import org.kordamp.gradle.oci.tasks.traits.VerboseAwareTrait
-
-import static org.kordamp.gradle.StringUtils.isBlank
+import org.kordamp.jipsy.TypeProviderFor
 
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
 @CompileStatic
+@TypeProviderFor(OCITask)
 class ListVcnsTask extends AbstractOCITask implements CompartmentAwareTrait, VerboseAwareTrait {
-    static final String NAME = 'listVcns'
-    static final String DESCRIPTION = 'Lists vcns available on a compartment'
+    static final String DESCRIPTION = 'Lists vcns available on a compartment.'
 
     @TaskAction
-    void listVcns() {
-        if (isBlank(compartmentId)) {
-            throw new IllegalStateException("Missing value of 'compartmentId' in $path")
-        }
+    void executeTask() {
+        validateCompartmentId()
 
         AuthenticationDetailsProvider provider = resolveAuthenticationDetailsProvider()
         VirtualNetworkClient client = new VirtualNetworkClient(provider)
@@ -80,7 +79,8 @@ class ListVcnsTask extends AbstractOCITask implements CompartmentAwareTrait, Ver
     }
 
     private void printVcnDetails(AnsiConsole console, Vcn vcn, int offset) {
-        doPrintMapEntry(console, 'Id', vcn.id, offset + 1)
+        doPrintMapEntry(console, 'ID', vcn.id, offset + 1)
+        doPrintMapEntry(console, 'Compartment ID', vcn.compartmentId, offset + 1)
         doPrintMapEntry(console, 'CIDR Block', vcn.cidrBlock, offset + 1)
         doPrintMapEntry(console, 'DNS Label', vcn.dnsLabel, offset + 1)
         doPrintMapEntry(console, 'Time Created', vcn.timeCreated, offset + 1)

@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kordamp.gradle.oci.tasks
+package org.kordamp.gradle.oci.tasks.create
 
 import com.google.common.base.Strings
 import com.oracle.bmc.auth.AuthenticationDetailsProvider
@@ -66,7 +66,10 @@ import com.oracle.bmc.identity.responses.ListAvailabilityDomainsResponse
 import groovy.transform.CompileStatic
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.options.Option
+import org.kordamp.gradle.oci.tasks.AbstractOCITask
+import org.kordamp.gradle.oci.tasks.interfaces.OCITask
 import org.kordamp.gradle.oci.tasks.traits.CompartmentAwareTrait
+import org.kordamp.jipsy.TypeProviderFor
 
 import static org.kordamp.gradle.StringUtils.isBlank
 
@@ -75,8 +78,8 @@ import static org.kordamp.gradle.StringUtils.isBlank
  * @since 0.1.0
  */
 @CompileStatic
+@TypeProviderFor(OCITask)
 class CreateInstanceTask extends AbstractOCITask implements CompartmentAwareTrait {
-    static final String NAME = 'createInstance'
     static final String DESCRIPTION = 'Creates an instance with VCN, Gateway, and Volume.'
 
     private String instanceName
@@ -111,10 +114,9 @@ class CreateInstanceTask extends AbstractOCITask implements CompartmentAwareTrai
     }
 
     @TaskAction
-    void createInstance() {
-        if (isBlank(compartmentId)) {
-            throw new IllegalStateException("Missing value of 'compartmentId' in $path")
-        }
+    void executeTask() {
+        validateCompartmentId()
+
         if (isBlank(instanceName)) {
             instanceName = UUID.randomUUID().toString()
             project.logger.warn("Missing value of 'instanceName' in $path. Value set to ${instanceName}")
@@ -164,7 +166,7 @@ class CreateInstanceTask extends AbstractOCITask implements CompartmentAwareTrai
 
         println('Provisioning VCN. This may take a while.')
         Vcn vcn = maybeCreateVcn(vcnClient, compartmentId, vcnDisplayName, networkCidrBlock)
-        println("VNC is provisioned with id ${vcn.id}")
+        println("VCN is provisioned with id ${vcn.id}")
 
         // TODO: flag for connecting to intranet
         InternetGateway internetGateway = maybeCreateInternetGateway(vcnClient, compartmentId, internetGatewayDisplayName, vcn.id)
@@ -194,7 +196,7 @@ class CreateInstanceTask extends AbstractOCITask implements CompartmentAwareTrai
 
         println('Provisioning instance. This may take a while.')
         instance = waitForInstanceProvisioningToComplete(computeClient, instance.id)
-        println("Instance is provisioned with id ${instance.id}")
+        println("Instance is provisioned with id = ${instance.id}")
 
         printMonitoringStatus(instance)
 
@@ -206,7 +208,7 @@ class CreateInstanceTask extends AbstractOCITask implements CompartmentAwareTrai
 
         println('Provisioning bootVolume. This may take a while.')
         bootVolume = waitForBootVolumeToBeReady(blockstorageClient, bootVolume.id)
-        println("BootVolume is provisioned with id ${bootVolume.id}")
+        println("BootVolume is provisioned with id = ${bootVolume.id}")
     }
 
     private Image validateImage(ComputeClient client) {

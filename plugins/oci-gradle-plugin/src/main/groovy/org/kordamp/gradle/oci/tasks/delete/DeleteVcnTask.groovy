@@ -55,7 +55,6 @@ class DeleteVcnTask extends AbstractOCITask implements CompartmentAwareTrait {
         return vcnName
     }
 
-
     @Option(option = 'vcnId', description = 'The id of the VCN to be deleted (REQUIRED if vcnName = null).')
     void setVcnId(String vcnId) {
         this.vcnId = vcnId

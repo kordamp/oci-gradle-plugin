@@ -49,7 +49,7 @@ class OCIPlugin extends AbstractKordampPlugin {
         }
         setVisited(project, true)
 
-        TypeLoader.load(this.class.classLoader, 'META-INF/types', OCITask, new TypeLoader.LineProcessor() {
+        TypeLoader.load(this.class.classLoader, OCITask, new TypeLoader.LineProcessor() {
             @Override
             void process(ClassLoader classLoader, Class<?> clazz, String line) {
                 Class taskType = classLoader.loadClass(line.trim(), true)

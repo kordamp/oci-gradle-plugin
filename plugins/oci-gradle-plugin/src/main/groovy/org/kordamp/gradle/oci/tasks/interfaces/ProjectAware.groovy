@@ -17,12 +17,12 @@
  */
 package org.kordamp.gradle.oci.tasks.interfaces
 
-import org.gradle.api.Task
+import org.gradle.api.Project
 
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
-interface OCITask extends Task, PathAware, ProjectAware {
-    void executeTask()
+interface ProjectAware {
+    Project getProject()
 }

@@ -18,10 +18,13 @@
 package org.kordamp.gradle.oci.tasks.traits
 
 import groovy.transform.CompileStatic
+import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.options.Option
 import org.kordamp.gradle.oci.tasks.interfaces.PathAware
+import org.kordamp.gradle.oci.tasks.interfaces.ProjectAware
+
+import javax.annotation.PostConstruct
 
 import static org.kordamp.gradle.StringUtils.isBlank
 
@@ -30,22 +33,26 @@ import static org.kordamp.gradle.StringUtils.isBlank
  * @since 0.1.0
  */
 @CompileStatic
-trait CompartmentAwareTrait implements PathAware {
-    private String compartmentId
+trait CompartmentAwareTrait implements PathAware, ProjectAware {
+    private Property<String> compartmentId
 
-    @Optional
+    @PostConstruct
+    void postInitialize() {
+        compartmentId = project.objects.property(String)
+    }
+
     @Input
     @Option(option = 'compartmentId', description = 'The id of the compartment to query (REQUIRED).')
     void setCompartmentId(String compartmentId) {
-        this.compartmentId = compartmentId
+        this.compartmentId.set(compartmentId)
     }
 
     String getCompartmentId() {
-        return compartmentId
+        return compartmentId.orNull
     }
 
     void validateCompartmentId() {
-        if (isBlank(compartmentId)) {
+        if (isBlank(getCompartmentId())) {
             throw new IllegalStateException("Missing value of 'compartmentId' in $path")
         }
     }

@@ -24,11 +24,15 @@ import com.oracle.bmc.auth.AuthenticationDetailsProvider
 import com.oracle.bmc.auth.ConfigFileAuthenticationDetailsProvider
 import com.oracle.bmc.auth.SimpleAuthenticationDetailsProvider
 import groovy.transform.CompileStatic
+import org.gradle.api.provider.Property
 import org.gradle.api.tasks.options.Option
 import org.kordamp.gradle.AnsiConsole
 import org.kordamp.gradle.oci.OCIConfigExtension
 import org.kordamp.gradle.oci.tasks.interfaces.OCITask
 import org.kordamp.gradle.plugin.base.tasks.AbstractReportingTask
+
+import javax.annotation.PostConstruct
+import java.lang.reflect.Method
 
 /**
  * @author Andres Almiray
@@ -39,20 +43,30 @@ abstract class AbstractOCITask extends AbstractReportingTask implements OCITask 
     protected static final String CONFIG_LOCATION = '~/.oci/config'
 
     protected final OCIConfigExtension ociConfig
-    protected String profile = 'DEFAULT'
+    protected Property<String> profile = project.objects.property(String)
 
     AbstractOCITask() {
         ociConfig = extensions.create('ociConfig', OCIConfigExtension, project)
+
+        this.class.methods.each { Method m ->
+            if (m.annotations?.find { PostConstruct.isAssignableFrom(it.annotationType()) }) {
+                m.invoke(this)
+            }
+        }
     }
 
     @Option(option = 'profile', description = 'The profile to use. Defaults to DEFAULT.')
     void setProfile(String profile) {
-        this.profile = profile
+        this.profile.set(profile)
+    }
+
+    String getProfile() {
+        profile.getOrElse('DEFAULT')
     }
 
     protected AuthenticationDetailsProvider resolveAuthenticationDetailsProvider() {
         if (ociConfig.empty) {
-            ConfigFileReader.ConfigFile configFile = ConfigFileReader.parse(CONFIG_LOCATION, profile)
+            ConfigFileReader.ConfigFile configFile = ConfigFileReader.parse(CONFIG_LOCATION, getProfile())
             return new ConfigFileAuthenticationDetailsProvider(configFile)
         }
 

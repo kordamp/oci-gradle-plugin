@@ -18,6 +18,8 @@
 package org.kordamp.gradle.oci.tasks.traits
 
 import groovy.transform.CompileStatic
+import org.gradle.api.provider.Property
+import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.options.Option
 
 /**
@@ -26,14 +28,15 @@ import org.gradle.api.tasks.options.Option
  */
 @CompileStatic
 trait VerboseAwareTrait {
-    private boolean verbose
+    private Property<Boolean> verbose
 
+    @Input
     @Option(option = 'verbose', description = 'Display additional information per image (OPTIONAL).')
     void setVerbose(boolean verbose) {
-        this.verbose = verbose
+        this.verbose.set(verbose)
     }
 
     boolean isVerbose() {
-        verbose
+        verbose.getOrElse(false)
     }
 }

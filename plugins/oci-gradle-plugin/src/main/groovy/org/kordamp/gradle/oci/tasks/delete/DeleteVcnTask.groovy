@@ -24,6 +24,9 @@ import com.oracle.bmc.core.requests.DeleteVcnRequest
 import com.oracle.bmc.core.requests.GetVcnRequest
 import com.oracle.bmc.core.requests.ListVcnsRequest
 import groovy.transform.CompileStatic
+import org.gradle.api.provider.Property
+import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.options.Option
 import org.kordamp.gradle.oci.tasks.AbstractOCITask
@@ -43,47 +46,51 @@ import static org.kordamp.gradle.StringUtils.isNotBlank
 class DeleteVcnTask extends AbstractOCITask implements CompartmentAwareTrait {
     static final String DESCRIPTION = 'Deletes a VCN.'
 
-    private String vcnName
-    private String vcnId
+    private final Property<String> vcnName = project.objects.property(String)
+    private final Property<String> vcnId = project.objects.property(String)
 
+    @Optional
+    @Input
     @Option(option = 'vcnName', description = 'The name of the VCN to be deleted (REQUIRED if vcnId = null).')
     void setVcnName(String vcnName) {
-        this.vcnName = vcnName
+        this.vcnName.set(vcnName)
     }
 
     String getVcnName() {
-        return vcnName
+        return vcnName.orNull
     }
 
+    @Optional
+    @Input
     @Option(option = 'vcnId', description = 'The id of the VCN to be deleted (REQUIRED if vcnName = null).')
     void setVcnId(String vcnId) {
-        this.vcnId = vcnId
+        this.vcnId.set(vcnId)
     }
 
     String getVcnId() {
-        return vcnId
+        return vcnId.orNull
     }
 
     @TaskAction
     void executeTask() {
-        if (isBlank(vcnId) && isBlank(vcnName)) {
+        if (isBlank(getVcnId()) && isBlank(getVcnName())) {
             throw new IllegalStateException("Missing value for either 'vcnId' or 'vncName' in $path")
         }
 
         AuthenticationDetailsProvider provider = resolveAuthenticationDetailsProvider()
         VirtualNetworkClient vcnClient = new VirtualNetworkClient(provider)
 
-        if (isNotBlank(vcnId)) {
+        if (isNotBlank(getVcnId())) {
             Vcn vcn = vcnClient.getVcn(GetVcnRequest.builder()
-                .vcnId(vcnId)
+                .vcnId(getVcnId())
                 .build())
                 .vcn
 
             if (vcn) {
-                vcnName = vcn.displayName
+                setVcnName(vcn.displayName)
                 println("Deleting VCN '${vcn.displayName}' with id = ${vcn.id}")
                 vcnClient.deleteVcn(DeleteVcnRequest.builder()
-                    .vcnId(vcnId)
+                    .vcnId(getVcnId())
                     .build())
             }
         } else {
@@ -91,10 +98,10 @@ class DeleteVcnTask extends AbstractOCITask implements CompartmentAwareTrait {
 
             vcnClient.listVcns(ListVcnsRequest.builder()
                 .compartmentId(compartmentId)
-                .displayName(vcnName)
+                .displayName(getVcnName())
                 .build())
                 .items.each { vcn ->
-                vcnId = vcn.id
+                setVcnId(vcn.id)
                 println("Deleting VCN '${vcn.displayName}' with id = ${vcn.id}")
                 vcnClient.deleteVcn(DeleteVcnRequest.builder()
                     .vcnId(vcn.id)

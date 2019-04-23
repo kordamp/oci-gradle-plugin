@@ -64,6 +64,9 @@ import com.oracle.bmc.identity.model.AvailabilityDomain
 import com.oracle.bmc.identity.requests.ListAvailabilityDomainsRequest
 import com.oracle.bmc.identity.responses.ListAvailabilityDomainsResponse
 import groovy.transform.CompileStatic
+import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.provider.Property
+import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.options.Option
 import org.kordamp.gradle.oci.tasks.AbstractOCITask
@@ -82,55 +85,80 @@ import static org.kordamp.gradle.StringUtils.isBlank
 class CreateInstanceTask extends AbstractOCITask implements CompartmentAwareTrait {
     static final String DESCRIPTION = 'Creates an instance with VCN, Gateway, and Volume.'
 
-    private String instanceName
-    private File sshKeyFile
-    private String image
-    private String shape
-    private String availabilityDomain
+    private final Property<String> instanceName = project.objects.property(String)
+    private final RegularFileProperty sshKeyFile = project.objects.fileProperty()
+    private final Property<String> image = project.objects.property(String)
+    private final Property<String> shape = project.objects.property(String)
+    private final Property<String> availabilityDomain = project.objects.property(String)
 
+    @Input
     @Option(option = 'instanceName', description = 'The name of the instance to be created (REQUIRED).')
     void setInstanceName(String instanceName) {
-        this.instanceName = instanceName
+        this.instanceName.set(instanceName)
     }
 
+    @Input
     @Option(option = 'sshKeyFile', description = 'Location of SSH public key file (REQUIRED).')
     void setSshKeyFile(String sshKeyFile) {
-        this.sshKeyFile = project.file(sshKeyFile)
+        this.sshKeyFile.set(project.file(sshKeyFile))
     }
 
+    @Input
     @Option(option = 'image', description = 'The image to be use (REQUIRED).')
     void setImage(String image) {
-        this.image = image
+        this.image.set(image)
     }
 
+    @Input
     @Option(option = 'shape', description = 'The shape to use (REQUIRED).')
     void setShape(String shape) {
-        this.shape = shape
+        this.shape.set(shape)
     }
 
+    @Input
     @Option(option = 'availabilityDomain', description = 'The availability domain to use (REQUIRED).')
     void setAvailabilityDomain(String availabilityDomain) {
-        this.availabilityDomain = availabilityDomain
+        this.availabilityDomain.set(availabilityDomain)
+    }
+
+    String getInstanceName() {
+        instanceName.orNull
+    }
+
+    File getSshKeyFile() {
+        sshKeyFile.asFile.orNull
+    }
+
+    String getImage() {
+        image.orNull
+    }
+
+    String getShape() {
+        shape.orNull
+    }
+
+    String getAvailabilityDomain() {
+        availabilityDomain.orNull
     }
 
     @TaskAction
     void executeTask() {
         validateCompartmentId()
 
-        if (isBlank(instanceName)) {
-            instanceName = UUID.randomUUID().toString()
+        if (isBlank(getInstanceName())) {
+            setInstanceName(UUID.randomUUID().toString())
             project.logger.warn("Missing value of 'instanceName' in $path. Value set to ${instanceName}")
         }
-        if (!sshKeyFile) {
+        if (!sshKeyFile.present) {
             throw new IllegalStateException("Missing value of 'sshKeyFile' in $path")
         }
-        if (isBlank(image)) {
+        if (isBlank(getImage())) {
             throw new IllegalStateException("Missing value of 'image' in $path")
         }
-        if (isBlank(shape)) {
+        if (isBlank(getShape())) {
             throw new IllegalStateException("Missing value of 'shape' in $path")
         }
-        if (isBlank(availabilityDomain)) {
+        if (isBlank(getAvailabilityDomain())) {
             throw new IllegalStateException("Missing value of 'availabilityDomain' in $path")
         }
 
@@ -140,25 +168,25 @@ class CreateInstanceTask extends AbstractOCITask implements CompartmentAwareTrai
 
         Image _image = validateImage(computeClient)
         if (!_image) {
-            throw new IllegalStateException("Invalid image $image")
+            throw new IllegalStateException("Invalid image ${image}")
         }
 
         Shape _shape = validateShape(computeClient)
         if (!_shape) {
-            throw new IllegalStateException("Invalid shape $shape")
+            throw new IllegalStateException("Invalid shape ${shape}")
         }
 
         AvailabilityDomain _availabilityDomain = validateAvailabilityDomain(identityClient)
         if (!_availabilityDomain) {
-            throw new IllegalStateException("Invalid availability domain $availabilityDomain")
+            throw new IllegalStateException("Invalid availability domain ${availabilityDomain}")
         }
 
         String networkCidrBlock = '10.0.0.0/16'
-        String sshPublicKey = sshKeyFile.text
-        String subnetDisplayName = instanceName + '-subnet'
-        String vcnDisplayName = instanceName + '-vcn'
-        String internetGatewayDisplayName = instanceName + '-internet-gateway'
-        String bootVolumeDisplayName = instanceName + '-bootVolume'
+        String sshPublicKey = getSshKeyFile().text
+        String subnetDisplayName = getInstanceName() + '-subnet'
+        String vcnDisplayName = getInstanceName() + '-vcn'
+        String internetGatewayDisplayName = getInstanceName() + '-internet-gateway'
+        String bootVolumeDisplayName = getInstanceName() + '-bootVolume'
         String kmsKeyId = ''
 
         VirtualNetworkClient vcnClient = new VirtualNetworkClient(provider)
@@ -215,21 +243,21 @@ class CreateInstanceTask extends AbstractOCITask implements CompartmentAwareTrai
         ListImagesResponse response = client.listImages(ListImagesRequest.builder()
             .compartmentId(compartmentId)
             .build())
-        response.items.find { Image img -> img.displayName == image }
+        response.items.find { Image img -> img.displayName == getImage() }
     }
 
     private Shape validateShape(ComputeClient client) {
         ListShapesResponse response = client.listShapes(ListShapesRequest.builder()
             .compartmentId(compartmentId)
             .build())
-        response.items.find { Shape sh -> sh.shape == shape }
+        response.items.find { Shape sh -> sh.shape == getShape() }
     }
 
     private AvailabilityDomain validateAvailabilityDomain(IdentityClient identityClient) {
         ListAvailabilityDomainsResponse response = identityClient.listAvailabilityDomains(ListAvailabilityDomainsRequest.builder()
             .compartmentId(compartmentId)
             .build())
-        response.items.find { AvailabilityDomain ad -> ad.name == availabilityDomain }
+        response.items.find { AvailabilityDomain ad -> ad.name == getAvailabilityDomain() }
     }
 
     private Vcn maybeCreateVcn(VirtualNetworkClient vcnClient,
@@ -340,7 +368,7 @@ class CreateInstanceTask extends AbstractOCITask implements CompartmentAwareTrai
         List<Instance> instances = computeClient.listInstances(ListInstancesRequest.builder()
             .compartmentId(compartmentId)
             .availabilityDomain(availabilityDomain.name)
-            .displayName(instanceName)
+            .displayName(instanceName.get())
             .build())
             .items
 
@@ -362,7 +390,7 @@ class CreateInstanceTask extends AbstractOCITask implements CompartmentAwareTrai
             .launchInstanceDetails(LaunchInstanceDetails.builder()
                 .availabilityDomain(availabilityDomain.name)
                 .compartmentId(compartmentId)
-                .displayName(instanceName)
+                .displayName(instanceName.get())
                 .metadata(metadata)
                 .shape(shape.shape)
                 .sourceDetails(details)

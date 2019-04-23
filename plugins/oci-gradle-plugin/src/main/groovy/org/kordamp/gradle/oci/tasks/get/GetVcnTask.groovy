@@ -22,6 +22,8 @@ import com.oracle.bmc.core.VirtualNetworkClient
 import com.oracle.bmc.core.model.Vcn
 import com.oracle.bmc.core.requests.GetVcnRequest
 import groovy.transform.CompileStatic
+import org.gradle.api.provider.Property
+import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.options.Option
 import org.kordamp.gradle.AnsiConsole
@@ -42,20 +44,21 @@ import static org.kordamp.gradle.StringUtils.isBlank
 class GetVcnTask extends AbstractOCITask implements CompartmentAwareTrait, VerboseAwareTrait {
     static final String DESCRIPTION = 'Displays information for an specific VCN.'
 
-    private String vcnId
+    private final Property<String> vcnId = project.objects.property(String)
 
-    @Option(option = 'vcnId', description = 'The id of the VCN to be queries (REQUIRED).')
+    @Input
+    @Option(option = 'vcnId', description = 'The id of the VCN to be queried (REQUIRED).')
     void setVcnId(String vcnId) {
-        this.vcnId = vcnId
+        this.vcnId.set(vcnId)
     }
 
     String getVcnId() {
-        return vcnId
+        return vcnId.orNull
     }
 
     @TaskAction
     void executeTask() {
-        if (isBlank(vcnId)) {
+        if (isBlank(getVcnId())) {
             throw new IllegalStateException("Missing value for 'vcnId' in $path")
         }
 
@@ -63,7 +66,7 @@ class GetVcnTask extends AbstractOCITask implements CompartmentAwareTrait, Verbo
         VirtualNetworkClient vcnClient = new VirtualNetworkClient(provider)
 
         Vcn vcn = vcnClient.getVcn(GetVcnRequest.builder()
-            .vcnId(vcnId)
+            .vcnId(getVcnId())
             .build())
             .vcn
 

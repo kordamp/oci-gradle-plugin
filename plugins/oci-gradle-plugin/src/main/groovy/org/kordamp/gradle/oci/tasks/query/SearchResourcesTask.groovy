@@ -27,6 +27,9 @@ import com.oracle.bmc.resourcesearch.requests.ListResourceTypesRequest
 import com.oracle.bmc.resourcesearch.responses.GetResourceTypeResponse
 import com.oracle.bmc.resourcesearch.responses.ListResourceTypesResponse
 import groovy.transform.CompileStatic
+import org.gradle.api.provider.Property
+import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.options.Option
 import org.kordamp.gradle.AnsiConsole
@@ -45,11 +48,17 @@ import static org.kordamp.gradle.StringUtils.isBlank
 class SearchResourcesTask extends AbstractOCITask {
     static final String DESCRIPTION = 'Lists information on resource types.'
 
-    private String type
+    private Property<String> type = project.objects.property(String)
 
+    @Optional
+    @Input
     @Option(option = 'type', description = 'The type to searchResources (OPTIONAL).')
     void setType(String type) {
-        this.type = type
+        this.type.set(type)
+    }
+
+    String getType() {
+        return type.orNull
     }
 
     @TaskAction
@@ -57,10 +66,10 @@ class SearchResourcesTask extends AbstractOCITask {
         AuthenticationDetailsProvider provider = resolveAuthenticationDetailsProvider()
 
         ResourceSearch client = ResourceSearchClient.builder().build(provider)
-        if (isBlank(type)) {
+        if (isBlank(getType())) {
             listTypes(client)
         } else {
-            getTypeDetails(client, type)
+            getTypeDetails(client, getType())
         }
     }
 

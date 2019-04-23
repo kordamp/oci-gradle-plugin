@@ -24,8 +24,7 @@ import com.oracle.bmc.core.model.Vcn
 import com.oracle.bmc.core.requests.CreateVcnRequest
 import com.oracle.bmc.core.requests.ListVcnsRequest
 import groovy.transform.CompileStatic
-import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.Optional
+import org.gradle.api.provider.Property
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.options.Option
 import org.kordamp.gradle.oci.tasks.AbstractOCITask
@@ -44,30 +43,28 @@ import static org.kordamp.gradle.StringUtils.isBlank
 class CreateVcnTask extends AbstractOCITask implements CompartmentAwareTrait {
     static final String DESCRIPTION = 'Creates a VCN.'
 
-    private String vcnName
-    private String vcnId
+    private final Property<String> vcnName = project.objects.property(String)
+    private final Property<String> vcnId = project.objects.property(String)
 
-    @Optional
-    @Input
-    @Option(option = 'vcnName', description = 'The name of the VCN to be created (REQUIRED).')
+    @Option(option = 'vcnName', description = 'The name of the VCN to be created.')
     void setVcnName(String vcnName) {
-        this.vcnName = vcnName
+        this.vcnName.set(vcnName)
     }
 
     String getVcnName() {
-        return vcnName
+        return vcnName.orNull
     }
 
     String getVcnId() {
-        return vcnId
+        return vcnId.orNull
     }
 
     @TaskAction
     void executeTask() {
         validateCompartmentId()
 
-        if (isBlank(vcnName)) {
-            vcnName = UUID.randomUUID().toString()
+        if (isBlank(getVcnName())) {
+            setVcnName(UUID.randomUUID().toString())
             project.logger.warn("Missing value of 'vcnName' in $path. Value set to ${vcnName}")
         }
 
@@ -77,19 +74,19 @@ class CreateVcnTask extends AbstractOCITask implements CompartmentAwareTrait {
         // 1. Check if it exists
         List<Vcn> vcns = vcnClient.listVcns(ListVcnsRequest.builder()
             .compartmentId(compartmentId)
-            .displayName(vcnName)
+            .displayName(vcnName.get())
             .build())
             .items
 
         if (!vcns.empty) {
-            vcnId = vcns[0].id
+            vcnId.set(vcns[0].id)
             println("VCN '${vcnName}' already exists. id = ${vcnId}")
         } else {
             // 2. Create
             println('Provisioning VCN. This may take a while.')
-            Vcn vcn = createVcn(vcnClient, compartmentId, vcnName, '10.0.0.0/16')
+            Vcn vcn = createVcn(vcnClient, compartmentId, getVcnName(), '10.0.0.0/16')
+            vcnId.set(vcn.id)
             println("VCN '${vcnName}' is provisioned with id = ${vcn.id}")
-            vcnId = vcn.id
         }
 
         vcnClient.close()

@@ -31,6 +31,8 @@ import org.kordamp.gradle.oci.tasks.traits.CompartmentAwareTrait
 import org.kordamp.gradle.oci.tasks.traits.VerboseAwareTrait
 import org.kordamp.jipsy.TypeProviderFor
 
+import static org.kordamp.gradle.oci.tasks.printers.VcnPrinter.printVcn
+
 /**
  * @author Andres Almiray
  * @since 0.1.0
@@ -50,40 +52,13 @@ class ListVcnsTask extends AbstractOCITask implements CompartmentAwareTrait, Ver
         client.close()
 
         AnsiConsole console = new AnsiConsole(project)
-        println("Total vcns available at ${compartmentId}: " + console.cyan(response.items.size().toString()))
+        println('Total VCNs: ' + console.cyan(response.items.size().toString()))
         println(' ')
         for (Vcn vcn : response.items) {
             println(vcn.displayName + (verbose ? ':' : ''))
             if (verbose) {
-                doPrint(console, vcn, 0)
+                printVcn(this, vcn, 0)
             }
         }
-    }
-
-    @Override
-    protected void doPrint(AnsiConsole console, Object value, int offset) {
-        if (value instanceof Vcn) {
-            printVcnDetails(console, (Vcn) value, offset)
-        } else {
-            super.doPrint(console, value, offset)
-        }
-    }
-
-    @Override
-    protected void doPrintElement(AnsiConsole console, Object value, int offset) {
-        if (value instanceof Vcn) {
-            printVcnDetails(console, (Vcn) value, offset)
-        } else {
-            super.doPrintElement(console, value, offset)
-        }
-    }
-
-    private void printVcnDetails(AnsiConsole console, Vcn vcn, int offset) {
-        doPrintMapEntry(console, 'ID', vcn.id, offset + 1)
-        doPrintMapEntry(console, 'Compartment ID', vcn.compartmentId, offset + 1)
-        doPrintMapEntry(console, 'CIDR Block', vcn.cidrBlock, offset + 1)
-        doPrintMapEntry(console, 'DNS Label', vcn.dnsLabel, offset + 1)
-        doPrintMapEntry(console, 'Time Created', vcn.timeCreated, offset + 1)
-        doPrintMapEntry(console, 'VCN Domain Name', vcn.vcnDomainName, offset + 1)
     }
 }

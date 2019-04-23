@@ -19,16 +19,16 @@ package org.kordamp.gradle.oci.tasks.get
 
 import com.oracle.bmc.auth.AuthenticationDetailsProvider
 import com.oracle.bmc.identity.IdentityClient
-import com.oracle.bmc.identity.model.Compartment
 import com.oracle.bmc.identity.requests.GetCompartmentRequest
 import com.oracle.bmc.identity.responses.GetCompartmentResponse
 import groovy.transform.CompileStatic
 import org.gradle.api.tasks.TaskAction
-import org.kordamp.gradle.AnsiConsole
 import org.kordamp.gradle.oci.tasks.AbstractOCITask
 import org.kordamp.gradle.oci.tasks.interfaces.OCITask
 import org.kordamp.gradle.oci.tasks.traits.CompartmentAwareTrait
 import org.kordamp.jipsy.TypeProviderFor
+
+import static org.kordamp.gradle.oci.tasks.printers.CompartmentPrinter.printCompartment
 
 /**
  * @author Andres Almiray
@@ -50,34 +50,7 @@ class GetCompartmentTask extends AbstractOCITask implements CompartmentAwareTrai
             .build())
         client.close()
 
-        AnsiConsole console = new AnsiConsole(project)
-
         println(response.compartment.name + ':')
-        doPrint(console, response.compartment, 0)
-    }
-
-    @Override
-    protected void doPrint(AnsiConsole console, Object value, int offset) {
-        if (value instanceof Compartment) {
-            printCompartmentDetails(console, (Compartment) value, offset)
-        } else {
-            super.doPrint(console, value, offset)
-        }
-    }
-
-    @Override
-    protected void doPrintElement(AnsiConsole console, Object value, int offset) {
-        if (value instanceof Compartment) {
-            printCompartmentDetails(console, (Compartment) value, offset)
-        } else {
-            super.doPrintElement(console, value, offset)
-        }
-    }
-
-    private void printCompartmentDetails(AnsiConsole console, Compartment compartment, int offset) {
-        doPrintMapEntry(console, 'Description', compartment.description, offset + 1)
-        doPrintMapEntry(console, 'Id', compartment.id, offset + 1)
-        doPrintMapEntry(console, 'Compartment Id', compartment.compartmentId, offset + 1)
-        doPrintMapEntry(console, 'Time Created', compartment.timeCreated, offset + 1)
+        printCompartment(this, response.compartment, 0)
     }
 }

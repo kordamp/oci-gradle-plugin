@@ -32,6 +32,7 @@ import org.gradle.api.tasks.options.Option
 import org.kordamp.gradle.oci.tasks.AbstractOCITask
 import org.kordamp.gradle.oci.tasks.interfaces.OCITask
 import org.kordamp.gradle.oci.tasks.traits.CompartmentAwareTrait
+import org.kordamp.gradle.oci.tasks.traits.VcnIdAwareTrait
 import org.kordamp.jipsy.TypeProviderFor
 
 import static org.kordamp.gradle.StringUtils.isBlank
@@ -43,32 +44,20 @@ import static org.kordamp.gradle.StringUtils.isNotBlank
  */
 @CompileStatic
 @TypeProviderFor(OCITask)
-class DeleteVcnTask extends AbstractOCITask implements CompartmentAwareTrait {
+class DeleteVcnTask extends AbstractOCITask implements CompartmentAwareTrait, VcnIdAwareTrait {
     static final String DESCRIPTION = 'Deletes a VCN.'
 
     private final Property<String> vcnName = project.objects.property(String)
-    private final Property<String> vcnId = project.objects.property(String)
 
     @Optional
     @Input
-    @Option(option = 'vcnName', description = 'The name of the VCN to be deleted (REQUIRED if vcnId = null).')
+    @Option(option = 'vcn-name', description = 'The name of the VCN (REQUIRED if vcnId = null).')
     void setVcnName(String vcnName) {
         this.vcnName.set(vcnName)
     }
 
     String getVcnName() {
         return vcnName.orNull
-    }
-
-    @Optional
-    @Input
-    @Option(option = 'vcnId', description = 'The id of the VCN to be deleted (REQUIRED if vcnName = null).')
-    void setVcnId(String vcnId) {
-        this.vcnId.set(vcnId)
-    }
-
-    String getVcnId() {
-        return vcnId.orNull
     }
 
     @TaskAction
@@ -92,6 +81,11 @@ class DeleteVcnTask extends AbstractOCITask implements CompartmentAwareTrait {
                 vcnClient.deleteVcn(DeleteVcnRequest.builder()
                     .vcnId(getVcnId())
                     .build())
+
+                vcnClient.waiters
+                    .forVcn(GetVcnRequest.builder().vcnId(vcn.id).build(),
+                        Vcn.LifecycleState.Terminated)
+                    .execute()
             }
         } else {
             validateCompartmentId()
@@ -103,9 +97,15 @@ class DeleteVcnTask extends AbstractOCITask implements CompartmentAwareTrait {
                 .items.each { vcn ->
                 setVcnId(vcn.id)
                 println("Deleting VCN '${vcn.displayName}' with id = ${vcn.id}")
+
                 vcnClient.deleteVcn(DeleteVcnRequest.builder()
                     .vcnId(vcn.id)
                     .build())
+
+                vcnClient.waiters
+                    .forVcn(GetVcnRequest.builder().vcnId(vcn.id).build(),
+                        Vcn.LifecycleState.Terminated)
+                    .execute()
             }
         }
 

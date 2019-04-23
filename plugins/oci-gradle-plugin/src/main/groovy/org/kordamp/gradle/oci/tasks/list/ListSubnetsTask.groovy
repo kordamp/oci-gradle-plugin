@@ -18,19 +18,21 @@
 package org.kordamp.gradle.oci.tasks.list
 
 import com.oracle.bmc.auth.AuthenticationDetailsProvider
-import com.oracle.bmc.identity.IdentityClient
-import com.oracle.bmc.identity.model.Region
-import com.oracle.bmc.identity.requests.ListRegionsRequest
-import com.oracle.bmc.identity.responses.ListRegionsResponse
+import com.oracle.bmc.core.VirtualNetworkClient
+import com.oracle.bmc.core.model.Subnet
+import com.oracle.bmc.core.requests.ListSubnetsRequest
+import com.oracle.bmc.core.responses.ListSubnetsResponse
 import groovy.transform.CompileStatic
 import org.gradle.api.tasks.TaskAction
 import org.kordamp.gradle.AnsiConsole
 import org.kordamp.gradle.oci.tasks.AbstractOCITask
 import org.kordamp.gradle.oci.tasks.interfaces.OCITask
+import org.kordamp.gradle.oci.tasks.traits.CompartmentAwareTrait
+import org.kordamp.gradle.oci.tasks.traits.VcnIdAwareTrait
 import org.kordamp.gradle.oci.tasks.traits.VerboseAwareTrait
 import org.kordamp.jipsy.TypeProviderFor
 
-import static org.kordamp.gradle.oci.tasks.printers.RegionPrinter.printRegion
+import static org.kordamp.gradle.oci.tasks.printers.SubnetPrinter.printSubnet
 
 /**
  * @author Andres Almiray
@@ -38,24 +40,29 @@ import static org.kordamp.gradle.oci.tasks.printers.RegionPrinter.printRegion
  */
 @CompileStatic
 @TypeProviderFor(OCITask)
-class ListRegionsTask extends AbstractOCITask implements VerboseAwareTrait {
-    static final String DESCRIPTION = 'Lists available regions.'
+class ListSubnetsTask extends AbstractOCITask implements CompartmentAwareTrait, VcnIdAwareTrait, VerboseAwareTrait {
+    static final String DESCRIPTION = 'Lists subnets available on a VCN.'
 
     @TaskAction
     void executeTask() {
+        validateCompartmentId()
+        validateVcnId()
+
         AuthenticationDetailsProvider provider = resolveAuthenticationDetailsProvider()
-        IdentityClient client = IdentityClient.builder().build(provider)
-        ListRegionsResponse response = client.listRegions(ListRegionsRequest.builder()
+        VirtualNetworkClient client = new VirtualNetworkClient(provider)
+        ListSubnetsResponse response = client.listSubnets(ListSubnetsRequest.builder()
+            .compartmentId(compartmentId)
+            .vcnId(vcnId)
             .build())
         client.close()
 
         AnsiConsole console = new AnsiConsole(project)
-        println('Total regions: ' + console.cyan(response.items.size().toString()))
+        println('Total subnets: ' + console.cyan(response.items.size().toString()))
         println(' ')
-        for (Region region : response.items) {
-            println(region.name + (verbose ? ':' : ''))
+        for (Subnet subnet : response.items) {
+            println(subnet.displayName + (verbose ? ':' : ''))
             if (verbose) {
-                printRegion(this, region, 0)
+                printSubnet(this, subnet, 0)
             }
         }
     }

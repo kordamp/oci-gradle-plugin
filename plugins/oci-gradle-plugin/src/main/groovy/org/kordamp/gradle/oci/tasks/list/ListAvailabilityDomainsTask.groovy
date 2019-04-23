@@ -31,6 +31,8 @@ import org.kordamp.gradle.oci.tasks.traits.CompartmentAwareTrait
 import org.kordamp.gradle.oci.tasks.traits.VerboseAwareTrait
 import org.kordamp.jipsy.TypeProviderFor
 
+import static org.kordamp.gradle.oci.tasks.printers.AvailabilityDomainPrinter.printAvailabilityDomain
+
 /**
  * @author Andres Almiray
  * @since 0.1.0
@@ -50,36 +52,13 @@ class ListAvailabilityDomainsTask extends AbstractOCITask implements Compartment
         client.close()
 
         AnsiConsole console = new AnsiConsole(project)
-        println("Total availability domains available at ${compartmentId}: " + console.cyan(response.items.size().toString()))
+        println('Total availability domains: ' + console.cyan(response.items.size().toString()))
         println(' ')
         for (AvailabilityDomain domain : response.items) {
             println(domain.name + (verbose ? ':' : ''))
             if (verbose) {
-                doPrint(console, domain, 0)
+                printAvailabilityDomain(this, domain, 0)
             }
         }
-    }
-
-    @Override
-    protected void doPrint(AnsiConsole console, Object value, int offset) {
-        if (value instanceof AvailabilityDomain) {
-            printAvailabilityDomainDetails(console, (AvailabilityDomain) value, offset)
-        } else {
-            super.doPrint(console, value, offset)
-        }
-    }
-
-    @Override
-    protected void doPrintElement(AnsiConsole console, Object value, int offset) {
-        if (value instanceof AvailabilityDomain) {
-            printAvailabilityDomainDetails(console, (AvailabilityDomain) value, offset)
-        } else {
-            super.doPrintElement(console, value, offset)
-        }
-    }
-
-    private void printAvailabilityDomainDetails(AnsiConsole console, AvailabilityDomain domain, int offset) {
-        doPrintMapEntry(console, 'ID', domain.id, offset + 1)
-        doPrintMapEntry(console, 'Compartment ID', domain.compartmentId, offset + 1)
     }
 }

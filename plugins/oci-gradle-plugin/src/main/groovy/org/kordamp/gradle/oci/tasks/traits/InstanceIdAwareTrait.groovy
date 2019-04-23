@@ -17,27 +17,40 @@
  */
 package org.kordamp.gradle.oci.tasks.traits
 
+import com.oracle.bmc.OCID
 import groovy.transform.CompileStatic
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.options.Option
+import org.kordamp.gradle.oci.tasks.interfaces.PathAware
 import org.kordamp.gradle.oci.tasks.interfaces.ProjectAware
+
+import static org.kordamp.gradle.StringUtils.isBlank
 
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
 @CompileStatic
-trait VerboseAwareTrait implements ProjectAware {
-    private final Property<Boolean> verbose = project.objects.property(Boolean)
+trait InstanceIdAwareTrait implements PathAware, ProjectAware {
+    private final Property<String> instanceId = project.objects.property(String)
 
     @Input
-    @Option(option = 'verbose', description = 'Display additional information (OPTIONAL).')
-    void setVerbose(boolean verbose) {
-        this.verbose.set(verbose)
+    @Option(option = 'instance-id', description = 'The id of the instance to query (REQUIRED).')
+    void setInstanceId(String instanceId) {
+        this.instanceId.set(instanceId)
     }
 
-    boolean isVerbose() {
-        verbose.getOrElse(false)
+    String getInstanceId() {
+        return instanceId.orNull
+    }
+
+    void validateInstanceId() {
+        if (isBlank(getInstanceId())) {
+            throw new IllegalStateException("Missing value for 'instanceId' in $path")
+        }
+        if (!OCID.isValid(getInstanceId())) {
+            throw new IllegalStateException("Instance id '${instanceId}' is invalid")
+        }
     }
 }

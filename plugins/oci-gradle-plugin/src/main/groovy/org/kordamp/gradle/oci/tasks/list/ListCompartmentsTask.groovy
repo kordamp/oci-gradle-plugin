@@ -31,6 +31,8 @@ import org.kordamp.gradle.oci.tasks.traits.CompartmentAwareTrait
 import org.kordamp.gradle.oci.tasks.traits.VerboseAwareTrait
 import org.kordamp.jipsy.TypeProviderFor
 
+import static org.kordamp.gradle.oci.tasks.printers.CompartmentPrinter.printCompartment
+
 /**
  * @author Andres Almiray
  * @since 0.1.0
@@ -52,39 +54,13 @@ class ListCompartmentsTask extends AbstractOCITask implements CompartmentAwareTr
         client.close()
 
         AnsiConsole console = new AnsiConsole(project)
-        println("Total compartments available at ${compartmentId}: " + console.cyan(response.items.size().toString()))
+        println('Total compartments: ' + console.cyan(response.items.size().toString()))
         println(' ')
         for (Compartment compartment : response.items) {
             println(compartment.name + (verbose ? ':' : ''))
             if (verbose) {
-                doPrint(console, compartment, 0)
+                printCompartment(this, compartment, 0)
             }
         }
-    }
-
-    @Override
-    protected void doPrint(AnsiConsole console, Object value, int offset) {
-        if (value instanceof Compartment) {
-            printCompartmentDetails(console, (Compartment) value, offset)
-        } else {
-            super.doPrint(console, value, offset)
-        }
-    }
-
-    @Override
-    protected void doPrintElement(AnsiConsole console, Object value, int offset) {
-        if (value instanceof Compartment) {
-            printCompartmentDetails(console, (Compartment) value, offset)
-        } else {
-            super.doPrintElement(console, value, offset)
-        }
-    }
-
-    private void printCompartmentDetails(AnsiConsole console, Compartment compartment, int offset) {
-        doPrintMapEntry(console, 'ID', compartment.id, offset + 1)
-        doPrintMapEntry(console, 'Compartment ID', compartment.compartmentId, offset + 1)
-        doPrintMapEntry(console, 'Name', compartment.name, offset + 1)
-        doPrintMapEntry(console, 'Description', compartment.description, offset + 1)
-        doPrintMapEntry(console, 'Time Created', compartment.timeCreated, offset + 1)
     }
 }

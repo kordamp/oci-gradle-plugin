@@ -17,14 +17,13 @@
  */
 package org.kordamp.gradle.oci.tasks.traits
 
+import com.oracle.bmc.OCID
 import groovy.transform.CompileStatic
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.options.Option
 import org.kordamp.gradle.oci.tasks.interfaces.PathAware
 import org.kordamp.gradle.oci.tasks.interfaces.ProjectAware
-
-import javax.annotation.PostConstruct
 
 import static org.kordamp.gradle.StringUtils.isBlank
 
@@ -34,15 +33,10 @@ import static org.kordamp.gradle.StringUtils.isBlank
  */
 @CompileStatic
 trait CompartmentAwareTrait implements PathAware, ProjectAware {
-    private Property<String> compartmentId
-
-    @PostConstruct
-    void postInitialize() {
-        compartmentId = project.objects.property(String)
-    }
+    private final Property<String> compartmentId = project.objects.property(String)
 
     @Input
-    @Option(option = 'compartmentId', description = 'The id of the compartment to query (REQUIRED).')
+    @Option(option = 'compartment-id', description = 'The id of the compartment to query (REQUIRED).')
     void setCompartmentId(String compartmentId) {
         this.compartmentId.set(compartmentId)
     }
@@ -53,7 +47,10 @@ trait CompartmentAwareTrait implements PathAware, ProjectAware {
 
     void validateCompartmentId() {
         if (isBlank(getCompartmentId())) {
-            throw new IllegalStateException("Missing value of 'compartmentId' in $path")
+            throw new IllegalStateException("Missing value for 'compartmentId' in $path")
+        }
+        if (!OCID.isValid(getCompartmentId())) {
+            throw new IllegalStateException("Compartment id '${compartmentId}' is invalid")
         }
     }
 }

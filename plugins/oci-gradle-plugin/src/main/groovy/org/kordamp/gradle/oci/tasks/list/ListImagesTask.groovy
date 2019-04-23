@@ -31,7 +31,7 @@ import org.kordamp.gradle.oci.tasks.traits.CompartmentAwareTrait
 import org.kordamp.gradle.oci.tasks.traits.VerboseAwareTrait
 import org.kordamp.jipsy.TypeProviderFor
 
-import static org.kordamp.gradle.StringUtils.isBlank
+import static org.kordamp.gradle.oci.tasks.printers.ImagePrinter.printImage
 
 /**
  * @author Andres Almiray
@@ -44,9 +44,7 @@ class ListImagesTask extends AbstractOCITask implements CompartmentAwareTrait, V
 
     @TaskAction
     void executeTask() {
-        if (isBlank(compartmentId)) {
-            throw new IllegalStateException("Missing value of 'compartmentId' in $path")
-        }
+        validateCompartmentId()
 
         AuthenticationDetailsProvider provider = resolveAuthenticationDetailsProvider()
         ComputeClient client = ComputeClient.builder().build(provider)
@@ -54,40 +52,13 @@ class ListImagesTask extends AbstractOCITask implements CompartmentAwareTrait, V
         client.close()
 
         AnsiConsole console = new AnsiConsole(project)
-        println("Total images available at ${compartmentId}: " + console.cyan(response.items.size().toString()))
+        println('Total images: ' + console.cyan(response.items.size().toString()))
         println(' ')
         for (Image image : response.items) {
             println(image.displayName + (verbose ? ':' : ''))
             if (verbose) {
-                doPrint(console, image, 0)
+                printImage(this, image, 0)
             }
         }
-    }
-
-    @Override
-    protected void doPrint(AnsiConsole console, Object value, int offset) {
-        if (value instanceof Image) {
-            printImageDetails(console, (Image) value, offset)
-        } else {
-            super.doPrint(console, value, offset)
-        }
-    }
-
-    @Override
-    protected void doPrintElement(AnsiConsole console, Object value, int offset) {
-        if (value instanceof Image) {
-            printImageDetails(console, (Image) value, offset)
-        } else {
-            super.doPrintElement(console, value, offset)
-        }
-    }
-
-    private void printImageDetails(AnsiConsole console, Image image, int offset) {
-        doPrintMapEntry(console, 'Id', image.id, offset + 1)
-        doPrintMapEntry(console, 'Compartment ID', image.compartmentId, offset + 1)
-        doPrintMapEntry(console, 'Size (MBs)', image.sizeInMBs, offset + 1)
-        doPrintMapEntry(console, 'Time Created', image.timeCreated, offset + 1)
-        doPrintMapEntry(console, 'Operating System', image.operatingSystem, offset + 1)
-        doPrintMapEntry(console, 'Operating System Version', image.operatingSystemVersion, offset + 1)
     }
 }

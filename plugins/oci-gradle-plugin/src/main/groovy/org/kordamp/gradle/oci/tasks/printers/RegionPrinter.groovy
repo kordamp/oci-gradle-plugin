@@ -15,29 +15,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kordamp.gradle.oci.tasks.traits
+package org.kordamp.gradle.oci.tasks.printers
 
-import groovy.transform.CompileStatic
-import org.gradle.api.provider.Property
-import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.options.Option
-import org.kordamp.gradle.oci.tasks.interfaces.ProjectAware
+import com.oracle.bmc.identity.model.Region
+import org.kordamp.gradle.oci.tasks.interfaces.ValuePrinter
 
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
-@CompileStatic
-trait VerboseAwareTrait implements ProjectAware {
-    private final Property<Boolean> verbose = project.objects.property(Boolean)
-
-    @Input
-    @Option(option = 'verbose', description = 'Display additional information (OPTIONAL).')
-    void setVerbose(boolean verbose) {
-        this.verbose.set(verbose)
-    }
-
-    boolean isVerbose() {
-        verbose.getOrElse(false)
+class RegionPrinter {
+    static void printRegion(ValuePrinter printer, Region region, int offset) {
+        printer.printKeyValue('Key', region.key, offset + 1)
     }
 }

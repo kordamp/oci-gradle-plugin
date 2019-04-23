@@ -25,6 +25,7 @@ import com.oracle.bmc.core.requests.CreateVcnRequest
 import com.oracle.bmc.core.requests.ListVcnsRequest
 import groovy.transform.CompileStatic
 import org.gradle.api.provider.Property
+import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.options.Option
 import org.kordamp.gradle.oci.tasks.AbstractOCITask
@@ -33,6 +34,7 @@ import org.kordamp.gradle.oci.tasks.traits.CompartmentAwareTrait
 import org.kordamp.jipsy.TypeProviderFor
 
 import static org.kordamp.gradle.StringUtils.isBlank
+import static org.kordamp.gradle.oci.tasks.printers.VcnPrinter.printVcn
 
 /**
  * @author Andres Almiray
@@ -46,7 +48,8 @@ class CreateVcnTask extends AbstractOCITask implements CompartmentAwareTrait {
     private final Property<String> vcnName = project.objects.property(String)
     private final Property<String> vcnId = project.objects.property(String)
 
-    @Option(option = 'vcnName', description = 'The name of the VCN to be created.')
+    @Input
+    @Option(option = 'vcn-name', description = 'The name of the VCN to be created.')
     void setVcnName(String vcnName) {
         this.vcnName.set(vcnName)
     }
@@ -65,7 +68,7 @@ class CreateVcnTask extends AbstractOCITask implements CompartmentAwareTrait {
 
         if (isBlank(getVcnName())) {
             setVcnName(UUID.randomUUID().toString())
-            project.logger.warn("Missing value of 'vcnName' in $path. Value set to ${vcnName}")
+            project.logger.warn("Missing value for 'vcnName' in $path. Value set to ${vcnName}")
         }
 
         AuthenticationDetailsProvider provider = resolveAuthenticationDetailsProvider()
@@ -80,13 +83,15 @@ class CreateVcnTask extends AbstractOCITask implements CompartmentAwareTrait {
 
         if (!vcns.empty) {
             vcnId.set(vcns[0].id)
-            println("VCN '${vcnName}' already exists. id = ${vcnId}")
+            println("VCN '${vcnName}' already exists.")
+            printVcn(this, vcns[0], 0)
         } else {
             // 2. Create
             println('Provisioning VCN. This may take a while.')
             Vcn vcn = createVcn(vcnClient, compartmentId, getVcnName(), '10.0.0.0/16')
             vcnId.set(vcn.id)
-            println("VCN '${vcnName}' is provisioned with id = ${vcn.id}")
+            println("VCN '${vcnName}' has been provisioned.")
+            printVcn(this, vcn, 0)
         }
 
         vcnClient.close()

@@ -23,6 +23,6 @@ import org.gradle.api.Task
  * @author Andres Almiray
  * @since 0.1.0
  */
-interface OCITask extends Task, PathAware, ProjectAware {
+interface OCITask extends Task, PathAware, ProjectAware, ValuePrinter {
     void executeTask()
 }

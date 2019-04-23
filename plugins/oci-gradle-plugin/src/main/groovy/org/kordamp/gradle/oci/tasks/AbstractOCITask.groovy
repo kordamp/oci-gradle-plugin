@@ -31,8 +31,7 @@ import org.kordamp.gradle.oci.OCIConfigExtension
 import org.kordamp.gradle.oci.tasks.interfaces.OCITask
 import org.kordamp.gradle.plugin.base.tasks.AbstractReportingTask
 
-import javax.annotation.PostConstruct
-import java.lang.reflect.Method
+import static org.kordamp.gradle.StringUtils.isNotBlank
 
 /**
  * @author Andres Almiray
@@ -43,16 +42,12 @@ abstract class AbstractOCITask extends AbstractReportingTask implements OCITask 
     protected static final String CONFIG_LOCATION = '~/.oci/config'
 
     protected final OCIConfigExtension ociConfig
+    protected final AnsiConsole console = new AnsiConsole(project)
+
     protected Property<String> profile = project.objects.property(String)
 
     AbstractOCITask() {
         ociConfig = extensions.create('ociConfig', OCIConfigExtension, project)
-
-        this.class.methods.each { Method m ->
-            if (m.annotations?.find { PostConstruct.isAssignableFrom(it.annotationType()) }) {
-                m.invoke(this)
-            }
-        }
     }
 
     @Option(option = 'profile', description = 'The profile to use. Defaults to DEFAULT.')
@@ -110,6 +105,17 @@ abstract class AbstractOCITask extends AbstractReportingTask implements OCITask 
     protected void doPrintMapEntry(AnsiConsole console, String key, value, int offset) {
         if (null != value) {
             super.doPrintMapEntry(console, key, value, offset)
+        }
+    }
+
+    @Override
+    void printKeyValue(String key, Object value, int offset) {
+        if (value instanceof CharSequence) {
+            if (isNotBlank((String.valueOf(value)))) {
+                doPrintMapEntry(console, key, value, offset)
+            }
+        } else {
+            doPrintMapEntry(console, key, value, offset)
         }
     }
 }

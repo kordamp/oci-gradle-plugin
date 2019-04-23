@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kordamp.gradle.oci.tasks.create
+package org.kordamp.gradle.oci.tasks.instance
 
 import com.google.common.base.Strings
 import com.oracle.bmc.auth.AuthenticationDetailsProvider
@@ -61,8 +61,6 @@ import com.oracle.bmc.core.responses.ListImagesResponse
 import com.oracle.bmc.core.responses.ListShapesResponse
 import com.oracle.bmc.identity.IdentityClient
 import com.oracle.bmc.identity.model.AvailabilityDomain
-import com.oracle.bmc.identity.requests.ListAvailabilityDomainsRequest
-import com.oracle.bmc.identity.responses.ListAvailabilityDomainsResponse
 import groovy.transform.CompileStatic
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
@@ -71,6 +69,7 @@ import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.options.Option
 import org.kordamp.gradle.oci.tasks.AbstractOCITask
 import org.kordamp.gradle.oci.tasks.interfaces.OCITask
+import org.kordamp.gradle.oci.tasks.traits.AvailabilityDomainAwareTrait
 import org.kordamp.gradle.oci.tasks.traits.CompartmentAwareTrait
 import org.kordamp.jipsy.TypeProviderFor
 
@@ -82,23 +81,22 @@ import static org.kordamp.gradle.StringUtils.isBlank
  */
 @CompileStatic
 @TypeProviderFor(OCITask)
-class CreateInstanceTask extends AbstractOCITask implements CompartmentAwareTrait {
+class CreateInstanceTask extends AbstractOCITask implements CompartmentAwareTrait, AvailabilityDomainAwareTrait {
     static final String DESCRIPTION = 'Creates an instance with VCN, Gateway, and Volume.'
 
     private final Property<String> instanceName = project.objects.property(String)
     private final RegularFileProperty sshKeyFile = project.objects.fileProperty()
     private final Property<String> image = project.objects.property(String)
     private final Property<String> shape = project.objects.property(String)
-    private final Property<String> availabilityDomain = project.objects.property(String)
 
     @Input
-    @Option(option = 'instanceName', description = 'The name of the instance to be created (REQUIRED).')
+    @Option(option = 'instance-name', description = 'The name of the instance to be created (REQUIRED).')
     void setInstanceName(String instanceName) {
         this.instanceName.set(instanceName)
     }
 
     @Input
-    @Option(option = 'sshKeyFile', description = 'Location of SSH public key file (REQUIRED).')
+    @Option(option = 'ssh-key-file', description = 'Location of SSH public key file (REQUIRED).')
     void setSshKeyFile(String sshKeyFile) {
         this.sshKeyFile.set(project.file(sshKeyFile))
     }
@@ -113,12 +111,6 @@ class CreateInstanceTask extends AbstractOCITask implements CompartmentAwareTrai
     @Option(option = 'shape', description = 'The shape to use (REQUIRED).')
     void setShape(String shape) {
         this.shape.set(shape)
-    }
-
-    @Input
-    @Option(option = 'availabilityDomain', description = 'The availability domain to use (REQUIRED).')
-    void setAvailabilityDomain(String availabilityDomain) {
-        this.availabilityDomain.set(availabilityDomain)
     }
 
     String getInstanceName() {
@@ -137,29 +129,23 @@ class CreateInstanceTask extends AbstractOCITask implements CompartmentAwareTrai
         shape.orNull
     }
 
-    String getAvailabilityDomain() {
-        availabilityDomain.orNull
-    }
-
     @TaskAction
     void executeTask() {
         validateCompartmentId()
+        validateAvailabilityDomain()
 
         if (isBlank(getInstanceName())) {
             setInstanceName(UUID.randomUUID().toString())
             project.logger.warn("Missing value of 'instanceName' in $path. Value set to ${instanceName}")
         }
         if (!sshKeyFile.present) {
-            throw new IllegalStateException("Missing value of 'sshKeyFile' in $path")
+            throw new IllegalStateException("Missing value for 'sshKeyFile' in $path")
         }
         if (isBlank(getImage())) {
-            throw new IllegalStateException("Missing value of 'image' in $path")
+            throw new IllegalStateException("Missing value for 'image' in $path")
         }
         if (isBlank(getShape())) {
-            throw new IllegalStateException("Missing value of 'shape' in $path")
-        }
-        if (isBlank(getAvailabilityDomain())) {
-            throw new IllegalStateException("Missing value of 'availabilityDomain' in $path")
+            throw new IllegalStateException("Missing value for 'shape' in $path")
         }
 
         AuthenticationDetailsProvider provider = resolveAuthenticationDetailsProvider()
@@ -176,10 +162,7 @@ class CreateInstanceTask extends AbstractOCITask implements CompartmentAwareTrai
             throw new IllegalStateException("Invalid shape ${shape}")
         }
 
-        AvailabilityDomain _availabilityDomain = validateAvailabilityDomain(identityClient)
-        if (!_availabilityDomain) {
-            throw new IllegalStateException("Invalid availability domain ${availabilityDomain}")
-        }
+        AvailabilityDomain _availabilityDomain = validateAvailabilityDomain(identityClient, compartmentId)
 
         String networkCidrBlock = '10.0.0.0/16'
         String sshPublicKey = getSshKeyFile().text
@@ -197,22 +180,16 @@ class CreateInstanceTask extends AbstractOCITask implements CompartmentAwareTrai
         println("VCN is provisioned with id ${vcn.id}")
 
         // TODO: flag for connecting to intranet
-        InternetGateway internetGateway = maybeCreateInternetGateway(vcnClient, compartmentId, internetGatewayDisplayName, vcn.id)
+        // InternetGateway internetGateway = maybeCreateInternetGateway(vcnClient, compartmentId, internetGatewayDisplayName, vcn.id)
 
-        addInternetGatewayToRouteTable(vcnClient, vcn.defaultRouteTableId, internetGateway)
+        // addInternetGatewayToRouteTable(vcnClient, vcn.defaultRouteTableId, internetGateway)
 
         Subnet subnet = maybeCreateSubnet(vcnClient,
             compartmentId,
             _availabilityDomain,
             subnetDisplayName,
             networkCidrBlock,
-            vcn.id,
-            vcn.defaultRouteTableId)
-
-        // wait
-        vcnClient.waiters.forSubnet(GetSubnetRequest.builder().subnetId(subnet.id).build(),
-            Subnet.LifecycleState.Available)
-            .execute()
+            vcn.id)
 
         Instance instance = maybeCreateInstance(computeClient,
             _availabilityDomain,
@@ -222,9 +199,11 @@ class CreateInstanceTask extends AbstractOCITask implements CompartmentAwareTrai
             sshPublicKey,
             kmsKeyId)
 
-        println('Provisioning instance. This may take a while.')
-        instance = waitForInstanceProvisioningToComplete(computeClient, instance.id)
-        println("Instance is provisioned with id = ${instance.id}")
+        if (instance.lifecycleState != Instance.LifecycleState.Running) {
+            println('Provisioning instance. This may take a while.')
+            instance = waitForInstanceProvisioningToComplete(computeClient, instance.id)
+            println("Instance is provisioned with id = ${instance.id}")
+        }
 
         printMonitoringStatus(instance)
 
@@ -251,13 +230,6 @@ class CreateInstanceTask extends AbstractOCITask implements CompartmentAwareTrai
             .compartmentId(compartmentId)
             .build())
         response.items.find { Shape sh -> sh.shape == getShape() }
-    }
-
-    private AvailabilityDomain validateAvailabilityDomain(IdentityClient identityClient) {
-        ListAvailabilityDomainsResponse response = identityClient.listAvailabilityDomains(ListAvailabilityDomainsRequest.builder()
-            .compartmentId(compartmentId)
-            .build())
-        response.items.find { AvailabilityDomain ad -> ad.name == getAvailabilityDomain() }
     }
 
     private Vcn maybeCreateVcn(VirtualNetworkClient vcnClient,
@@ -332,8 +304,7 @@ class CreateInstanceTask extends AbstractOCITask implements CompartmentAwareTrai
                                      AvailabilityDomain availabilityDomain,
                                      String subnetName,
                                      String cidrBlock,
-                                     String vcnId,
-                                     String routeTableId) {
+                                     String vcnId) {
         List<Subnet> subnets = vcnClient.listSubnets(ListSubnetsRequest.builder()
             .compartmentId(compartmentId)
             .vcnId(vcnId)
@@ -345,17 +316,25 @@ class CreateInstanceTask extends AbstractOCITask implements CompartmentAwareTrai
             return subnets[0]
         }
 
-        vcnClient.createSubnet(CreateSubnetRequest.builder()
+        Subnet subnet = vcnClient.createSubnet(CreateSubnetRequest.builder()
             .createSubnetDetails(CreateSubnetDetails.builder()
                 .availabilityDomain(availabilityDomain.name)
                 .compartmentId(compartmentId)
                 .displayName(subnetName)
                 .cidrBlock(cidrBlock)
                 .vcnId(vcnId)
-                .routeTableId(routeTableId)
                 .build())
             .build())
             .subnet
+
+        // wait
+        vcnClient.waiters.forSubnet(GetSubnetRequest.builder()
+            .subnetId(subnet.id)
+            .build(),
+            Subnet.LifecycleState.Available)
+            .execute()
+
+        subnet
     }
 
     private Instance maybeCreateInstance(ComputeClient computeClient,

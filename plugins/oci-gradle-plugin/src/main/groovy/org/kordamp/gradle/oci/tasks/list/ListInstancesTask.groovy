@@ -18,19 +18,21 @@
 package org.kordamp.gradle.oci.tasks.list
 
 import com.oracle.bmc.auth.AuthenticationDetailsProvider
-import com.oracle.bmc.identity.IdentityClient
-import com.oracle.bmc.identity.model.Region
-import com.oracle.bmc.identity.requests.ListRegionsRequest
-import com.oracle.bmc.identity.responses.ListRegionsResponse
+import com.oracle.bmc.core.ComputeClient
+import com.oracle.bmc.core.model.Instance
+import com.oracle.bmc.core.requests.ListInstancesRequest
+import com.oracle.bmc.core.responses.ListInstancesResponse
 import groovy.transform.CompileStatic
 import org.gradle.api.tasks.TaskAction
 import org.kordamp.gradle.AnsiConsole
 import org.kordamp.gradle.oci.tasks.AbstractOCITask
 import org.kordamp.gradle.oci.tasks.interfaces.OCITask
+import org.kordamp.gradle.oci.tasks.traits.AvailabilityDomainAwareTrait
+import org.kordamp.gradle.oci.tasks.traits.CompartmentAwareTrait
 import org.kordamp.gradle.oci.tasks.traits.VerboseAwareTrait
 import org.kordamp.jipsy.TypeProviderFor
 
-import static org.kordamp.gradle.oci.tasks.printers.RegionPrinter.printRegion
+import static org.kordamp.gradle.oci.tasks.printers.InstancePrinter.printInstance
 
 /**
  * @author Andres Almiray
@@ -38,24 +40,28 @@ import static org.kordamp.gradle.oci.tasks.printers.RegionPrinter.printRegion
  */
 @CompileStatic
 @TypeProviderFor(OCITask)
-class ListRegionsTask extends AbstractOCITask implements VerboseAwareTrait {
-    static final String DESCRIPTION = 'Lists available regions.'
+class ListInstancesTask extends AbstractOCITask implements CompartmentAwareTrait, AvailabilityDomainAwareTrait, VerboseAwareTrait {
+    static final String DESCRIPTION = 'Lists available instances.'
 
     @TaskAction
     void executeTask() {
+        validateCompartmentId()
+
         AuthenticationDetailsProvider provider = resolveAuthenticationDetailsProvider()
-        IdentityClient client = IdentityClient.builder().build(provider)
-        ListRegionsResponse response = client.listRegions(ListRegionsRequest.builder()
+        ComputeClient client = ComputeClient.builder().build(provider)
+        ListInstancesResponse response = client.listInstances(ListInstancesRequest.builder()
+            .compartmentId(compartmentId)
+            .availabilityDomain(availabilityDomain)
             .build())
         client.close()
 
         AnsiConsole console = new AnsiConsole(project)
-        println('Total regions: ' + console.cyan(response.items.size().toString()))
+        println('Total instances: ' + console.cyan(response.items.size().toString()))
         println(' ')
-        for (Region region : response.items) {
-            println(region.name + (verbose ? ':' : ''))
+        for (Instance instance : response.items) {
+            println(instance.displayName + (verbose ? ':' : ''))
             if (verbose) {
-                printRegion(this, region, 0)
+                printInstance(this, instance, 0)
             }
         }
     }

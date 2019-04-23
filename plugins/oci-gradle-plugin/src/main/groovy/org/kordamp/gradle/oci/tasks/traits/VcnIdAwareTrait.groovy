@@ -17,27 +17,40 @@
  */
 package org.kordamp.gradle.oci.tasks.traits
 
+import com.oracle.bmc.OCID
 import groovy.transform.CompileStatic
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.options.Option
+import org.kordamp.gradle.oci.tasks.interfaces.PathAware
 import org.kordamp.gradle.oci.tasks.interfaces.ProjectAware
+
+import static org.kordamp.gradle.StringUtils.isBlank
 
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
 @CompileStatic
-trait VerboseAwareTrait implements ProjectAware {
-    private final Property<Boolean> verbose = project.objects.property(Boolean)
+trait VcnIdAwareTrait implements PathAware, ProjectAware {
+    private final Property<String> vcnId = project.objects.property(String)
 
     @Input
-    @Option(option = 'verbose', description = 'Display additional information (OPTIONAL).')
-    void setVerbose(boolean verbose) {
-        this.verbose.set(verbose)
+    @Option(option = 'vcn-id', description = 'The id of the VCN to query (REQUIRED).')
+    void setVcnId(String vcnId) {
+        this.vcnId.set(vcnId)
     }
 
-    boolean isVerbose() {
-        verbose.getOrElse(false)
+    String getVcnId() {
+        return vcnId.orNull
+    }
+
+    void validateVcnId() {
+        if (isBlank(getVcnId())) {
+            throw new IllegalStateException("Missing value for 'vcnId' in $path")
+        }
+        if (!OCID.isValid(getVcnId())) {
+            throw new IllegalStateException("VCN id '${vcnId}' is invalid")
+        }
     }
 }

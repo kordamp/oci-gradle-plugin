@@ -30,8 +30,6 @@ import org.kordamp.gradle.oci.tasks.interfaces.OCITask
 import org.kordamp.gradle.oci.tasks.traits.CompartmentAwareTrait
 import org.kordamp.jipsy.TypeProviderFor
 
-import static org.kordamp.gradle.StringUtils.isBlank
-
 /**
  * @author Andres Almiray
  * @since 0.1.0
@@ -43,9 +41,7 @@ class ListShapesTask extends AbstractOCITask implements CompartmentAwareTrait {
 
     @TaskAction
     void executeTask() {
-        if (isBlank(compartmentId)) {
-            throw new IllegalStateException("Missing value of 'compartmentId' in $path")
-        }
+        validateCompartmentId()
 
         AuthenticationDetailsProvider provider = resolveAuthenticationDetailsProvider()
         ComputeClient client = ComputeClient.builder().build(provider)
@@ -54,7 +50,7 @@ class ListShapesTask extends AbstractOCITask implements CompartmentAwareTrait {
 
         AnsiConsole console = new AnsiConsole(project)
         List<Shape> shapes = response.items.unique().sort { it.shape }
-        println("Total shapes available at ${compartmentId}: " + console.cyan(shapes.size().toString()))
+        println('Total shapes: ' + console.cyan(shapes.size().toString()))
         println(' ')
         for (Shape shape : shapes) {
             println(shape.shape)

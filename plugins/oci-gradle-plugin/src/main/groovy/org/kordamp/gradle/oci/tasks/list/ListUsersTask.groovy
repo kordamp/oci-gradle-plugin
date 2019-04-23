@@ -19,18 +19,19 @@ package org.kordamp.gradle.oci.tasks.list
 
 import com.oracle.bmc.auth.AuthenticationDetailsProvider
 import com.oracle.bmc.identity.IdentityClient
-import com.oracle.bmc.identity.model.Region
-import com.oracle.bmc.identity.requests.ListRegionsRequest
-import com.oracle.bmc.identity.responses.ListRegionsResponse
+import com.oracle.bmc.identity.model.User
+import com.oracle.bmc.identity.requests.ListUsersRequest
+import com.oracle.bmc.identity.responses.ListUsersResponse
 import groovy.transform.CompileStatic
 import org.gradle.api.tasks.TaskAction
 import org.kordamp.gradle.AnsiConsole
 import org.kordamp.gradle.oci.tasks.AbstractOCITask
 import org.kordamp.gradle.oci.tasks.interfaces.OCITask
+import org.kordamp.gradle.oci.tasks.traits.CompartmentAwareTrait
 import org.kordamp.gradle.oci.tasks.traits.VerboseAwareTrait
 import org.kordamp.jipsy.TypeProviderFor
 
-import static org.kordamp.gradle.oci.tasks.printers.RegionPrinter.printRegion
+import static org.kordamp.gradle.oci.tasks.printers.UserPrinter.printUser
 
 /**
  * @author Andres Almiray
@@ -38,24 +39,27 @@ import static org.kordamp.gradle.oci.tasks.printers.RegionPrinter.printRegion
  */
 @CompileStatic
 @TypeProviderFor(OCITask)
-class ListRegionsTask extends AbstractOCITask implements VerboseAwareTrait {
-    static final String DESCRIPTION = 'Lists available regions.'
+class ListUsersTask extends AbstractOCITask implements CompartmentAwareTrait, VerboseAwareTrait {
+    static final String DESCRIPTION = 'Lists available users.'
 
     @TaskAction
     void executeTask() {
+        validateCompartmentId()
+
         AuthenticationDetailsProvider provider = resolveAuthenticationDetailsProvider()
         IdentityClient client = IdentityClient.builder().build(provider)
-        ListRegionsResponse response = client.listRegions(ListRegionsRequest.builder()
+        ListUsersResponse response = client.listUsers(ListUsersRequest.builder()
+            .compartmentId(compartmentId)
             .build())
         client.close()
 
         AnsiConsole console = new AnsiConsole(project)
-        println('Total regions: ' + console.cyan(response.items.size().toString()))
+        println('Total users: ' + console.cyan(response.items.size().toString()))
         println(' ')
-        for (Region region : response.items) {
-            println(region.name + (verbose ? ':' : ''))
+        for (User user : response.items) {
+            println(user.name + (verbose ? ':' : ''))
             if (verbose) {
-                printRegion(this, region, 0)
+                printUser(this, user, 0)
             }
         }
     }

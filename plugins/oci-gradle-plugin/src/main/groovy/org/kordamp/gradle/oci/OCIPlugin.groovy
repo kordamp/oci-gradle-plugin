@@ -30,6 +30,10 @@ import org.kordamp.jipsy.util.TypeLoader
  * @since 0.1.0
  */
 class OCIPlugin extends AbstractKordampPlugin {
+    static {
+        System.setProperty('sun.net.http.allowRestrictedHeaders', 'true')
+    }
+
     Project project
 
     void apply(Project project) {

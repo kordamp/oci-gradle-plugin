@@ -62,7 +62,6 @@ import com.oracle.bmc.core.responses.ListShapesResponse
 import com.oracle.bmc.identity.IdentityClient
 import com.oracle.bmc.identity.model.AvailabilityDomain
 import groovy.transform.CompileStatic
-import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.TaskAction
@@ -71,6 +70,7 @@ import org.kordamp.gradle.oci.tasks.AbstractOCITask
 import org.kordamp.gradle.oci.tasks.interfaces.OCITask
 import org.kordamp.gradle.oci.tasks.traits.AvailabilityDomainAwareTrait
 import org.kordamp.gradle.oci.tasks.traits.CompartmentAwareTrait
+import org.kordamp.gradle.oci.tasks.traits.PublicKeyFileAwareTrait
 import org.kordamp.jipsy.TypeProviderFor
 
 import static org.kordamp.gradle.StringUtils.isBlank
@@ -81,11 +81,10 @@ import static org.kordamp.gradle.StringUtils.isBlank
  */
 @CompileStatic
 @TypeProviderFor(OCITask)
-class CreateInstanceTask extends AbstractOCITask implements CompartmentAwareTrait, AvailabilityDomainAwareTrait {
+class CreateInstanceTask extends AbstractOCITask implements CompartmentAwareTrait, AvailabilityDomainAwareTrait, PublicKeyFileAwareTrait {
     static final String DESCRIPTION = 'Creates an instance with VCN, Gateway, and Volume.'
 
     private final Property<String> instanceName = project.objects.property(String)
-    private final RegularFileProperty sshKeyFile = project.objects.fileProperty()
     private final Property<String> image = project.objects.property(String)
     private final Property<String> shape = project.objects.property(String)
 
@@ -93,12 +92,6 @@ class CreateInstanceTask extends AbstractOCITask implements CompartmentAwareTrai
     @Option(option = 'instance-name', description = 'The name of the instance to be created (REQUIRED).')
     void setInstanceName(String instanceName) {
         this.instanceName.set(instanceName)
-    }
-
-    @Input
-    @Option(option = 'ssh-key-file', description = 'Location of SSH public key file (REQUIRED).')
-    void setSshKeyFile(String sshKeyFile) {
-        this.sshKeyFile.set(project.file(sshKeyFile))
     }
 
     @Input
@@ -117,10 +110,6 @@ class CreateInstanceTask extends AbstractOCITask implements CompartmentAwareTrai
         instanceName.orNull
     }
 
-    File getSshKeyFile() {
-        sshKeyFile.asFile.orNull
-    }
-
     String getImage() {
         image.orNull
     }
@@ -137,9 +126,6 @@ class CreateInstanceTask extends AbstractOCITask implements CompartmentAwareTrai
         if (isBlank(getInstanceName())) {
             setInstanceName(UUID.randomUUID().toString())
             project.logger.warn("Missing value of 'instanceName' in $path. Value set to ${instanceName}")
-        }
-        if (!sshKeyFile.present) {
-            throw new IllegalStateException("Missing value for 'sshKeyFile' in $path")
         }
         if (isBlank(getImage())) {
             throw new IllegalStateException("Missing value for 'image' in $path")
@@ -165,7 +151,7 @@ class CreateInstanceTask extends AbstractOCITask implements CompartmentAwareTrai
         AvailabilityDomain _availabilityDomain = validateAvailabilityDomain(identityClient, compartmentId)
 
         String networkCidrBlock = '10.0.0.0/16'
-        String sshPublicKey = getSshKeyFile().text
+        String publicPublicKey = getPublicKeyFile().text
         String subnetDisplayName = getInstanceName() + '-subnet'
         String vcnDisplayName = getInstanceName() + '-vcn'
         String internetGatewayDisplayName = getInstanceName() + '-internet-gateway'
@@ -196,13 +182,13 @@ class CreateInstanceTask extends AbstractOCITask implements CompartmentAwareTrai
             _image,
             _shape,
             subnet,
-            sshPublicKey,
+            publicPublicKey,
             kmsKeyId)
 
         if (instance.lifecycleState != Instance.LifecycleState.Running) {
             println('Provisioning instance. This may take a while.')
             instance = waitForInstanceProvisioningToComplete(computeClient, instance.id)
-            println("Instance is provisioned with id = ${instance.id}")
+            println("Instance is provisioned with id ${instance.id}")
         }
 
         printMonitoringStatus(instance)
@@ -215,7 +201,7 @@ class CreateInstanceTask extends AbstractOCITask implements CompartmentAwareTrai
 
         println('Provisioning bootVolume. This may take a while.')
         bootVolume = waitForBootVolumeToBeReady(blockstorageClient, bootVolume.id)
-        println("BootVolume is provisioned with id = ${bootVolume.id}")
+        println("BootVolume is provisioned with id ${bootVolume.id}")
     }
 
     private Image validateImage(ComputeClient client) {
@@ -342,7 +328,7 @@ class CreateInstanceTask extends AbstractOCITask implements CompartmentAwareTrai
                                          Image image,
                                          Shape shape,
                                          Subnet subnet,
-                                         String sshPublicKey,
+                                         String publicPublicKey,
                                          String kmsKeyId) {
         List<Instance> instances = computeClient.listInstances(ListInstancesRequest.builder()
             .compartmentId(compartmentId)
@@ -355,7 +341,7 @@ class CreateInstanceTask extends AbstractOCITask implements CompartmentAwareTrai
             return instances[0]
         }
 
-        Map<String, String> metadata = new HashMap<>('ssh_authorized_keys': sshPublicKey)
+        Map<String, String> metadata = new HashMap<>('public_authorized_keys': publicPublicKey)
 
         InstanceSourceViaImageDetails details =
             (Strings.isNullOrEmpty(kmsKeyId))

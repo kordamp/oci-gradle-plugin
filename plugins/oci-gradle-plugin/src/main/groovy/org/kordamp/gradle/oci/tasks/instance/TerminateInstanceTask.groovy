@@ -77,7 +77,7 @@ class TerminateInstanceTask extends AbstractOCITask implements CompartmentAwareT
 
             if (instance) {
                 setInstanceName(instance.displayName)
-                println("Terminating instance '${instance.displayName}' with id = ${instance.id}")
+                println("Terminating instance '${instance.displayName}' with id ${instance.id}")
                 computeClient.terminateInstance(TerminateInstanceRequest.builder()
                     .instanceId(instanceId)
                     .build())
@@ -96,7 +96,7 @@ class TerminateInstanceTask extends AbstractOCITask implements CompartmentAwareT
                 .build())
                 .items.each { instance ->
                 setInstanceId(instance.id)
-                println("Terminating instance '${instance.displayName}' with id = ${instance.id}")
+                println("Terminating instance '${instance.displayName}' with id ${instance.id}")
 
                 computeClient.terminateInstance(TerminateInstanceRequest.builder()
                     .instanceId(instanceId)

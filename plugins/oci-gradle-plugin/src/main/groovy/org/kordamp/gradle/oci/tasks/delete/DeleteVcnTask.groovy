@@ -77,7 +77,7 @@ class DeleteVcnTask extends AbstractOCITask implements CompartmentAwareTrait, Vc
 
             if (vcn) {
                 setVcnName(vcn.displayName)
-                println("Deleting VCN '${vcn.displayName}' with id = ${vcn.id}")
+                println("Deleting VCN '${vcn.displayName}' with id ${vcn.id}")
                 vcnClient.deleteVcn(DeleteVcnRequest.builder()
                     .vcnId(getVcnId())
                     .build())
@@ -96,7 +96,7 @@ class DeleteVcnTask extends AbstractOCITask implements CompartmentAwareTrait, Vc
                 .build())
                 .items.each { vcn ->
                 setVcnId(vcn.id)
-                println("Deleting VCN '${vcn.displayName}' with id = ${vcn.id}")
+                println("Deleting VCN '${vcn.displayName}' with id ${vcn.id}")
 
                 vcnClient.deleteVcn(DeleteVcnRequest.builder()
                     .vcnId(vcn.id)

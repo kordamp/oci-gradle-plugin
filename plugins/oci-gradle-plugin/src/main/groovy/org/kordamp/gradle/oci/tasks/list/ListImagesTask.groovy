@@ -52,7 +52,7 @@ class ListImagesTask extends AbstractOCITask implements CompartmentAwareTrait, V
         client.close()
 
         AnsiConsole console = new AnsiConsole(project)
-        println('Total images: ' + console.cyan(response.items.size().toString()))
+        println('Total Images: ' + console.cyan(response.items.size().toString()))
         println(' ')
         for (Image image : response.items) {
             println(image.displayName + (verbose ? ':' : ''))

@@ -54,7 +54,7 @@ class ListUsersTask extends AbstractOCITask implements CompartmentAwareTrait, Ve
         client.close()
 
         AnsiConsole console = new AnsiConsole(project)
-        println('Total users: ' + console.cyan(response.items.size().toString()))
+        println('Total Users: ' + console.cyan(response.items.size().toString()))
         println(' ')
         for (User user : response.items) {
             println(user.name + (verbose ? ':' : ''))

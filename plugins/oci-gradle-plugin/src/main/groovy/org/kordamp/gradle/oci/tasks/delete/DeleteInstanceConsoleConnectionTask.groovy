@@ -15,22 +15,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kordamp.gradle.oci.tasks.list
+package org.kordamp.gradle.oci.tasks.delete
 
 import com.oracle.bmc.auth.AuthenticationDetailsProvider
-import com.oracle.bmc.identity.IdentityClient
-import com.oracle.bmc.identity.model.Region
-import com.oracle.bmc.identity.requests.ListRegionsRequest
-import com.oracle.bmc.identity.responses.ListRegionsResponse
+import com.oracle.bmc.core.ComputeClient
+import com.oracle.bmc.core.model.InstanceConsoleConnection
+import com.oracle.bmc.core.requests.DeleteInstanceConsoleConnectionRequest
+import com.oracle.bmc.core.requests.GetInstanceConsoleConnectionRequest
 import groovy.transform.CompileStatic
 import org.gradle.api.tasks.TaskAction
-import org.kordamp.gradle.AnsiConsole
 import org.kordamp.gradle.oci.tasks.AbstractOCITask
 import org.kordamp.gradle.oci.tasks.interfaces.OCITask
-import org.kordamp.gradle.oci.tasks.traits.VerboseAwareTrait
+import org.kordamp.gradle.oci.tasks.traits.InstanceConsoleConnectionIdAwareTrait
 import org.kordamp.jipsy.TypeProviderFor
-
-import static org.kordamp.gradle.oci.tasks.printers.RegionPrinter.printRegion
 
 /**
  * @author Andres Almiray
@@ -38,25 +35,25 @@ import static org.kordamp.gradle.oci.tasks.printers.RegionPrinter.printRegion
  */
 @CompileStatic
 @TypeProviderFor(OCITask)
-class ListRegionsTask extends AbstractOCITask implements VerboseAwareTrait {
-    static final String DESCRIPTION = 'Lists available regions.'
+class DeleteInstanceConsoleConnectionTask extends AbstractOCITask implements InstanceConsoleConnectionIdAwareTrait {
+    static final String DESCRIPTION = 'Deletes an instance console connection.'
 
     @TaskAction
     void executeTask() {
+        validateInstanceConsoleConnectionId()
         AuthenticationDetailsProvider provider = resolveAuthenticationDetailsProvider()
-        IdentityClient client = IdentityClient.builder().build(provider)
-        ListRegionsResponse response = client.listRegions(ListRegionsRequest.builder()
-            .build())
-        client.close()
+        ComputeClient client = new ComputeClient(provider)
 
-        AnsiConsole console = new AnsiConsole(project)
-        println('Total Regions: ' + console.cyan(response.items.size().toString()))
-        println(' ')
-        for (Region region : response.items) {
-            println(region.name + (verbose ? ':' : ''))
-            if (verbose) {
-                printRegion(this, region, 0)
-            }
-        }
+        client.deleteInstanceConsoleConnection(DeleteInstanceConsoleConnectionRequest.builder()
+            .instanceConsoleConnectionId(instanceConsoleConnectionId)
+            .build())
+
+        client.waiters
+            .forInstanceConsoleConnection(GetInstanceConsoleConnectionRequest.builder()
+                .instanceConsoleConnectionId(instanceConsoleConnectionId).build(),
+                InstanceConsoleConnection.LifecycleState.Deleted)
+            .execute()
+
+        client.close()
     }
 }

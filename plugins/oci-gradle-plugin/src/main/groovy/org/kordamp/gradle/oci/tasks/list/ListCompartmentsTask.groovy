@@ -54,7 +54,7 @@ class ListCompartmentsTask extends AbstractOCITask implements CompartmentAwareTr
         client.close()
 
         AnsiConsole console = new AnsiConsole(project)
-        println('Total compartments: ' + console.cyan(response.items.size().toString()))
+        println('Total Compartments: ' + console.cyan(response.items.size().toString()))
         println(' ')
         for (Compartment compartment : response.items) {
             println(compartment.name + (verbose ? ':' : ''))

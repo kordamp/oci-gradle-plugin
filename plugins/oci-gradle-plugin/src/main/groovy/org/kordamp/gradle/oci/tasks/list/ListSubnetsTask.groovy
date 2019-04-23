@@ -57,7 +57,7 @@ class ListSubnetsTask extends AbstractOCITask implements CompartmentAwareTrait, 
         client.close()
 
         AnsiConsole console = new AnsiConsole(project)
-        println('Total subnets: ' + console.cyan(response.items.size().toString()))
+        println('Total Subnets: ' + console.cyan(response.items.size().toString()))
         println(' ')
         for (Subnet subnet : response.items) {
             println(subnet.displayName + (verbose ? ':' : ''))

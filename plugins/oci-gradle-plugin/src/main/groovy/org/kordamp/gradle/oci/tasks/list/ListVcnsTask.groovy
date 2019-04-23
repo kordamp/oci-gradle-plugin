@@ -52,7 +52,7 @@ class ListVcnsTask extends AbstractOCITask implements CompartmentAwareTrait, Ver
         client.close()
 
         AnsiConsole console = new AnsiConsole(project)
-        println('Total VCNs: ' + console.cyan(response.items.size().toString()))
+        println('Total Vcns: ' + console.cyan(response.items.size().toString()))
         println(' ')
         for (Vcn vcn : response.items) {
             println(vcn.displayName + (verbose ? ':' : ''))

@@ -15,20 +15,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kordamp.gradle.oci.tasks.list
+package org.kordamp.gradle.oci.tasks.get
 
 import com.oracle.bmc.auth.AuthenticationDetailsProvider
 import com.oracle.bmc.core.ComputeClient
-import com.oracle.bmc.core.model.Shape
-import com.oracle.bmc.core.requests.ListShapesRequest
-import com.oracle.bmc.core.responses.ListShapesResponse
+import com.oracle.bmc.core.model.InstanceConsoleConnection
+import com.oracle.bmc.core.requests.GetInstanceConsoleConnectionRequest
 import groovy.transform.CompileStatic
 import org.gradle.api.tasks.TaskAction
-import org.kordamp.gradle.AnsiConsole
 import org.kordamp.gradle.oci.tasks.AbstractOCITask
 import org.kordamp.gradle.oci.tasks.interfaces.OCITask
-import org.kordamp.gradle.oci.tasks.traits.CompartmentAwareTrait
+import org.kordamp.gradle.oci.tasks.traits.InstanceConsoleConnectionIdAwareTrait
 import org.kordamp.jipsy.TypeProviderFor
+
+import static org.kordamp.gradle.oci.tasks.printers.InstanceConsoleConnectionPrinter.printInstanceConsoleConnection
 
 /**
  * @author Andres Almiray
@@ -36,24 +36,27 @@ import org.kordamp.jipsy.TypeProviderFor
  */
 @CompileStatic
 @TypeProviderFor(OCITask)
-class ListShapesTask extends AbstractOCITask implements CompartmentAwareTrait {
-    static final String DESCRIPTION = 'Lists shapes available on a compartment.'
+class GetInstanceConsoleConnectionTask extends AbstractOCITask implements InstanceConsoleConnectionIdAwareTrait {
+    static final String DESCRIPTION = 'Displays information for an specific instance console connection.'
 
     @TaskAction
     void executeTask() {
-        validateCompartmentId()
+        validateInstanceConsoleConnectionId()
 
         AuthenticationDetailsProvider provider = resolveAuthenticationDetailsProvider()
-        ComputeClient client = ComputeClient.builder().build(provider)
-        ListShapesResponse response = client.listShapes(ListShapesRequest.builder().compartmentId(compartmentId).build())
-        client.close()
+        ComputeClient client = new ComputeClient(provider)
 
-        AnsiConsole console = new AnsiConsole(project)
-        List<Shape> shapes = response.items.unique().sort { it.shape }
-        println('Total Shapes: ' + console.cyan(shapes.size().toString()))
-        println(' ')
-        for (Shape shape : shapes) {
-            println(shape.shape)
+        InstanceConsoleConnection connection = client.getInstanceConsoleConnection(GetInstanceConsoleConnectionRequest.builder()
+            .instanceConsoleConnectionId(getInstanceConsoleConnectionId())
+            .build())
+            .instanceConsoleConnection
+
+        if (connection) {
+            printInstanceConsoleConnection(this, connection, 0)
+        } else {
+            println("Instance console connection with id ${instanceConsoleConnectionId} was not found")
         }
+
+        client.close()
     }
 }

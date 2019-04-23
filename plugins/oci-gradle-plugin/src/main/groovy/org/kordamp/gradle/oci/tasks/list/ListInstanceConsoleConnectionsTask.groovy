@@ -18,20 +18,20 @@
 package org.kordamp.gradle.oci.tasks.list
 
 import com.oracle.bmc.auth.AuthenticationDetailsProvider
-import com.oracle.bmc.identity.IdentityClient
-import com.oracle.bmc.identity.model.AvailabilityDomain
-import com.oracle.bmc.identity.requests.ListAvailabilityDomainsRequest
-import com.oracle.bmc.identity.responses.ListAvailabilityDomainsResponse
+import com.oracle.bmc.core.ComputeClient
+import com.oracle.bmc.core.model.InstanceConsoleConnection
+import com.oracle.bmc.core.requests.ListInstanceConsoleConnectionsRequest
+import com.oracle.bmc.core.responses.ListInstanceConsoleConnectionsResponse
 import groovy.transform.CompileStatic
 import org.gradle.api.tasks.TaskAction
 import org.kordamp.gradle.AnsiConsole
 import org.kordamp.gradle.oci.tasks.AbstractOCITask
 import org.kordamp.gradle.oci.tasks.interfaces.OCITask
 import org.kordamp.gradle.oci.tasks.traits.CompartmentAwareTrait
-import org.kordamp.gradle.oci.tasks.traits.VerboseAwareTrait
+import org.kordamp.gradle.oci.tasks.traits.InstanceIdAwareTrait
 import org.kordamp.jipsy.TypeProviderFor
 
-import static org.kordamp.gradle.oci.tasks.printers.AvailabilityDomainPrinter.printAvailabilityDomain
+import static org.kordamp.gradle.oci.tasks.printers.InstanceConsoleConnectionPrinter.printInstanceConsoleConnection
 
 /**
  * @author Andres Almiray
@@ -39,26 +39,30 @@ import static org.kordamp.gradle.oci.tasks.printers.AvailabilityDomainPrinter.pr
  */
 @CompileStatic
 @TypeProviderFor(OCITask)
-class ListAvailabilityDomainsTask extends AbstractOCITask implements CompartmentAwareTrait, VerboseAwareTrait {
-    static final String DESCRIPTION = 'Lists domains available on a compartment.'
+class ListInstanceConsoleConnectionsTask extends AbstractOCITask implements CompartmentAwareTrait, InstanceIdAwareTrait {
+    static final String DESCRIPTION = 'Lists available console connections on an instance.'
 
     @TaskAction
     void executeTask() {
         validateCompartmentId()
+        validateInstanceId()
 
         AuthenticationDetailsProvider provider = resolveAuthenticationDetailsProvider()
-        IdentityClient client = IdentityClient.builder().build(provider)
-        ListAvailabilityDomainsResponse response = client.listAvailabilityDomains(ListAvailabilityDomainsRequest.builder().compartmentId(compartmentId).build())
+        ComputeClient client = ComputeClient.builder().build(provider)
+        ListInstanceConsoleConnectionsResponse response = client.listInstanceConsoleConnections(ListInstanceConsoleConnectionsRequest.builder()
+            .compartmentId(compartmentId)
+            .instanceId(instanceId)
+            .build())
         client.close()
 
         AnsiConsole console = new AnsiConsole(project)
-        println('Total AvailabilityDomains: ' + console.cyan(response.items.size().toString()))
+        println('Total InstanceConsoleConnections: ' + console.cyan(response.items.size().toString()))
         println(' ')
-        for (AvailabilityDomain domain : response.items) {
-            println(domain.name + (verbose ? ':' : ''))
-            if (verbose) {
-                printAvailabilityDomain(this, domain, 0)
-            }
+        int index = 0
+        for (InstanceConsoleConnection connection : response.items) {
+            println("Instance Console Connection ${index.toString().padLeft(2, '0')}:")
+            printInstanceConsoleConnection(this, connection, 0)
+            index++
         }
     }
 }

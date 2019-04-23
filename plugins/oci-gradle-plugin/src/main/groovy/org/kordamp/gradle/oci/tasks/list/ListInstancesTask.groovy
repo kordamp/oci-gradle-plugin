@@ -56,7 +56,7 @@ class ListInstancesTask extends AbstractOCITask implements CompartmentAwareTrait
         client.close()
 
         AnsiConsole console = new AnsiConsole(project)
-        println('Total instances: ' + console.cyan(response.items.size().toString()))
+        println('Total Instances: ' + console.cyan(response.items.size().toString()))
         println(' ')
         for (Instance instance : response.items) {
             println(instance.displayName + (verbose ? ':' : ''))

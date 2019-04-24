@@ -32,8 +32,9 @@ import org.gradle.api.tasks.options.Option
 import org.gradle.api.tasks.options.OptionValues
 import org.kordamp.gradle.oci.tasks.AbstractOCITask
 import org.kordamp.gradle.oci.tasks.interfaces.OCITask
-import org.kordamp.gradle.oci.tasks.traits.CompartmentAwareTrait
+import org.kordamp.gradle.oci.tasks.traits.CompartmentIdAwareTrait
 import org.kordamp.gradle.oci.tasks.traits.InstanceIdAwareTrait
+import org.kordamp.gradle.oci.tasks.traits.WaitForCompletionAwareTrait
 import org.kordamp.jipsy.TypeProviderFor
 
 import static org.kordamp.gradle.StringUtils.isBlank
@@ -45,8 +46,10 @@ import static org.kordamp.gradle.StringUtils.isNotBlank
  */
 @CompileStatic
 @TypeProviderFor(OCITask)
-class InstanceActionTask extends AbstractOCITask implements CompartmentAwareTrait, InstanceIdAwareTrait {
-    static final String DESCRIPTION = 'Performs a given action on an instance.'
+class InstanceActionTask extends AbstractOCITask implements CompartmentIdAwareTrait,
+    InstanceIdAwareTrait,
+    WaitForCompletionAwareTrait {
+    static final String TASK_DESCRIPTION = 'Performs a given action on an instance.'
 
     private static enum InstanceAction {
         START(Instance.LifecycleState.Running),
@@ -117,12 +120,14 @@ class InstanceActionTask extends AbstractOCITask implements CompartmentAwareTrai
 
             if (instance) {
                 setInstanceName(instance.displayName)
-                println("Waiting for instance to be ${getAction().state()}")
 
-                computeClient.waiters
-                    .forInstance(GetInstanceRequest.builder().instanceId(instance.id).build(),
-                        getAction().state())
-                    .execute()
+                if (isWaitForCompletion()) {
+                    println("Waiting for instance to be ${getAction().state()}")
+                    computeClient.waiters
+                        .forInstance(GetInstanceRequest.builder().instanceId(instance.id).build(),
+                            getAction().state())
+                        .execute()
+                }
             }
         } else {
             validateCompartmentId()
@@ -141,12 +146,13 @@ class InstanceActionTask extends AbstractOCITask implements CompartmentAwareTrai
                     .build())
                     .instance
 
-                println("Waiting for instance to be ${getAction().state()}")
-
-                computeClient.waiters
-                    .forInstance(GetInstanceRequest.builder().instanceId(instance.id).build(),
-                        getAction().state())
-                    .execute()
+                if (isWaitForCompletion()) {
+                    println("Waiting for instance to be ${getAction().state()}")
+                    computeClient.waiters
+                        .forInstance(GetInstanceRequest.builder().instanceId(instance.id).build(),
+                            getAction().state())
+                        .execute()
+                }
             }
         }
 

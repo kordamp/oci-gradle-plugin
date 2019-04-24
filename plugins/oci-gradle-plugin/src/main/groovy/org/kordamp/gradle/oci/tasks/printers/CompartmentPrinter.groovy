@@ -18,18 +18,22 @@
 package org.kordamp.gradle.oci.tasks.printers
 
 import com.oracle.bmc.identity.model.Compartment
+import groovy.transform.CompileStatic
 import org.kordamp.gradle.oci.tasks.interfaces.ValuePrinter
 
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
+@CompileStatic
 class CompartmentPrinter {
     static void printCompartment(ValuePrinter printer, Compartment compartment, int offset) {
-        printer.printKeyValue('Description', compartment.description, offset + 1)
         printer.printKeyValue('Id', compartment.id, offset + 1)
         printer.printKeyValue('Compartment Id', compartment.compartmentId, offset + 1)
+        printer.printKeyValue('Description', compartment.description, offset + 1)
         printer.printKeyValue('Time Created', compartment.timeCreated, offset + 1)
         printer.printKeyValue('Lifecycle State', compartment.lifecycleState, offset + 1)
+        printer.printMap('Defined Tags', compartment.definedTags, offset + 1)
+        printer.printMap('Freeform Tags', compartment.freeformTags, offset + 1)
     }
 }

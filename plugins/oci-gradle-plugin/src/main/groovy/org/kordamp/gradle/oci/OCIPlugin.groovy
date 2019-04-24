@@ -65,7 +65,7 @@ class OCIPlugin extends AbstractKordampPlugin {
                         @Override
                         void execute(Task t) {
                             t.group = 'OCI ' + group.capitalize()
-                            t.description = taskType.DESCRIPTION
+                            t.description = taskType.TASK_DESCRIPTION
                         }
                     })
             }

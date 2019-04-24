@@ -18,12 +18,14 @@
 package org.kordamp.gradle.oci.tasks.printers
 
 import com.oracle.bmc.identity.model.User
+import groovy.transform.CompileStatic
 import org.kordamp.gradle.oci.tasks.interfaces.ValuePrinter
 
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
+@CompileStatic
 class UserPrinter {
     static void printUser(ValuePrinter printer, User user, int offset) {
         printer.printKeyValue('ID', user.id, offset + 1)
@@ -33,5 +35,7 @@ class UserPrinter {
         printer.printKeyValue('Email', user.email, offset + 1)
         printer.printKeyValue('Time Created', user.timeCreated, offset + 1)
         printer.printKeyValue('Lifecycle State', user.lifecycleState, offset + 1)
+        printer.printMap('Defined Tags', user.definedTags, offset + 1)
+        printer.printMap('Freeform Tags', user.freeformTags, offset + 1)
     }
 }

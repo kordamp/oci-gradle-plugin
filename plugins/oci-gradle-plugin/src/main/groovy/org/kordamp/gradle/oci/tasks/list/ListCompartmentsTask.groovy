@@ -27,7 +27,7 @@ import org.gradle.api.tasks.TaskAction
 import org.kordamp.gradle.AnsiConsole
 import org.kordamp.gradle.oci.tasks.AbstractOCITask
 import org.kordamp.gradle.oci.tasks.interfaces.OCITask
-import org.kordamp.gradle.oci.tasks.traits.CompartmentAwareTrait
+import org.kordamp.gradle.oci.tasks.traits.CompartmentIdAwareTrait
 import org.kordamp.gradle.oci.tasks.traits.VerboseAwareTrait
 import org.kordamp.jipsy.TypeProviderFor
 
@@ -39,12 +39,12 @@ import static org.kordamp.gradle.oci.tasks.printers.CompartmentPrinter.printComp
  */
 @CompileStatic
 @TypeProviderFor(OCITask)
-class ListCompartmentsTask extends AbstractOCITask implements CompartmentAwareTrait, VerboseAwareTrait {
-    static final String DESCRIPTION = 'Lists available compartments.'
+class ListCompartmentsTask extends AbstractOCITask implements CompartmentIdAwareTrait, VerboseAwareTrait {
+    static final String TASK_DESCRIPTION = 'Lists available compartments.'
 
     @TaskAction
     void executeTask() {
-        validateCompartmentId()
+        //validateCompartmentId()
 
         AuthenticationDetailsProvider provider = resolveAuthenticationDetailsProvider()
         IdentityClient client = IdentityClient.builder().build(provider)

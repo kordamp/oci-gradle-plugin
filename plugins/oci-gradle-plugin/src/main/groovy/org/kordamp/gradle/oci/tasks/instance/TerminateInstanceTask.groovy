@@ -31,8 +31,9 @@ import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.options.Option
 import org.kordamp.gradle.oci.tasks.AbstractOCITask
 import org.kordamp.gradle.oci.tasks.interfaces.OCITask
-import org.kordamp.gradle.oci.tasks.traits.CompartmentAwareTrait
+import org.kordamp.gradle.oci.tasks.traits.CompartmentIdAwareTrait
 import org.kordamp.gradle.oci.tasks.traits.InstanceIdAwareTrait
+import org.kordamp.gradle.oci.tasks.traits.WaitForCompletionAwareTrait
 import org.kordamp.jipsy.TypeProviderFor
 
 import static org.kordamp.gradle.StringUtils.isBlank
@@ -44,8 +45,10 @@ import static org.kordamp.gradle.StringUtils.isNotBlank
  */
 @CompileStatic
 @TypeProviderFor(OCITask)
-class TerminateInstanceTask extends AbstractOCITask implements CompartmentAwareTrait, InstanceIdAwareTrait {
-    static final String DESCRIPTION = 'Terminates an instance.'
+class TerminateInstanceTask extends AbstractOCITask implements CompartmentIdAwareTrait,
+    InstanceIdAwareTrait,
+    WaitForCompletionAwareTrait {
+    static final String TASK_DESCRIPTION = 'Terminates an instance.'
 
     private final Property<String> instanceName = project.objects.property(String)
 
@@ -82,10 +85,13 @@ class TerminateInstanceTask extends AbstractOCITask implements CompartmentAwareT
                     .instanceId(instanceId)
                     .build())
 
-                computeClient.waiters
-                    .forInstance(GetInstanceRequest.builder().instanceId(instance.id).build(),
-                        Instance.LifecycleState.Terminated)
-                    .execute()
+                if (isWaitForCompletion()) {
+                    println("Waiting for instance to be Terminated")
+                    computeClient.waiters
+                        .forInstance(GetInstanceRequest.builder().instanceId(instance.id).build(),
+                            Instance.LifecycleState.Terminated)
+                        .execute()
+                }
             }
         } else {
             validateCompartmentId()
@@ -102,10 +108,13 @@ class TerminateInstanceTask extends AbstractOCITask implements CompartmentAwareT
                     .instanceId(instanceId)
                     .build())
 
-                computeClient.waiters
-                    .forInstance(GetInstanceRequest.builder().instanceId(instance.id).build(),
-                        Instance.LifecycleState.Terminated)
-                    .execute()
+                if (isWaitForCompletion()) {
+                    println("Waiting for instance to be Terminated")
+                    computeClient.waiters
+                        .forInstance(GetInstanceRequest.builder().instanceId(instance.id).build(),
+                            Instance.LifecycleState.Terminated)
+                        .execute()
+                }
             }
         }
 

@@ -27,7 +27,7 @@ import org.gradle.api.tasks.TaskAction
 import org.kordamp.gradle.AnsiConsole
 import org.kordamp.gradle.oci.tasks.AbstractOCITask
 import org.kordamp.gradle.oci.tasks.interfaces.OCITask
-import org.kordamp.gradle.oci.tasks.traits.CompartmentAwareTrait
+import org.kordamp.gradle.oci.tasks.traits.CompartmentIdAwareTrait
 import org.kordamp.gradle.oci.tasks.traits.VerboseAwareTrait
 import org.kordamp.jipsy.TypeProviderFor
 
@@ -39,8 +39,8 @@ import static org.kordamp.gradle.oci.tasks.printers.ImagePrinter.printImage
  */
 @CompileStatic
 @TypeProviderFor(OCITask)
-class ListImagesTask extends AbstractOCITask implements CompartmentAwareTrait, VerboseAwareTrait {
-    static final String DESCRIPTION = 'Lists images available on a compartment.'
+class ListImagesTask extends AbstractOCITask implements CompartmentIdAwareTrait, VerboseAwareTrait {
+    static final String TASK_DESCRIPTION = 'Lists images available on a compartment.'
 
     @TaskAction
     void executeTask() {

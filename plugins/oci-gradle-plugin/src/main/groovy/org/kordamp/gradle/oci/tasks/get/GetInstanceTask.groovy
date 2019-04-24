@@ -37,7 +37,7 @@ import static org.kordamp.gradle.oci.tasks.printers.InstancePrinter.printInstanc
 @CompileStatic
 @TypeProviderFor(OCITask)
 class GetInstanceTask extends AbstractOCITask implements InstanceIdAwareTrait {
-    static final String DESCRIPTION = 'Displays information for an specific instance.'
+    static final String TASK_DESCRIPTION = 'Displays information for an specific instance.'
 
     @TaskAction
     void executeTask() {

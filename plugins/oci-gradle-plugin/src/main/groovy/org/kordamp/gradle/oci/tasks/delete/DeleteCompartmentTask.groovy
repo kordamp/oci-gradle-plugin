@@ -15,23 +15,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kordamp.gradle.oci.tasks.list
+package org.kordamp.gradle.oci.tasks.delete
 
 import com.oracle.bmc.auth.AuthenticationDetailsProvider
 import com.oracle.bmc.identity.IdentityClient
-import com.oracle.bmc.identity.model.User
-import com.oracle.bmc.identity.requests.ListUsersRequest
-import com.oracle.bmc.identity.responses.ListUsersResponse
+import com.oracle.bmc.identity.model.Compartment
+import com.oracle.bmc.identity.requests.DeleteCompartmentRequest
+import com.oracle.bmc.identity.requests.GetCompartmentRequest
 import groovy.transform.CompileStatic
 import org.gradle.api.tasks.TaskAction
-import org.kordamp.gradle.AnsiConsole
 import org.kordamp.gradle.oci.tasks.AbstractOCITask
 import org.kordamp.gradle.oci.tasks.interfaces.OCITask
 import org.kordamp.gradle.oci.tasks.traits.CompartmentIdAwareTrait
-import org.kordamp.gradle.oci.tasks.traits.VerboseAwareTrait
+import org.kordamp.gradle.oci.tasks.traits.WaitForCompletionAwareTrait
 import org.kordamp.jipsy.TypeProviderFor
-
-import static org.kordamp.gradle.oci.tasks.printers.UserPrinter.printUser
 
 /**
  * @author Andres Almiray
@@ -39,28 +36,40 @@ import static org.kordamp.gradle.oci.tasks.printers.UserPrinter.printUser
  */
 @CompileStatic
 @TypeProviderFor(OCITask)
-class ListUsersTask extends AbstractOCITask implements CompartmentIdAwareTrait, VerboseAwareTrait {
-    static final String TASK_DESCRIPTION = 'Lists available users.'
+class DeleteCompartmentTask extends AbstractOCITask implements CompartmentIdAwareTrait,
+    WaitForCompletionAwareTrait {
+    static final String TASK_DESCRIPTION = 'Deletes a compartment.'
 
     @TaskAction
     void executeTask() {
         validateCompartmentId()
 
         AuthenticationDetailsProvider provider = resolveAuthenticationDetailsProvider()
-        IdentityClient client = IdentityClient.builder().build(provider)
-        ListUsersResponse response = client.listUsers(ListUsersRequest.builder()
+        IdentityClient client = new IdentityClient(provider)
+
+        // TODO: check if compartment is empty
+
+        Compartment compartment = client.getCompartment(GetCompartmentRequest.builder()
             .compartmentId(compartmentId)
             .build())
-        client.close()
+            .compartment
 
-        AnsiConsole console = new AnsiConsole(project)
-        println('Total Users: ' + console.cyan(response.items.size().toString()))
-        println(' ')
-        for (User user : response.items) {
-            println(user.name + (verbose ? ':' : ''))
-            if (verbose) {
-                printUser(this, user, 0)
-            }
+        println("Deleting compartment ${compartment.name} with id ${compartmentId}")
+
+        client.deleteCompartment(DeleteCompartmentRequest.builder()
+            .compartmentId(compartmentId)
+            .build())
+
+        if (isWaitForCompletion()) {
+            println("Waiting for compartment to be Deleted")
+            client.waiters
+                .forCompartment(GetCompartmentRequest.builder()
+                    .compartmentId(compartmentId)
+                    .build(),
+                    Compartment.LifecycleState.Deleted)
+                .execute()
         }
+
+        client.close()
     }
 }

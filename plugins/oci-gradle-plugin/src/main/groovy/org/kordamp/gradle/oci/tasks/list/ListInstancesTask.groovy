@@ -28,7 +28,7 @@ import org.kordamp.gradle.AnsiConsole
 import org.kordamp.gradle.oci.tasks.AbstractOCITask
 import org.kordamp.gradle.oci.tasks.interfaces.OCITask
 import org.kordamp.gradle.oci.tasks.traits.AvailabilityDomainAwareTrait
-import org.kordamp.gradle.oci.tasks.traits.CompartmentAwareTrait
+import org.kordamp.gradle.oci.tasks.traits.CompartmentIdAwareTrait
 import org.kordamp.gradle.oci.tasks.traits.VerboseAwareTrait
 import org.kordamp.jipsy.TypeProviderFor
 
@@ -40,8 +40,8 @@ import static org.kordamp.gradle.oci.tasks.printers.InstancePrinter.printInstanc
  */
 @CompileStatic
 @TypeProviderFor(OCITask)
-class ListInstancesTask extends AbstractOCITask implements CompartmentAwareTrait, AvailabilityDomainAwareTrait, VerboseAwareTrait {
-    static final String DESCRIPTION = 'Lists available instances.'
+class ListInstancesTask extends AbstractOCITask implements CompartmentIdAwareTrait, AvailabilityDomainAwareTrait, VerboseAwareTrait {
+    static final String TASK_DESCRIPTION = 'Lists available instances.'
 
     @TaskAction
     void executeTask() {

@@ -18,12 +18,14 @@
 package org.kordamp.gradle.oci.tasks.printers
 
 import com.oracle.bmc.core.model.Vcn
+import groovy.transform.CompileStatic
 import org.kordamp.gradle.oci.tasks.interfaces.ValuePrinter
 
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
+@CompileStatic
 class VcnPrinter {
     static void printVcn(ValuePrinter printer, Vcn vcn, int offset) {
         printer.printKeyValue('ID', vcn.id, offset + 1)
@@ -33,5 +35,7 @@ class VcnPrinter {
         printer.printKeyValue('Time Created', vcn.timeCreated, offset + 1)
         printer.printKeyValue('VCN Domain Name', vcn.vcnDomainName, offset + 1)
         printer.printKeyValue('Lifecycle State', vcn.lifecycleState, offset + 1)
+        printer.printMap('Defined Tags', vcn.definedTags, offset + 1)
+        printer.printMap('Freeform Tags', vcn.freeformTags, offset + 1)
     }
 }

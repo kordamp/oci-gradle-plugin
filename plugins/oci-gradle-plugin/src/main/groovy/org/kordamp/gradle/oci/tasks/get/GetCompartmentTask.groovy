@@ -25,7 +25,7 @@ import groovy.transform.CompileStatic
 import org.gradle.api.tasks.TaskAction
 import org.kordamp.gradle.oci.tasks.AbstractOCITask
 import org.kordamp.gradle.oci.tasks.interfaces.OCITask
-import org.kordamp.gradle.oci.tasks.traits.CompartmentAwareTrait
+import org.kordamp.gradle.oci.tasks.traits.CompartmentIdAwareTrait
 import org.kordamp.jipsy.TypeProviderFor
 
 import static org.kordamp.gradle.oci.tasks.printers.CompartmentPrinter.printCompartment
@@ -36,8 +36,8 @@ import static org.kordamp.gradle.oci.tasks.printers.CompartmentPrinter.printComp
  */
 @CompileStatic
 @TypeProviderFor(OCITask)
-class GetCompartmentTask extends AbstractOCITask implements CompartmentAwareTrait {
-    static final String DESCRIPTION = 'Displays information for an specific compartment.'
+class GetCompartmentTask extends AbstractOCITask implements CompartmentIdAwareTrait {
+    static final String TASK_DESCRIPTION = 'Displays information for an specific compartment.'
 
     @TaskAction
     void executeTask() {

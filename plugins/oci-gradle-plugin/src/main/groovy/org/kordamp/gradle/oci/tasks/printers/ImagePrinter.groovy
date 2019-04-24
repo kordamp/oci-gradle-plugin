@@ -18,12 +18,14 @@
 package org.kordamp.gradle.oci.tasks.printers
 
 import com.oracle.bmc.core.model.Image
+import groovy.transform.CompileStatic
 import org.kordamp.gradle.oci.tasks.interfaces.ValuePrinter
 
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
+@CompileStatic
 class ImagePrinter {
     static void printImage(ValuePrinter printer, Image image, int offset) {
         printer.printKeyValue('Id', image.id, offset + 1)
@@ -33,5 +35,6 @@ class ImagePrinter {
         printer.printKeyValue('Operating System', image.operatingSystem, offset + 1)
         printer.printKeyValue('Operating System Version', image.operatingSystemVersion, offset + 1)
         printer.printKeyValue('Lifecycle State', image.lifecycleState, offset + 1)
+        printer.printMap('Freeform Tags', image.freeformTags, offset + 1)
     }
 }

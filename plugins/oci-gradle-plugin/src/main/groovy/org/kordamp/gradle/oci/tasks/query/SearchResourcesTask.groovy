@@ -46,7 +46,7 @@ import static org.kordamp.gradle.StringUtils.isBlank
 @CompileStatic
 @TypeProviderFor(OCITask)
 class SearchResourcesTask extends AbstractOCITask {
-    static final String DESCRIPTION = 'Lists information on resource types.'
+    static final String TASK_DESCRIPTION = 'Lists information on resource types.'
 
     private Property<String> type = project.objects.property(String)
 

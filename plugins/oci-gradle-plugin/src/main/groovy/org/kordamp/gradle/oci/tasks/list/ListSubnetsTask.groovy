@@ -27,7 +27,7 @@ import org.gradle.api.tasks.TaskAction
 import org.kordamp.gradle.AnsiConsole
 import org.kordamp.gradle.oci.tasks.AbstractOCITask
 import org.kordamp.gradle.oci.tasks.interfaces.OCITask
-import org.kordamp.gradle.oci.tasks.traits.CompartmentAwareTrait
+import org.kordamp.gradle.oci.tasks.traits.CompartmentIdAwareTrait
 import org.kordamp.gradle.oci.tasks.traits.VcnIdAwareTrait
 import org.kordamp.gradle.oci.tasks.traits.VerboseAwareTrait
 import org.kordamp.jipsy.TypeProviderFor
@@ -40,8 +40,8 @@ import static org.kordamp.gradle.oci.tasks.printers.SubnetPrinter.printSubnet
  */
 @CompileStatic
 @TypeProviderFor(OCITask)
-class ListSubnetsTask extends AbstractOCITask implements CompartmentAwareTrait, VcnIdAwareTrait, VerboseAwareTrait {
-    static final String DESCRIPTION = 'Lists subnets available on a VCN.'
+class ListSubnetsTask extends AbstractOCITask implements CompartmentIdAwareTrait, VcnIdAwareTrait, VerboseAwareTrait {
+    static final String TASK_DESCRIPTION = 'Lists subnets available on a VCN.'
 
     @TaskAction
     void executeTask() {

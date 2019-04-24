@@ -22,6 +22,7 @@ import com.oracle.bmc.core.VirtualNetworkClient
 import com.oracle.bmc.core.model.CreateVcnDetails
 import com.oracle.bmc.core.model.Vcn
 import com.oracle.bmc.core.requests.CreateVcnRequest
+import com.oracle.bmc.core.requests.GetVcnRequest
 import com.oracle.bmc.core.requests.ListVcnsRequest
 import groovy.transform.CompileStatic
 import org.gradle.api.provider.Property
@@ -30,7 +31,8 @@ import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.options.Option
 import org.kordamp.gradle.oci.tasks.AbstractOCITask
 import org.kordamp.gradle.oci.tasks.interfaces.OCITask
-import org.kordamp.gradle.oci.tasks.traits.CompartmentAwareTrait
+import org.kordamp.gradle.oci.tasks.traits.CompartmentIdAwareTrait
+import org.kordamp.gradle.oci.tasks.traits.WaitForCompletionAwareTrait
 import org.kordamp.jipsy.TypeProviderFor
 
 import static org.kordamp.gradle.StringUtils.isBlank
@@ -42,14 +44,15 @@ import static org.kordamp.gradle.oci.tasks.printers.VcnPrinter.printVcn
  */
 @CompileStatic
 @TypeProviderFor(OCITask)
-class CreateVcnTask extends AbstractOCITask implements CompartmentAwareTrait {
-    static final String DESCRIPTION = 'Creates a VCN.'
+class CreateVcnTask extends AbstractOCITask implements CompartmentIdAwareTrait,
+    WaitForCompletionAwareTrait {
+    static final String TASK_DESCRIPTION = 'Creates a Vcn.'
 
     private final Property<String> vcnName = project.objects.property(String)
-    private final Property<String> vcnId = project.objects.property(String)
+    private final Property<String> createdVcnId = project.objects.property(String)
 
     @Input
-    @Option(option = 'vcn-name', description = 'The name of the VCN to be created.')
+    @Option(option = 'vcn-name', description = 'The name of the Vcn to be created.')
     void setVcnName(String vcnName) {
         this.vcnName.set(vcnName)
     }
@@ -58,8 +61,8 @@ class CreateVcnTask extends AbstractOCITask implements CompartmentAwareTrait {
         return vcnName.orNull
     }
 
-    String getVcnId() {
-        return vcnId.orNull
+    String getCreatedVcnId() {
+        return createdVcnId.orNull
     }
 
     @TaskAction
@@ -67,34 +70,45 @@ class CreateVcnTask extends AbstractOCITask implements CompartmentAwareTrait {
         validateCompartmentId()
 
         if (isBlank(getVcnName())) {
-            setVcnName(UUID.randomUUID().toString())
+            setVcnName('vcn-' + UUID.randomUUID().toString())
             project.logger.warn("Missing value for 'vcnName' in $path. Value set to ${vcnName}")
         }
 
         AuthenticationDetailsProvider provider = resolveAuthenticationDetailsProvider()
-        VirtualNetworkClient vcnClient = new VirtualNetworkClient(provider)
+        VirtualNetworkClient client = new VirtualNetworkClient(provider)
 
         // 1. Check if it exists
-        List<Vcn> vcns = vcnClient.listVcns(ListVcnsRequest.builder()
+        List<Vcn> vcns = client.listVcns(ListVcnsRequest.builder()
             .compartmentId(compartmentId)
             .displayName(vcnName.get())
             .build())
             .items
 
         if (!vcns.empty) {
-            vcnId.set(vcns[0].id)
+            createdVcnId.set(vcns[0].id)
             println("VCN '${vcnName}' already exists.")
             printVcn(this, vcns[0], 0)
         } else {
             // 2. Create
-            println('Provisioning VCN. This may take a while.')
-            Vcn vcn = createVcn(vcnClient, compartmentId, getVcnName(), '10.0.0.0/16')
-            vcnId.set(vcn.id)
-            println("VCN '${vcnName}' has been provisioned.")
+            println('Provisioning Vcn. This may take a while.')
+            Vcn vcn = createVcn(client, compartmentId, getVcnName(), '10.0.0.0/16')
+
+            if (isWaitForCompletion()) {
+                println("Waiting for Vcn to be Available")
+                client.waiters
+                    .forVcn(GetVcnRequest.builder()
+                        .vcnId(vcn.id)
+                        .build(),
+                        Vcn.LifecycleState.Available)
+                    .execute()
+            }
+
+            createdVcnId.set(vcn.id)
+            println("Vcn '${vcnName}' has been provisioned.")
             printVcn(this, vcn, 0)
         }
 
-        vcnClient.close()
+        client.close()
     }
 
     private Vcn createVcn(VirtualNetworkClient vcnClient,

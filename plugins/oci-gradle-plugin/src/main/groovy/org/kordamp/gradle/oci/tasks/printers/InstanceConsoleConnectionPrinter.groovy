@@ -19,12 +19,14 @@ package org.kordamp.gradle.oci.tasks.printers
 
 
 import com.oracle.bmc.core.model.InstanceConsoleConnection
+import groovy.transform.CompileStatic
 import org.kordamp.gradle.oci.tasks.interfaces.ValuePrinter
 
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
+@CompileStatic
 class InstanceConsoleConnectionPrinter {
     static void printInstanceConsoleConnection(ValuePrinter printer, InstanceConsoleConnection connection, int offset) {
         printer.printKeyValue('ID', connection.id, offset + 1)
@@ -34,5 +36,6 @@ class InstanceConsoleConnectionPrinter {
         printer.printKeyValue('Connection String', connection.connectionString, offset + 1)
         printer.printKeyValue('VNC Connection String', connection.vncConnectionString, offset + 1)
         printer.printKeyValue('Lifecycle State', connection.lifecycleState, offset + 1)
+        printer.printMap('Freeform Tags', connection.freeformTags, offset + 1)
     }
 }

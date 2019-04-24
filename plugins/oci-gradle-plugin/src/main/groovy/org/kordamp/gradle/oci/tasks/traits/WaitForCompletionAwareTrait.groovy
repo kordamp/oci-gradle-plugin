@@ -15,20 +15,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kordamp.gradle.oci.tasks.printers
+package org.kordamp.gradle.oci.tasks.traits
 
-import com.oracle.bmc.identity.model.AvailabilityDomain
 import groovy.transform.CompileStatic
-import org.kordamp.gradle.oci.tasks.interfaces.ValuePrinter
+import org.gradle.api.provider.Property
+import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Optional
+import org.gradle.api.tasks.options.Option
+import org.kordamp.gradle.oci.tasks.interfaces.ProjectAware
 
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
 @CompileStatic
-class AvailabilityDomainPrinter {
-    static void printAvailabilityDomain(ValuePrinter printer, AvailabilityDomain domain, int offset) {
-        printer.printKeyValue('ID', domain.id, offset + 1)
-        printer.printKeyValue('Compartment ID', domain.compartmentId, offset + 1)
+trait WaitForCompletionAwareTrait implements ProjectAware {
+    private final Property<Boolean> waitForCompletion = project.objects.property(Boolean)
+
+    @Optional
+    @Input
+    @Option(option = 'wait-for-completion', description = 'Wait for operation to finish.')
+    void setWaitForCompletion(boolean waitForCompletion) {
+        this.waitForCompletion.set(waitForCompletion)
+    }
+
+    boolean isWaitForCompletion() {
+        waitForCompletion.getOrElse(false)
     }
 }

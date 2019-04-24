@@ -27,7 +27,7 @@ import org.gradle.api.tasks.TaskAction
 import org.kordamp.gradle.AnsiConsole
 import org.kordamp.gradle.oci.tasks.AbstractOCITask
 import org.kordamp.gradle.oci.tasks.interfaces.OCITask
-import org.kordamp.gradle.oci.tasks.traits.CompartmentAwareTrait
+import org.kordamp.gradle.oci.tasks.traits.CompartmentIdAwareTrait
 import org.kordamp.jipsy.TypeProviderFor
 
 /**
@@ -36,8 +36,8 @@ import org.kordamp.jipsy.TypeProviderFor
  */
 @CompileStatic
 @TypeProviderFor(OCITask)
-class ListShapesTask extends AbstractOCITask implements CompartmentAwareTrait {
-    static final String DESCRIPTION = 'Lists shapes available on a compartment.'
+class ListShapesTask extends AbstractOCITask implements CompartmentIdAwareTrait {
+    static final String TASK_DESCRIPTION = 'Lists shapes available on a compartment.'
 
     @TaskAction
     void executeTask() {

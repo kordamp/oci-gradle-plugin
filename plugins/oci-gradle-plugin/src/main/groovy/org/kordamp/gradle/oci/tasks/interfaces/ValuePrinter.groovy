@@ -22,4 +22,6 @@ package org.kordamp.gradle.oci.tasks.interfaces
  */
 interface ValuePrinter {
     void printKeyValue(String key, value, int offset)
+
+    void printMap(String key, Map<String, ?> map, int offset)
 }

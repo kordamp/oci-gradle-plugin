@@ -103,19 +103,25 @@ abstract class AbstractOCITask extends AbstractReportingTask implements OCITask 
 
     @Override
     protected void doPrintMapEntry(AnsiConsole console, String key, value, int offset) {
-        if (null != value) {
+        if (value instanceof CharSequence) {
+            if (isNotBlank((String.valueOf(value)))) {
+                super.doPrintMapEntry(console, key, value, offset)
+            }
+        } else {
             super.doPrintMapEntry(console, key, value, offset)
         }
     }
 
     @Override
     void printKeyValue(String key, Object value, int offset) {
-        if (value instanceof CharSequence) {
-            if (isNotBlank((String.valueOf(value)))) {
-                doPrintMapEntry(console, key, value, offset)
-            }
-        } else {
-            doPrintMapEntry(console, key, value, offset)
+        doPrintMapEntry(console, key, value, offset)
+    }
+
+    @Override
+    void printMap(String key, Map<String, ?> map, int offset) {
+        if (!map.isEmpty()) {
+            println(('    ' * offset) + key + ':')
+            doPrintMap(console, map, offset + 1)
         }
     }
 }

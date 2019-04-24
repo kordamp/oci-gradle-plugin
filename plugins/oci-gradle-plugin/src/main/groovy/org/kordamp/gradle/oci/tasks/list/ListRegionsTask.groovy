@@ -39,7 +39,7 @@ import static org.kordamp.gradle.oci.tasks.printers.RegionPrinter.printRegion
 @CompileStatic
 @TypeProviderFor(OCITask)
 class ListRegionsTask extends AbstractOCITask implements VerboseAwareTrait {
-    static final String DESCRIPTION = 'Lists available regions.'
+    static final String TASK_DESCRIPTION = 'Lists available regions.'
 
     @TaskAction
     void executeTask() {

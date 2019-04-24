@@ -27,7 +27,7 @@ import org.gradle.api.tasks.TaskAction
 import org.kordamp.gradle.AnsiConsole
 import org.kordamp.gradle.oci.tasks.AbstractOCITask
 import org.kordamp.gradle.oci.tasks.interfaces.OCITask
-import org.kordamp.gradle.oci.tasks.traits.CompartmentAwareTrait
+import org.kordamp.gradle.oci.tasks.traits.CompartmentIdAwareTrait
 import org.kordamp.gradle.oci.tasks.traits.InstanceIdAwareTrait
 import org.kordamp.jipsy.TypeProviderFor
 
@@ -39,8 +39,8 @@ import static org.kordamp.gradle.oci.tasks.printers.InstanceConsoleConnectionPri
  */
 @CompileStatic
 @TypeProviderFor(OCITask)
-class ListInstanceConsoleConnectionsTask extends AbstractOCITask implements CompartmentAwareTrait, InstanceIdAwareTrait {
-    static final String DESCRIPTION = 'Lists available console connections on an instance.'
+class ListInstanceConsoleConnectionsTask extends AbstractOCITask implements CompartmentIdAwareTrait, InstanceIdAwareTrait {
+    static final String TASK_DESCRIPTION = 'Lists available console connections on an instance.'
 
     @TaskAction
     void executeTask() {

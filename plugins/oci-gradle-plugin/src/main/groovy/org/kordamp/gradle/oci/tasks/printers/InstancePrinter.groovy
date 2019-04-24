@@ -18,12 +18,14 @@
 package org.kordamp.gradle.oci.tasks.printers
 
 import com.oracle.bmc.core.model.Instance
+import groovy.transform.CompileStatic
 import org.kordamp.gradle.oci.tasks.interfaces.ValuePrinter
 
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
+@CompileStatic
 class InstancePrinter {
     static void printInstance(ValuePrinter printer, Instance instance, int offset) {
         printer.printKeyValue('ID', instance.id, offset + 1)
@@ -34,5 +36,8 @@ class InstancePrinter {
         printer.printKeyValue('Shape', instance.shape, offset + 1)
         printer.printKeyValue('Time Created', instance.timeCreated, offset + 1)
         printer.printKeyValue('Lifecycle State', instance.lifecycleState, offset + 1)
+        printer.printMap('Defined Tags', instance.definedTags, offset + 1)
+        printer.printMap('Freeform Tags', instance.freeformTags, offset + 1)
+        printer.printMap('Metadata', instance.metadata, offset + 1)
     }
 }

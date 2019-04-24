@@ -18,12 +18,14 @@
 package org.kordamp.gradle.oci.tasks.printers
 
 import com.oracle.bmc.identity.model.Region
+import groovy.transform.CompileStatic
 import org.kordamp.gradle.oci.tasks.interfaces.ValuePrinter
 
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
+@CompileStatic
 class RegionPrinter {
     static void printRegion(ValuePrinter printer, Region region, int offset) {
         printer.printKeyValue('Key', region.key, offset + 1)

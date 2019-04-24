@@ -18,12 +18,14 @@
 package org.kordamp.gradle.oci.tasks.printers
 
 import com.oracle.bmc.core.model.Subnet
+import groovy.transform.CompileStatic
 import org.kordamp.gradle.oci.tasks.interfaces.ValuePrinter
 
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
+@CompileStatic
 class SubnetPrinter {
     static void printSubnet(ValuePrinter printer, Subnet subnet, int offset) {
         printer.printKeyValue('ID', subnet.id, offset + 1)
@@ -34,5 +36,7 @@ class SubnetPrinter {
         printer.printKeyValue('DNS Label', subnet.dnsLabel, offset + 1)
         printer.printKeyValue('Time Created', subnet.timeCreated, offset + 1)
         printer.printKeyValue('Lifecycle State', subnet.lifecycleState, offset + 1)
+        printer.printMap('Defined Tags', subnet.definedTags, offset + 1)
+        printer.printMap('Freeform Tags', subnet.freeformTags, offset + 1)
     }
 }

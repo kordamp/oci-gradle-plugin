@@ -27,7 +27,7 @@ import org.gradle.api.provider.Property
 import org.gradle.api.tasks.TaskAction
 import org.kordamp.gradle.oci.tasks.AbstractOCITask
 import org.kordamp.gradle.oci.tasks.interfaces.OCITask
-import org.kordamp.gradle.oci.tasks.traits.CompartmentAwareTrait
+import org.kordamp.gradle.oci.tasks.traits.CompartmentIdAwareTrait
 import org.kordamp.gradle.oci.tasks.traits.InstanceIdAwareTrait
 import org.kordamp.gradle.oci.tasks.traits.PublicKeyFileAwareTrait
 import org.kordamp.jipsy.TypeProviderFor
@@ -40,13 +40,13 @@ import static org.kordamp.gradle.oci.tasks.printers.InstanceConsoleConnectionPri
  */
 @CompileStatic
 @TypeProviderFor(OCITask)
-class CreateInstanceConsoleConnectionTask extends AbstractOCITask implements CompartmentAwareTrait, InstanceIdAwareTrait, PublicKeyFileAwareTrait {
-    static final String DESCRIPTION = 'Creates an instance console connection.'
+class CreateInstanceConsoleConnectionTask extends AbstractOCITask implements CompartmentIdAwareTrait, InstanceIdAwareTrait, PublicKeyFileAwareTrait {
+    static final String TASK_DESCRIPTION = 'Creates an instance console connection.'
 
-    private final Property<String> connectionId = project.objects.property(String)
+    private final Property<String> creactedConnectionId = project.objects.property(String)
 
-    String getInstanceConsoleConnectionId() {
-        return connectionId.orNull
+    String getCreatedInstanceConsoleConnectionId() {
+        return creactedConnectionId.orNull
     }
 
     @TaskAction
@@ -68,7 +68,7 @@ class CreateInstanceConsoleConnectionTask extends AbstractOCITask implements Com
             .build())
             .instanceConsoleConnection
 
-        connectionId.set(connection.id)
+        creactedConnectionId.set(connection.id)
         println("InstanceConsoleConnection has been provisioned.")
         printInstanceConsoleConnection(this, connection, 0)
 

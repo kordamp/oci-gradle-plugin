@@ -69,7 +69,7 @@ import org.gradle.api.tasks.options.Option
 import org.kordamp.gradle.oci.tasks.AbstractOCITask
 import org.kordamp.gradle.oci.tasks.interfaces.OCITask
 import org.kordamp.gradle.oci.tasks.traits.AvailabilityDomainAwareTrait
-import org.kordamp.gradle.oci.tasks.traits.CompartmentAwareTrait
+import org.kordamp.gradle.oci.tasks.traits.CompartmentIdAwareTrait
 import org.kordamp.gradle.oci.tasks.traits.PublicKeyFileAwareTrait
 import org.kordamp.jipsy.TypeProviderFor
 
@@ -81,8 +81,8 @@ import static org.kordamp.gradle.StringUtils.isBlank
  */
 @CompileStatic
 @TypeProviderFor(OCITask)
-class CreateInstanceTask extends AbstractOCITask implements CompartmentAwareTrait, AvailabilityDomainAwareTrait, PublicKeyFileAwareTrait {
-    static final String DESCRIPTION = 'Creates an instance with VCN, Gateway, and Volume.'
+class CreateInstanceTask extends AbstractOCITask implements CompartmentIdAwareTrait, AvailabilityDomainAwareTrait, PublicKeyFileAwareTrait {
+    static final String TASK_DESCRIPTION = 'Creates an instance with VCN, Gateway, and Volume.'
 
     private final Property<String> instanceName = project.objects.property(String)
     private final Property<String> image = project.objects.property(String)

@@ -1,5 +1,5 @@
 /*
- * SPDX-License-Identifier: Apache-2.0
+ * SPDX-License-Nameentifier: Apache-2.0
  *
  * Copyright 2019 Andres Almiray.
  *
@@ -17,7 +17,6 @@
  */
 package org.kordamp.gradle.oci.tasks.traits
 
-import com.oracle.bmc.OCID
 import groovy.transform.CompileStatic
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
@@ -32,25 +31,22 @@ import static org.kordamp.gradle.StringUtils.isBlank
  * @since 0.1.0
  */
 @CompileStatic
-trait CompartmentAwareTrait implements PathAware, ProjectAware {
-    private final Property<String> compartmentId = project.objects.property(String)
+trait CompartmentDescriptionAwareTrait implements PathAware, ProjectAware {
+    private final Property<String> compartmentDescription = project.objects.property(String)
 
     @Input
-    @Option(option = 'compartment-id', description = 'The id of the compartment to query (REQUIRED).')
-    void setCompartmentId(String compartmentId) {
-        this.compartmentId.set(compartmentId)
+    @Option(option = 'compartment-escription', description = 'The description to use (REQUIRED).')
+    void setCompartmentDescription(String compartmentDescription) {
+        this.compartmentDescription.set(compartmentDescription)
     }
 
-    String getCompartmentId() {
-        return compartmentId.orNull
+    String getCompartmentDescription() {
+        return compartmentDescription.orNull
     }
 
-    void validateCompartmentId() {
-        if (isBlank(getCompartmentId())) {
-            throw new IllegalStateException("Missing value for 'compartmentId' in $path")
-        }
-        if (!OCID.isValid(getCompartmentId())) {
-            throw new IllegalStateException("Compartment id '${compartmentId}' is invalid")
+    void validateCompartmentDescription() {
+        if (isBlank(getCompartmentDescription())) {
+            throw new IllegalStateException("Missing value for 'compartmentDescription' in $path")
         }
     }
 }

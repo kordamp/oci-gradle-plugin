@@ -27,6 +27,7 @@ import org.gradle.api.tasks.TaskAction
 import org.kordamp.gradle.oci.tasks.AbstractOCITask
 import org.kordamp.gradle.oci.tasks.interfaces.OCITask
 import org.kordamp.gradle.oci.tasks.traits.InstanceConsoleConnectionIdAwareTrait
+import org.kordamp.gradle.oci.tasks.traits.WaitForCompletionAwareTrait
 import org.kordamp.jipsy.TypeProviderFor
 
 /**
@@ -35,8 +36,9 @@ import org.kordamp.jipsy.TypeProviderFor
  */
 @CompileStatic
 @TypeProviderFor(OCITask)
-class DeleteInstanceConsoleConnectionTask extends AbstractOCITask implements InstanceConsoleConnectionIdAwareTrait {
-    static final String DESCRIPTION = 'Deletes an instance console connection.'
+class DeleteInstanceConsoleConnectionTask extends AbstractOCITask implements InstanceConsoleConnectionIdAwareTrait,
+    WaitForCompletionAwareTrait {
+    static final String TASK_DESCRIPTION = 'Deletes an instance console connection.'
 
     @TaskAction
     void executeTask() {
@@ -48,11 +50,14 @@ class DeleteInstanceConsoleConnectionTask extends AbstractOCITask implements Ins
             .instanceConsoleConnectionId(instanceConsoleConnectionId)
             .build())
 
-        client.waiters
-            .forInstanceConsoleConnection(GetInstanceConsoleConnectionRequest.builder()
-                .instanceConsoleConnectionId(instanceConsoleConnectionId).build(),
-                InstanceConsoleConnection.LifecycleState.Deleted)
-            .execute()
+        if (isWaitForCompletion()) {
+            println("Waiting for connection to be Deleted")
+            client.waiters
+                .forInstanceConsoleConnection(GetInstanceConsoleConnectionRequest.builder()
+                    .instanceConsoleConnectionId(instanceConsoleConnectionId).build(),
+                    InstanceConsoleConnection.LifecycleState.Deleted)
+                .execute()
+        }
 
         client.close()
     }

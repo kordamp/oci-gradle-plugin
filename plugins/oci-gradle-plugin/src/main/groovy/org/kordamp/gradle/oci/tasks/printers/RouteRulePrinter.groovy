@@ -15,15 +15,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kordamp.gradle.oci.tasks.interfaces
+package org.kordamp.gradle.oci.tasks.printers
+
+import com.oracle.bmc.core.model.RouteRule
+import groovy.transform.CompileStatic
+import org.kordamp.gradle.oci.tasks.interfaces.ValuePrinter
+
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
-interface ValuePrinter {
-    void printKeyValue(String key, value, int offset)
-
-    void printMap(String key, Map<String, ?> map, int offset)
-
-    void printCollection(String key, Collection<?> collection, int offset)
+@CompileStatic
+class RouteRulePrinter {
+    static void printRouteRule(ValuePrinter printer, RouteRule routeRule, int offset) {
+        printer.printKeyValue('Destination', routeRule.destination, offset + 1)
+        printer.printKeyValue('Destination Type', routeRule.destinationType, offset + 1)
+        printer.printKeyValue('Network Entity ID', routeRule.networkEntityId, offset + 1)
+    }
 }

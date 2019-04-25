@@ -124,4 +124,12 @@ abstract class AbstractOCITask extends AbstractReportingTask implements OCITask 
             doPrintMap(console, map, offset + 1)
         }
     }
+
+    @Override
+    void printCollection(String key, Collection<?> collection, int offset) {
+        if (!collection.isEmpty()) {
+            println(('    ' * offset) + key + ':')
+            doPrintCollection(console, collection, offset + 1)
+        }
+    }
 }

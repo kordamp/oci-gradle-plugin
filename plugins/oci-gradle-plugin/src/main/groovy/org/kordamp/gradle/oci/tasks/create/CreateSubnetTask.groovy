@@ -95,7 +95,7 @@ class CreateSubnetTask extends AbstractOCITask implements CompartmentIdAwareTrai
 
         if (isBlank(getSubnetName())) {
             setSubnetName('subnet-' + UUID.randomUUID().toString())
-            project.logger.warn("Missing value for 'subnetName' in $path. Value set to ${subnetName}")
+            project.logger.warn("Missing value for 'subnetName' in $path. Value set to ${getSubnetName()}")
         }
 
         AuthenticationDetailsProvider provider = resolveAuthenticationDetailsProvider()
@@ -105,8 +105,8 @@ class CreateSubnetTask extends AbstractOCITask implements CompartmentIdAwareTrai
         AvailabilityDomain _availabilityDomain = validateAvailabilityDomain(identityClient, compartmentId)
 
         if (isBlank(getDnsLabel())) {
-            setSubnetName('sub' + HashUtil.sha1(vcnId.bytes).asCompactString()[0..10])
-            project.logger.warn("Missing value for 'dnsLabel' in $path. Value set to ${subnetName}")
+            setDnsLabel('sub' + HashUtil.sha1(vcnId.bytes).asCompactString()[0..10])
+            project.logger.warn("Missing value for 'dnsLabel' in $path. Value set to ${getDnsLabel()}")
         }
 
         Subnet subnet = maybeCreateSubnet(this,

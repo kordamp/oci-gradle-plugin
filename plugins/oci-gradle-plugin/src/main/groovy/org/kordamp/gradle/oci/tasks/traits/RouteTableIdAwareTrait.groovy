@@ -17,6 +17,7 @@
  */
 package org.kordamp.gradle.oci.tasks.traits
 
+import com.oracle.bmc.OCID
 import groovy.transform.CompileStatic
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
@@ -31,23 +32,25 @@ import static org.kordamp.gradle.StringUtils.isBlank
  * @since 0.1.0
  */
 @CompileStatic
-trait CompartmentNameAwareTrait implements PathAware, ProjectAware {
-    private final Property<String> compartmentName = project.objects.property(String)
+trait RouteTableIdAwareTrait implements PathAware, ProjectAware {
+    private final Property<String> routeTableId = project.objects.property(String)
 
     @Input
-    @Option(option = 'compartment-name', description = 'The name of the Compartment to query (REQUIRED).')
-    void setCompartmentName(String compartmentName) {
-        this.compartmentName.set(compartmentName)
+    @Option(option = 'routeTable-id', description = 'The id of the RouteTable to query (REQUIRED).')
+    void setRouteTableId(String routeTableId) {
+        this.routeTableId.set(routeTableId)
     }
 
-    String getCompartmentName() {
-        return compartmentName.orNull
+    String getRouteTableId() {
+        return routeTableId.orNull
     }
 
-    void validateCompartmentName() {
-        if (isBlank(getCompartmentName())) {
-            setCompartmentName('compartment-' + UUID.randomUUID().toString())
-            project.logger.warn("Missing value for 'compartmentName' in $path. Value set to ${getCompartmentName()}")
+    void validateRouteTableId() {
+        if (isBlank(getRouteTableId())) {
+            throw new IllegalStateException("Missing value for 'routeTableId' in $path")
+        }
+        if (!OCID.isValid(getRouteTableId())) {
+            throw new IllegalStateException("RouteTable id '${routeTableId}' is invalid")
         }
     }
 }

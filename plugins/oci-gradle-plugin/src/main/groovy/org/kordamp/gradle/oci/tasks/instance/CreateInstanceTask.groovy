@@ -119,7 +119,6 @@ class CreateInstanceTask extends AbstractOCITask implements CompartmentIdAwareTr
         userDataFile.asFile.orNull
     }
 
-
     String getInstanceName() {
         instanceName.orNull
     }
@@ -138,7 +137,7 @@ class CreateInstanceTask extends AbstractOCITask implements CompartmentIdAwareTr
 
         if (isBlank(getInstanceName())) {
             setInstanceName(UUID.randomUUID().toString())
-            project.logger.warn("Missing value of 'instanceName' in $path. Value set to ${instanceName}")
+            project.logger.warn("Missing value of 'instanceName' in $path. Value set to ${getInstanceName()}")
         }
         if (isBlank(getImage())) {
             throw new IllegalStateException("Missing value for 'image' in $path")
@@ -182,15 +181,12 @@ class CreateInstanceTask extends AbstractOCITask implements CompartmentIdAwareTr
             networkCidrBlock,
             true)
 
-        // TODO: flag for connecting to intranet
-        InternetGateway internetGateway = maybeCreateInternetGateway(this,
+        maybeCreateInternetGateway(this,
             vcnClient,
             getCompartmentId(),
             internetGatewayDisplayName,
             vcn.id,
             true)
-
-        // addInternetGatewayToRouteTable(vcnClient, vcn.defaultRouteTableId, internetGateway)
 
         Subnet subnet = null
         int subnetIndex = 0

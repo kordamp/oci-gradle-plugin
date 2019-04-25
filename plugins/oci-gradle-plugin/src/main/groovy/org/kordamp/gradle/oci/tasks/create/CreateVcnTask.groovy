@@ -74,7 +74,7 @@ class CreateVcnTask extends AbstractOCITask implements CompartmentIdAwareTrait,
 
         if (isBlank(getVcnName())) {
             setVcnName('vcn-' + UUID.randomUUID().toString())
-            project.logger.warn("Missing value for 'vcnName' in $path. Value set to ${vcnName}")
+            project.logger.warn("Missing value for 'vcnName' in $path. Value set to ${getVcnName()}")
         }
 
         AuthenticationDetailsProvider provider = resolveAuthenticationDetailsProvider()

@@ -21,16 +21,20 @@ import com.oracle.bmc.auth.AuthenticationDetailsProvider
 import com.oracle.bmc.core.VirtualNetworkClient
 import com.oracle.bmc.core.model.CreateSubnetDetails
 import com.oracle.bmc.core.model.Subnet
+import com.oracle.bmc.core.model.Vcn
 import com.oracle.bmc.core.requests.CreateSubnetRequest
 import com.oracle.bmc.core.requests.GetSubnetRequest
+import com.oracle.bmc.core.requests.GetVcnRequest
 import com.oracle.bmc.core.requests.ListSubnetsRequest
 import com.oracle.bmc.identity.IdentityClient
 import com.oracle.bmc.identity.model.AvailabilityDomain
 import groovy.transform.CompileStatic
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.options.Option
+import org.gradle.internal.hash.HashUtil
 import org.kordamp.gradle.oci.tasks.AbstractOCITask
 import org.kordamp.gradle.oci.tasks.interfaces.OCITask
 import org.kordamp.gradle.oci.tasks.traits.AvailabilityDomainAwareTrait
@@ -55,6 +59,7 @@ class CreateSubnetTask extends AbstractOCITask implements CompartmentIdAwareTrai
     static final String TASK_DESCRIPTION = 'Creates a Subnet.'
 
     private final Property<String> subnetName = project.objects.property(String)
+    private final Property<String> dnsLabel = project.objects.property(String)
     private final Property<String> createdSubnetId = project.objects.property(String)
 
     @Input
@@ -65,6 +70,17 @@ class CreateSubnetTask extends AbstractOCITask implements CompartmentIdAwareTrai
 
     String getSubnetName() {
         return subnetName.orNull
+    }
+
+    @Input
+    @Optional
+    @Option(option = 'dns-label', description = 'The DNS label to use (REQUIRED).')
+    void setDnsLabel(String dnsLabel) {
+        this.dnsLabel.set(dnsLabel?.replace('.', '')?.replace('-', ''))
+    }
+
+    String getDnsLabel() {
+        return dnsLabel.orNull
     }
 
     String getCreatedSubnetId() {
@@ -88,10 +104,16 @@ class CreateSubnetTask extends AbstractOCITask implements CompartmentIdAwareTrai
 
         AvailabilityDomain _availabilityDomain = validateAvailabilityDomain(identityClient, compartmentId)
 
+        if (isBlank(getDnsLabel())) {
+            setSubnetName('sub' + HashUtil.sha1(vcnId.bytes).asCompactString()[0..10])
+            project.logger.warn("Missing value for 'dnsLabel' in $path. Value set to ${subnetName}")
+        }
+
         Subnet subnet = maybeCreateSubnet(this,
             client,
             getCompartmentId(),
             getVcnId(),
+            getDnsLabel(),
             _availabilityDomain.name,
             getSubnetName(),
             '10.0.0.0/24',
@@ -105,11 +127,11 @@ class CreateSubnetTask extends AbstractOCITask implements CompartmentIdAwareTrai
                                     VirtualNetworkClient client,
                                     String compartmentId,
                                     String vcnId,
+                                    String dnsLabel,
                                     String availabilityDomain,
                                     String subnetName,
                                     String cidrBlock,
                                     boolean waitForCompletion) {
-
         // 1. Check if it exists
         List<Subnet> subnets = client.listSubnets(ListSubnetsRequest.builder()
             .compartmentId(compartmentId)
@@ -125,12 +147,18 @@ class CreateSubnetTask extends AbstractOCITask implements CompartmentIdAwareTrai
             return subnets[0]
         }
 
+        Vcn vcn = client.getVcn(GetVcnRequest.builder()
+            .vcnId(vcnId)
+            .build())
+            .vcn
+
         Subnet subnet = client.createSubnet(CreateSubnetRequest.builder()
             .createSubnetDetails(CreateSubnetDetails.builder()
                 .compartmentId(compartmentId)
                 .vcnId(vcnId)
                 .availabilityDomain(availabilityDomain)
                 .displayName(subnetName)
+                .dnsLabel(dnsLabel)
                 .cidrBlock(cidrBlock)
                 .build())
             .build())

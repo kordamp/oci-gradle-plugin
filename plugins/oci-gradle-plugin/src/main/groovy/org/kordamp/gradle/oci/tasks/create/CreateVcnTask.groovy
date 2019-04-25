@@ -32,6 +32,7 @@ import org.gradle.api.tasks.options.Option
 import org.kordamp.gradle.oci.tasks.AbstractOCITask
 import org.kordamp.gradle.oci.tasks.interfaces.OCITask
 import org.kordamp.gradle.oci.tasks.traits.CompartmentIdAwareTrait
+import org.kordamp.gradle.oci.tasks.traits.DnsLabelAwareTrait
 import org.kordamp.gradle.oci.tasks.traits.WaitForCompletionAwareTrait
 import org.kordamp.jipsy.TypeProviderFor
 
@@ -45,6 +46,7 @@ import static org.kordamp.gradle.oci.tasks.printers.VcnPrinter.printVcn
 @CompileStatic
 @TypeProviderFor(OCITask)
 class CreateVcnTask extends AbstractOCITask implements CompartmentIdAwareTrait,
+    DnsLabelAwareTrait,
     WaitForCompletionAwareTrait {
     static final String TASK_DESCRIPTION = 'Creates a Vcn.'
 
@@ -68,6 +70,7 @@ class CreateVcnTask extends AbstractOCITask implements CompartmentIdAwareTrait,
     @TaskAction
     void executeTask() {
         validateCompartmentId()
+        validateDnsLabel()
 
         if (isBlank(getVcnName())) {
             setVcnName('vcn-' + UUID.randomUUID().toString())
@@ -81,6 +84,7 @@ class CreateVcnTask extends AbstractOCITask implements CompartmentIdAwareTrait,
             client,
             getCompartmentId(),
             getVcnName(),
+            getDnsLabel(),
             '10.0.0.0/16',
             isWaitForCompletion())
         createdVcnId.set(vcn.id)
@@ -92,6 +96,7 @@ class CreateVcnTask extends AbstractOCITask implements CompartmentIdAwareTrait,
                               VirtualNetworkClient client,
                               String compartmentId,
                               String vcnName,
+                              String dnsLabel,
                               String cidrBlock,
                               boolean waitForCompletion) {
         // 1. Check if it exists
@@ -115,7 +120,7 @@ class CreateVcnTask extends AbstractOCITask implements CompartmentIdAwareTrait,
                 .cidrBlock(cidrBlock)
                 .compartmentId(compartmentId)
                 .displayName(vcnName)
-
+                .dnsLabel(dnsLabel)
                 .build())
             .build())
             .vcn

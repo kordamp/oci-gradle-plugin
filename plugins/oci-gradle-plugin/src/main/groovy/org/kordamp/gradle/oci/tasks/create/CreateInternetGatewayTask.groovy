@@ -98,7 +98,6 @@ class CreateInternetGatewayTask extends AbstractOCITask implements CompartmentId
                                                       String vcnId,
                                                       String internetGatewayName,
                                                       boolean waitForCompletion) {
-
         // 1. Check if it exists
         List<InternetGateway> internetGateways = client.listInternetGateways(ListInternetGatewaysRequest.builder()
             .compartmentId(compartmentId)

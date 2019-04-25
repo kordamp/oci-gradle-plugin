@@ -60,6 +60,7 @@ import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.options.Option
+import org.gradle.internal.hash.HashUtil
 import org.kordamp.gradle.oci.tasks.AbstractOCITask
 import org.kordamp.gradle.oci.tasks.interfaces.OCITask
 import org.kordamp.gradle.oci.tasks.traits.CompartmentIdAwareTrait
@@ -165,6 +166,7 @@ class CreateInstanceTask extends AbstractOCITask implements CompartmentIdAwareTr
         String userDataFile = getUserDataFile()?.text
         String subnetDisplayName = getInstanceName() + '-subnet'
         String vcnDisplayName = getInstanceName() + '-vcn'
+        String dnsLabel = getInstanceName()
         String internetGatewayDisplayName = getInstanceName() + '-internet-gateway'
         String bootVolumeDisplayName = getInstanceName() + '-boot-volume'
         String kmsKeyId = ''
@@ -176,6 +178,7 @@ class CreateInstanceTask extends AbstractOCITask implements CompartmentIdAwareTr
             vcnClient,
             getCompartmentId(),
             vcnDisplayName,
+            dnsLabel,
             networkCidrBlock,
             true)
 
@@ -190,14 +193,17 @@ class CreateInstanceTask extends AbstractOCITask implements CompartmentIdAwareTr
         // addInternetGatewayToRouteTable(vcnClient, vcn.defaultRouteTableId, internetGateway)
 
         Subnet subnet = null
+        int subnetIndex = 0
         // create a Subnet per AvailabilityDomain
         for (AvailabilityDomain domain : identityClient.listAvailabilityDomains(ListAvailabilityDomainsRequest.builder()
             .compartmentId(getCompartmentId())
             .build()).items) {
+            String subnetDnsLabel = 'sub' + HashUtil.sha1(vcn.id.bytes).asCompactString()[0..10] + (subnetIndex.toString().padLeft(3, '0'))
             Subnet s = maybeCreateSubnet(this,
                 vcnClient,
                 getCompartmentId(),
                 vcn.id,
+                subnetDnsLabel,
                 domain.name,
                 subnetDisplayName,
                 networkCidrBlock,
@@ -205,6 +211,7 @@ class CreateInstanceTask extends AbstractOCITask implements CompartmentIdAwareTr
 
             // save the first one
             if (subnet == null) subnet = s
+            subnetIndex++
         }
 
         Instance instance = maybeCreateInstance(computeClient,

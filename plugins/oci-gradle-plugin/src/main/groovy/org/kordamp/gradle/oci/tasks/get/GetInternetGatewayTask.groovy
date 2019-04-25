@@ -19,16 +19,16 @@ package org.kordamp.gradle.oci.tasks.get
 
 import com.oracle.bmc.auth.AuthenticationDetailsProvider
 import com.oracle.bmc.core.VirtualNetworkClient
-import com.oracle.bmc.core.model.Subnet
-import com.oracle.bmc.core.requests.GetSubnetRequest
+import com.oracle.bmc.core.model.InternetGateway
+import com.oracle.bmc.core.requests.GetInternetGatewayRequest
 import groovy.transform.CompileStatic
 import org.gradle.api.tasks.TaskAction
 import org.kordamp.gradle.oci.tasks.AbstractOCITask
 import org.kordamp.gradle.oci.tasks.interfaces.OCITask
-import org.kordamp.gradle.oci.tasks.traits.SubnetIdAwareTrait
+import org.kordamp.gradle.oci.tasks.traits.InternetGatewayIdAwareTrait
 import org.kordamp.jipsy.TypeProviderFor
 
-import static org.kordamp.gradle.oci.tasks.printers.SubnetPrinter.printSubnet
+import static org.kordamp.gradle.oci.tasks.printers.InternetGatewayPrinter.printInternetGateway
 
 /**
  * @author Andres Almiray
@@ -36,27 +36,27 @@ import static org.kordamp.gradle.oci.tasks.printers.SubnetPrinter.printSubnet
  */
 @CompileStatic
 @TypeProviderFor(OCITask)
-class GetSubnetTask extends AbstractOCITask implements SubnetIdAwareTrait {
-    static final String TASK_DESCRIPTION = 'Displays information for an specific Subnet.'
+class GetInternetGatewayTask extends AbstractOCITask implements InternetGatewayIdAwareTrait {
+    static final String TASK_DESCRIPTION = 'Displays information for an specific InternetGateway.'
 
     @TaskAction
     void executeTask() {
-        validateSubnetId()
+        validateInternetGatewayId()
 
         AuthenticationDetailsProvider provider = resolveAuthenticationDetailsProvider()
         VirtualNetworkClient client = new VirtualNetworkClient(provider)
 
-        Subnet subnet = client.getSubnet(GetSubnetRequest.builder()
-            .subnetId(getSubnetId())
+        InternetGateway internetGateway = client.getInternetGateway(GetInternetGatewayRequest.builder()
+            .igId(getInternetGatewayId())
             .build())
-            .subnet
+            .internetGateway
         client.close()
 
-        if (subnet) {
-            println(subnet.displayName + ':')
-            printSubnet(this, subnet, 0)
+        if (internetGateway) {
+            println(internetGateway.displayName + ':')
+            printInternetGateway(this, internetGateway, 0)
         } else {
-            println("Subnet with id ${getSubnetId()} was not found")
+            println("InternetGateway with id ${getInternetGatewayId()} was not found")
         }
     }
 }

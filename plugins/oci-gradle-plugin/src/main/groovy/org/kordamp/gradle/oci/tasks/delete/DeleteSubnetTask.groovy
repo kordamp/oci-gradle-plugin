@@ -56,7 +56,7 @@ class DeleteSubnetTask extends AbstractOCITask implements CompartmentIdAwareTrai
 
     @Optional
     @Input
-    @Option(option = 'subnet-name', description = 'The name of the subnet (REQUIRED if subnetId = null).')
+    @Option(option = 'subnet-name', description = 'The name of the Subnet (REQUIRED if subnetId = null).')
     void setSubnetName(String subnetName) {
         this.subnetName.set(subnetName)
     }

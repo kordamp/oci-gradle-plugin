@@ -26,7 +26,6 @@ import com.oracle.bmc.core.model.BootVolume
 import com.oracle.bmc.core.model.BootVolumeSourceDetails
 import com.oracle.bmc.core.model.BootVolumeSourceFromBootVolumeDetails
 import com.oracle.bmc.core.model.CreateBootVolumeDetails
-import com.oracle.bmc.core.model.CreateInternetGatewayDetails
 import com.oracle.bmc.core.model.CreateVnicDetails
 import com.oracle.bmc.core.model.Image
 import com.oracle.bmc.core.model.Instance
@@ -40,14 +39,12 @@ import com.oracle.bmc.core.model.Subnet
 import com.oracle.bmc.core.model.UpdateRouteTableDetails
 import com.oracle.bmc.core.model.Vcn
 import com.oracle.bmc.core.requests.CreateBootVolumeRequest
-import com.oracle.bmc.core.requests.CreateInternetGatewayRequest
 import com.oracle.bmc.core.requests.GetBootVolumeRequest
 import com.oracle.bmc.core.requests.GetInstanceRequest
 import com.oracle.bmc.core.requests.LaunchInstanceRequest
 import com.oracle.bmc.core.requests.ListBootVolumesRequest
 import com.oracle.bmc.core.requests.ListImagesRequest
 import com.oracle.bmc.core.requests.ListInstancesRequest
-import com.oracle.bmc.core.requests.ListInternetGatewaysRequest
 import com.oracle.bmc.core.requests.ListShapesRequest
 import com.oracle.bmc.core.requests.UpdateRouteTableRequest
 import com.oracle.bmc.core.responses.ListImagesResponse
@@ -72,6 +69,7 @@ import org.kordamp.jipsy.TypeProviderFor
 
 import static org.kordamp.gradle.StringUtils.isBlank
 import static org.kordamp.gradle.StringUtils.isNotBlank
+import static org.kordamp.gradle.oci.tasks.create.CreateInternetGatewayTask.maybeCreateInternetGateway
 import static org.kordamp.gradle.oci.tasks.create.CreateSubnetTask.maybeCreateSubnet
 import static org.kordamp.gradle.oci.tasks.create.CreateVcnTask.maybeCreateVcn
 
@@ -168,7 +166,7 @@ class CreateInstanceTask extends AbstractOCITask implements CompartmentIdAwareTr
         String subnetDisplayName = getInstanceName() + '-subnet'
         String vcnDisplayName = getInstanceName() + '-vcn'
         String internetGatewayDisplayName = getInstanceName() + '-internet-gateway'
-        String bootVolumeDisplayName = getInstanceName() + '-bootVolume'
+        String bootVolumeDisplayName = getInstanceName() + '-boot-volume'
         String kmsKeyId = ''
 
         VirtualNetworkClient vcnClient = new VirtualNetworkClient(provider)
@@ -182,7 +180,12 @@ class CreateInstanceTask extends AbstractOCITask implements CompartmentIdAwareTr
             true)
 
         // TODO: flag for connecting to intranet
-        // InternetGateway internetGateway = maybeCreateInternetGateway(vcnClient, compartmentId, internetGatewayDisplayName, vcn.id)
+        InternetGateway internetGateway = maybeCreateInternetGateway(this,
+            vcnClient,
+            getCompartmentId(),
+            internetGatewayDisplayName,
+            vcn.id,
+            true)
 
         // addInternetGatewayToRouteTable(vcnClient, vcn.defaultRouteTableId, internetGateway)
 
@@ -245,32 +248,6 @@ class CreateInstanceTask extends AbstractOCITask implements CompartmentIdAwareTr
             .compartmentId(compartmentId)
             .build())
         response.items.find { Shape sh -> sh.shape == getShape() }
-    }
-
-    private InternetGateway maybeCreateInternetGateway(VirtualNetworkClient vcnClient,
-                                                       String compartmentId,
-                                                       String internetGatewayName,
-                                                       String vcnId) {
-        List<InternetGateway> internetGateways = vcnClient.listInternetGateways(ListInternetGatewaysRequest.builder()
-            .compartmentId(compartmentId)
-            .vcnId(vcnId)
-            .displayName(internetGatewayName)
-            .build())
-            .items
-
-        if (!internetGateways.empty) {
-            return internetGateways[0]
-        }
-
-        vcnClient.createInternetGateway(CreateInternetGatewayRequest.builder()
-            .createInternetGatewayDetails(CreateInternetGatewayDetails.builder()
-                .compartmentId(compartmentId)
-                .displayName(internetGatewayName)
-                .isEnabled(true)
-                .vcnId(vcnId)
-                .build())
-            .build())
-            .internetGateway
     }
 
     private void addInternetGatewayToRouteTable(VirtualNetworkClient vcnClient,

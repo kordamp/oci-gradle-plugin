@@ -127,11 +127,11 @@ class CreateSubnetTask extends AbstractOCITask implements CompartmentIdAwareTrai
 
         Subnet subnet = client.createSubnet(CreateSubnetRequest.builder()
             .createSubnetDetails(CreateSubnetDetails.builder()
-                .availabilityDomain(availabilityDomain)
                 .compartmentId(compartmentId)
+                .vcnId(vcnId)
+                .availabilityDomain(availabilityDomain)
                 .displayName(subnetName)
                 .cidrBlock(cidrBlock)
-                .vcnId(vcnId)
                 .build())
             .build())
             .subnet

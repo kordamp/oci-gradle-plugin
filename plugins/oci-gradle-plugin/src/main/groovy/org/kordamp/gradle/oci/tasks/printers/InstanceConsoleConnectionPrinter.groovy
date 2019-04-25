@@ -36,6 +36,7 @@ class InstanceConsoleConnectionPrinter {
         printer.printKeyValue('Connection String', connection.connectionString, offset + 1)
         printer.printKeyValue('VNC Connection String', connection.vncConnectionString, offset + 1)
         printer.printKeyValue('Lifecycle State', connection.lifecycleState, offset + 1)
+        printer.printMap('Defined Tags', connection.definedTags, offset + 1)
         printer.printMap('Freeform Tags', connection.freeformTags, offset + 1)
     }
 }

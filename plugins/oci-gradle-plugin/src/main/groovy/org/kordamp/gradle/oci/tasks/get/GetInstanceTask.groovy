@@ -50,6 +50,7 @@ class GetInstanceTask extends AbstractOCITask implements InstanceIdAwareTrait {
             .instanceId(instanceId)
             .build())
             .instance
+        client.close()
 
         if (instance) {
             println(instance.displayName + ':')
@@ -57,7 +58,5 @@ class GetInstanceTask extends AbstractOCITask implements InstanceIdAwareTrait {
         } else {
             println("Instance with id ${instanceId} was not found")
         }
-
-        client.close()
     }
 }

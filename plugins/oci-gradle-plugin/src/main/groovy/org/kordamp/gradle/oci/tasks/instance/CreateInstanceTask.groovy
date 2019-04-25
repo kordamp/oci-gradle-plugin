@@ -27,8 +27,6 @@ import com.oracle.bmc.core.model.BootVolumeSourceDetails
 import com.oracle.bmc.core.model.BootVolumeSourceFromBootVolumeDetails
 import com.oracle.bmc.core.model.CreateBootVolumeDetails
 import com.oracle.bmc.core.model.CreateInternetGatewayDetails
-import com.oracle.bmc.core.model.CreateSubnetDetails
-import com.oracle.bmc.core.model.CreateVcnDetails
 import com.oracle.bmc.core.model.CreateVnicDetails
 import com.oracle.bmc.core.model.Image
 import com.oracle.bmc.core.model.Instance
@@ -43,27 +41,25 @@ import com.oracle.bmc.core.model.UpdateRouteTableDetails
 import com.oracle.bmc.core.model.Vcn
 import com.oracle.bmc.core.requests.CreateBootVolumeRequest
 import com.oracle.bmc.core.requests.CreateInternetGatewayRequest
-import com.oracle.bmc.core.requests.CreateSubnetRequest
-import com.oracle.bmc.core.requests.CreateVcnRequest
 import com.oracle.bmc.core.requests.GetBootVolumeRequest
 import com.oracle.bmc.core.requests.GetInstanceRequest
-import com.oracle.bmc.core.requests.GetSubnetRequest
 import com.oracle.bmc.core.requests.LaunchInstanceRequest
 import com.oracle.bmc.core.requests.ListBootVolumesRequest
 import com.oracle.bmc.core.requests.ListImagesRequest
 import com.oracle.bmc.core.requests.ListInstancesRequest
 import com.oracle.bmc.core.requests.ListInternetGatewaysRequest
 import com.oracle.bmc.core.requests.ListShapesRequest
-import com.oracle.bmc.core.requests.ListSubnetsRequest
-import com.oracle.bmc.core.requests.ListVcnsRequest
 import com.oracle.bmc.core.requests.UpdateRouteTableRequest
 import com.oracle.bmc.core.responses.ListImagesResponse
 import com.oracle.bmc.core.responses.ListShapesResponse
 import com.oracle.bmc.identity.IdentityClient
 import com.oracle.bmc.identity.model.AvailabilityDomain
 import groovy.transform.CompileStatic
+import org.apache.commons.codec.binary.Base64
+import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.options.Option
 import org.kordamp.gradle.oci.tasks.AbstractOCITask
@@ -71,9 +67,13 @@ import org.kordamp.gradle.oci.tasks.interfaces.OCITask
 import org.kordamp.gradle.oci.tasks.traits.AvailabilityDomainAwareTrait
 import org.kordamp.gradle.oci.tasks.traits.CompartmentIdAwareTrait
 import org.kordamp.gradle.oci.tasks.traits.PublicKeyFileAwareTrait
+import org.kordamp.gradle.oci.tasks.traits.WaitForCompletionAwareTrait
 import org.kordamp.jipsy.TypeProviderFor
 
 import static org.kordamp.gradle.StringUtils.isBlank
+import static org.kordamp.gradle.StringUtils.isNotBlank
+import static org.kordamp.gradle.oci.tasks.create.CreateSubnetTask.maybeCreateSubnet
+import static org.kordamp.gradle.oci.tasks.create.CreateVcnTask.maybeCreateVcn
 
 /**
  * @author Andres Almiray
@@ -81,12 +81,16 @@ import static org.kordamp.gradle.StringUtils.isBlank
  */
 @CompileStatic
 @TypeProviderFor(OCITask)
-class CreateInstanceTask extends AbstractOCITask implements CompartmentIdAwareTrait, AvailabilityDomainAwareTrait, PublicKeyFileAwareTrait {
+class CreateInstanceTask extends AbstractOCITask implements CompartmentIdAwareTrait,
+    AvailabilityDomainAwareTrait,
+    PublicKeyFileAwareTrait,
+    WaitForCompletionAwareTrait {
     static final String TASK_DESCRIPTION = 'Creates an instance with VCN, Gateway, and Volume.'
 
     private final Property<String> instanceName = project.objects.property(String)
     private final Property<String> image = project.objects.property(String)
     private final Property<String> shape = project.objects.property(String)
+    private final RegularFileProperty userDataFile = project.objects.fileProperty()
 
     @Input
     @Option(option = 'instance-name', description = 'The name of the instance to be created (REQUIRED).')
@@ -105,6 +109,18 @@ class CreateInstanceTask extends AbstractOCITask implements CompartmentIdAwareTr
     void setShape(String shape) {
         this.shape.set(shape)
     }
+
+    @Optional
+    @Input
+    @Option(option = 'user-data-file', description = 'Location of a user data file (OPTIONAL).')
+    void setUserDataFile(String userDataFile) {
+        this.userDataFile.set(project.file(userDataFile))
+    }
+
+    File getUserDataFile() {
+        userDataFile.asFile.orNull
+    }
+
 
     String getInstanceName() {
         instanceName.orNull
@@ -151,7 +167,8 @@ class CreateInstanceTask extends AbstractOCITask implements CompartmentIdAwareTr
         AvailabilityDomain _availabilityDomain = validateAvailabilityDomain(identityClient, compartmentId)
 
         String networkCidrBlock = '10.0.0.0/16'
-        String publicPublicKey = getPublicKeyFile().text
+        String publicKeyFile = getPublicKeyFile().text
+        String userDataFile = getUserDataFile()?.text
         String subnetDisplayName = getInstanceName() + '-subnet'
         String vcnDisplayName = getInstanceName() + '-vcn'
         String internetGatewayDisplayName = getInstanceName() + '-internet-gateway'
@@ -162,27 +179,36 @@ class CreateInstanceTask extends AbstractOCITask implements CompartmentIdAwareTr
         BlockstorageClient blockstorageClient = new BlockstorageClient(provider)
 
         println('Provisioning VCN. This may take a while.')
-        Vcn vcn = maybeCreateVcn(vcnClient, compartmentId, vcnDisplayName, networkCidrBlock)
-        println("VCN is provisioned with id ${vcn.id}")
+        Vcn vcn = maybeCreateVcn(this,
+            vcnClient,
+            getCompartmentId(),
+            vcnDisplayName,
+            networkCidrBlock,
+            true)
 
         // TODO: flag for connecting to intranet
         // InternetGateway internetGateway = maybeCreateInternetGateway(vcnClient, compartmentId, internetGatewayDisplayName, vcn.id)
 
         // addInternetGatewayToRouteTable(vcnClient, vcn.defaultRouteTableId, internetGateway)
 
-        Subnet subnet = maybeCreateSubnet(vcnClient,
-            compartmentId,
-            _availabilityDomain,
+        Subnet subnet = maybeCreateSubnet(this,
+            vcnClient,
+            getCompartmentId(),
+            vcn.id,
+            _availabilityDomain.name,
             subnetDisplayName,
             networkCidrBlock,
-            vcn.id)
+            true)
 
         Instance instance = maybeCreateInstance(computeClient,
-            _availabilityDomain,
-            _image,
-            _shape,
-            subnet,
-            publicPublicKey,
+            getCompartmentId(),
+            getInstanceName(),
+            _availabilityDomain.name,
+            _image.id,
+            _shape.shape,
+            subnet.id,
+            publicKeyFile,
+            userDataFile,
             kmsKeyId)
 
         if (instance.lifecycleState != Instance.LifecycleState.Running) {
@@ -191,10 +217,9 @@ class CreateInstanceTask extends AbstractOCITask implements CompartmentIdAwareTr
             println("Instance is provisioned with id ${instance.id}")
         }
 
-        printMonitoringStatus(instance)
-
         BootVolume bootVolume = createBootVolume(blockstorageClient,
-            _availabilityDomain,
+            getCompartmentId(),
+            _availabilityDomain.name,
             instance.imageId,
             bootVolumeDisplayName,
             kmsKeyId)
@@ -216,30 +241,6 @@ class CreateInstanceTask extends AbstractOCITask implements CompartmentIdAwareTr
             .compartmentId(compartmentId)
             .build())
         response.items.find { Shape sh -> sh.shape == getShape() }
-    }
-
-    private Vcn maybeCreateVcn(VirtualNetworkClient vcnClient,
-                               String compartmentId,
-                               String vcnName,
-                               String cidrBlock) {
-        List<Vcn> vcns = vcnClient.listVcns(ListVcnsRequest.builder()
-            .compartmentId(compartmentId)
-            .displayName(vcnName)
-            .build())
-            .items
-
-        if (!vcns.empty) {
-            return vcns[0]
-        }
-
-        vcnClient.createVcn(CreateVcnRequest.builder()
-            .createVcnDetails(CreateVcnDetails.builder()
-                .cidrBlock(cidrBlock)
-                .compartmentId(compartmentId)
-                .displayName(vcnName)
-                .build())
-            .build())
-            .vcn
     }
 
     private InternetGateway maybeCreateInternetGateway(VirtualNetworkClient vcnClient,
@@ -285,55 +286,20 @@ class CreateInstanceTask extends AbstractOCITask implements CompartmentIdAwareTr
             .build())
     }
 
-    private Subnet maybeCreateSubnet(VirtualNetworkClient vcnClient,
-                                     String compartmentId,
-                                     AvailabilityDomain availabilityDomain,
-                                     String subnetName,
-                                     String cidrBlock,
-                                     String vcnId) {
-        List<Subnet> subnets = vcnClient.listSubnets(ListSubnetsRequest.builder()
-            .compartmentId(compartmentId)
-            .vcnId(vcnId)
-            .displayName(subnetName)
-            .build())
-            .items
-
-        if (!subnets.empty) {
-            return subnets[0]
-        }
-
-        Subnet subnet = vcnClient.createSubnet(CreateSubnetRequest.builder()
-            .createSubnetDetails(CreateSubnetDetails.builder()
-                .availabilityDomain(availabilityDomain.name)
-                .compartmentId(compartmentId)
-                .displayName(subnetName)
-                .cidrBlock(cidrBlock)
-                .vcnId(vcnId)
-                .build())
-            .build())
-            .subnet
-
-        // wait
-        vcnClient.waiters.forSubnet(GetSubnetRequest.builder()
-            .subnetId(subnet.id)
-            .build(),
-            Subnet.LifecycleState.Available)
-            .execute()
-
-        subnet
-    }
-
     private Instance maybeCreateInstance(ComputeClient computeClient,
-                                         AvailabilityDomain availabilityDomain,
-                                         Image image,
-                                         Shape shape,
-                                         Subnet subnet,
-                                         String publicPublicKey,
+                                         String compartmentId,
+                                         String instanceName,
+                                         String availabilityDomain,
+                                         String imageId,
+                                         String shape,
+                                         String subnetId,
+                                         String publicKeyFile,
+                                         String userDataFile,
                                          String kmsKeyId) {
         List<Instance> instances = computeClient.listInstances(ListInstancesRequest.builder()
             .compartmentId(compartmentId)
-            .availabilityDomain(availabilityDomain.name)
-            .displayName(instanceName.get())
+            .availabilityDomain(availabilityDomain)
+            .displayName(instanceName)
             .build())
             .items
 
@@ -341,26 +307,31 @@ class CreateInstanceTask extends AbstractOCITask implements CompartmentIdAwareTr
             return instances[0]
         }
 
-        Map<String, String> metadata = new HashMap<>('public_authorized_keys': publicPublicKey)
+        Map<String, String> metadata = new HashMap<>('public_authorized_keys': publicKeyFile)
+        if (isNotBlank(userDataFile)) {
+            metadata.put("user_data", Base64.encodeBase64String(userDataFile.getBytes()))
+        }
 
         InstanceSourceViaImageDetails details =
             (Strings.isNullOrEmpty(kmsKeyId))
-                ? InstanceSourceViaImageDetails.builder().imageId(image.id).build()
+                ? InstanceSourceViaImageDetails.builder()
+                .imageId(imageId)
+                .build()
                 : InstanceSourceViaImageDetails.builder()
-                .imageId(image.id)
+                .imageId(imageId)
                 .kmsKeyId(kmsKeyId)
                 .build()
 
         computeClient.launchInstance(LaunchInstanceRequest.builder()
             .launchInstanceDetails(LaunchInstanceDetails.builder()
-                .availabilityDomain(availabilityDomain.name)
+                .availabilityDomain(availabilityDomain)
                 .compartmentId(compartmentId)
-                .displayName(instanceName.get())
+                .displayName(instanceName)
                 .metadata(metadata)
-                .shape(shape.shape)
+                .shape(shape)
                 .sourceDetails(details)
                 .createVnicDetails(CreateVnicDetails.builder()
-                    .subnetId(subnet.id)
+                    .subnetId(subnetId)
                     .build())
                 .agentConfig(LaunchInstanceAgentConfigDetails.builder()
                     .isMonitoringDisabled(false)
@@ -378,23 +349,14 @@ class CreateInstanceTask extends AbstractOCITask implements CompartmentIdAwareTr
             .instance
     }
 
-    private void printMonitoringStatus(Instance instance) {
-        boolean monitoringEnabled = instance.agentConfig != null && !instance.agentConfig.isMonitoringDisabled
-
-        if (monitoringEnabled) {
-            println("Instance ${instance.id} has Monitoring Enabled")
-        } else {
-            println("Instance ${instance.id} has Monitoring Disabled")
-        }
-    }
-
     private BootVolume createBootVolume(BlockstorageClient blockstorageClient,
-                                        AvailabilityDomain availabilityDomain,
+                                        String compartmentId,
+                                        String availabilityDomain,
                                         String imageId,
                                         String displayName,
                                         String kmsKeyId) {
         List<BootVolume> bootVolumes = blockstorageClient.listBootVolumes(ListBootVolumesRequest.builder()
-            .availabilityDomain(availabilityDomain.name)
+            .availabilityDomain(availabilityDomain)
             .compartmentId(compartmentId)
             .build())
             .items
@@ -409,16 +371,23 @@ class CreateInstanceTask extends AbstractOCITask implements CompartmentIdAwareTr
             }
         }
 
-        BootVolumeSourceDetails bootVolumeSourceDetails = BootVolumeSourceFromBootVolumeDetails.builder().id(bootVolumeId).build()
-        CreateBootVolumeDetails details = CreateBootVolumeDetails.builder()
-            .availabilityDomain(availabilityDomain.name)
+        BootVolumeSourceDetails bootVolumeSourceDetails = BootVolumeSourceFromBootVolumeDetails.builder()
+            .id(bootVolumeId)
+            .build()
+
+        CreateBootVolumeDetails.Builder details = CreateBootVolumeDetails.builder()
+            .availabilityDomain(availabilityDomain)
             .compartmentId(compartmentId)
             .displayName(displayName)
             .sourceDetails(bootVolumeSourceDetails)
-            .kmsKeyId(kmsKeyId)
-            .build()
 
-        blockstorageClient.createBootVolume(CreateBootVolumeRequest.builder().createBootVolumeDetails(details).build())
+        if (isNotBlank(kmsKeyId)) {
+            details = details.kmsKeyId(kmsKeyId)
+        }
+
+        blockstorageClient.createBootVolume(CreateBootVolumeRequest.builder()
+            .createBootVolumeDetails(details.build())
+            .build())
             .bootVolume
     }
 

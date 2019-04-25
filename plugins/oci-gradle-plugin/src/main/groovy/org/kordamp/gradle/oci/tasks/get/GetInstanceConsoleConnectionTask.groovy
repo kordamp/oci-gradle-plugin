@@ -50,13 +50,12 @@ class GetInstanceConsoleConnectionTask extends AbstractOCITask implements Instan
             .instanceConsoleConnectionId(getInstanceConsoleConnectionId())
             .build())
             .instanceConsoleConnection
+        client.close()
 
         if (connection) {
             printInstanceConsoleConnection(this, connection, 0)
         } else {
             println("Instance console connection with id ${instanceConsoleConnectionId} was not found")
         }
-
-        client.close()
     }
 }

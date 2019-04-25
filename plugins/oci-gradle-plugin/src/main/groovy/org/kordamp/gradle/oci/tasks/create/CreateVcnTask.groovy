@@ -77,51 +77,61 @@ class CreateVcnTask extends AbstractOCITask implements CompartmentIdAwareTrait,
         AuthenticationDetailsProvider provider = resolveAuthenticationDetailsProvider()
         VirtualNetworkClient client = new VirtualNetworkClient(provider)
 
-        // 1. Check if it exists
-        List<Vcn> vcns = client.listVcns(ListVcnsRequest.builder()
-            .compartmentId(compartmentId)
-            .displayName(vcnName.get())
-            .build())
-            .items
-
-        if (!vcns.empty) {
-            createdVcnId.set(vcns[0].id)
-            println("VCN '${vcnName}' already exists.")
-            printVcn(this, vcns[0], 0)
-        } else {
-            // 2. Create
-            println('Provisioning Vcn. This may take a while.')
-            Vcn vcn = createVcn(client, compartmentId, getVcnName(), '10.0.0.0/16')
-
-            if (isWaitForCompletion()) {
-                println("Waiting for Vcn to be Available")
-                client.waiters
-                    .forVcn(GetVcnRequest.builder()
-                        .vcnId(vcn.id)
-                        .build(),
-                        Vcn.LifecycleState.Available)
-                    .execute()
-            }
-
-            createdVcnId.set(vcn.id)
-            println("Vcn '${vcnName}' has been provisioned.")
-            printVcn(this, vcn, 0)
-        }
+        Vcn vcn = maybeCreateVcn(this,
+            client,
+            getCompartmentId(),
+            getVcnName(),
+            '10.0.0.0/16',
+            isWaitForCompletion())
+        createdVcnId.set(vcn.id)
 
         client.close()
     }
 
-    private Vcn createVcn(VirtualNetworkClient vcnClient,
-                          String compartmentId,
-                          String vcnName,
-                          String cidrBlock) {
-        vcnClient.createVcn(CreateVcnRequest.builder()
+    static Vcn maybeCreateVcn(OCITask owner,
+                              VirtualNetworkClient client,
+                              String compartmentId,
+                              String vcnName,
+                              String cidrBlock,
+                              boolean waitForCompletion) {
+        // 1. Check if it exists
+        List<Vcn> vcns = client.listVcns(ListVcnsRequest.builder()
+            .compartmentId(compartmentId)
+            .displayName(vcnName)
+            .build())
+            .items
+
+        if (!vcns.empty) {
+            Vcn vcn = vcns[0]
+            println("Vcn '${vcnName}' already exists. id = ${vcn.id}")
+            printVcn(owner, vcn, 0)
+            return vcn
+        }
+
+        // 2. Create
+        println('Provisioning Vcn. This may take a while.')
+        Vcn vcn = client.createVcn(CreateVcnRequest.builder()
             .createVcnDetails(CreateVcnDetails.builder()
                 .cidrBlock(cidrBlock)
                 .compartmentId(compartmentId)
                 .displayName(vcnName)
+
                 .build())
             .build())
             .vcn
+
+        if (waitForCompletion) {
+            println("Waiting for Vcn to be Available")
+            client.waiters
+                .forVcn(GetVcnRequest.builder()
+                    .vcnId(vcn.id)
+                    .build(),
+                    Vcn.LifecycleState.Available)
+                .execute()
+        }
+
+        println("Vcn '${vcnName}' has been provisioned. id = ${vcn.id}")
+        printVcn(owner, vcn, 0)
+        vcn
     }
 }

@@ -64,47 +64,57 @@ class CreateCompartmentTask extends AbstractOCITask implements CompartmentIdAwar
         AuthenticationDetailsProvider provider = resolveAuthenticationDetailsProvider()
         IdentityClient client = new IdentityClient(provider)
 
-        // 1. Check if it exists
-        List<Compartment> compartments = client.listCompartments(ListCompartmentsRequest.builder()
-            .compartmentId(getCompartmentId())
-            .build()).items
-        Compartment compartment = compartments.find { Compartment c -> c.name == getCompartmentName() }
-
-        if (compartment) {
-            createdCompartmentId.set(compartment.id)
-            println("Compartment '${compartmentName}' already exists.")
-            printCompartment(this, compartment, 0)
-        } else {
-            // 2. Create
-            println('Provisioning Compartment. This may take a while.')
-            compartment = createCompartment(client)
-
-            if (isWaitForCompletion()) {
-                println("Waiting for Compartment to be Active")
-                client.waiters
-                    .forCompartment(GetCompartmentRequest.builder()
-                        .compartmentId(compartmentId)
-                        .build(),
-                        Compartment.LifecycleState.Active)
-                    .execute()
-            }
-
-            createdCompartmentId.set(compartment.id)
-            println("Compartment '${compartmentName}' has been provisioned.")
-            printCompartment(this, compartment, 0)
-        }
+        Compartment compartment = maybeCreateCompartment(this,
+            client,
+            getCompartmentId(),
+            getCompartmentName(),
+            getCompartmentDescription(),
+            isWaitForCompletion())
+        createdCompartmentId.set(compartment.id)
 
         client.close()
     }
 
-    private Compartment createCompartment(IdentityClient client) {
-        client.createCompartment(CreateCompartmentRequest.builder()
+    static Compartment maybeCreateCompartment(OCITask owner,
+                                              IdentityClient client,
+                                              String parentCompartmentId,
+                                              String compartmentName,
+                                              String compartmentDescription,
+                                              boolean waitForCompletion) {
+        // 1. Check if it exists
+        List<Compartment> compartments = client.listCompartments(ListCompartmentsRequest.builder()
+            .compartmentId(parentCompartmentId)
+            .build()).items
+        Compartment compartment = compartments.find { Compartment c -> c.name == compartmentName }
+
+        if (compartment) {
+            println("Compartment '${compartmentName}' already exists. id = ${compartment.id}")
+            printCompartment(owner, compartment, 0)
+            return compartment
+        }
+        // 2. Create
+        println('Provisioning Compartment. This may take a while.')
+        compartment = client.createCompartment(CreateCompartmentRequest.builder()
             .createCompartmentDetails(CreateCompartmentDetails.builder()
-                .compartmentId(getCompartmentId())
-                .name(getCompartmentName())
-                .description(getCompartmentDescription())
+                .compartmentId(parentCompartmentId)
+                .name(compartmentName)
+                .description(compartmentDescription)
                 .build())
             .build())
             .compartment
+
+        if (waitForCompletion) {
+            println("Waiting for Compartment to be Active")
+            client.waiters
+                .forCompartment(GetCompartmentRequest.builder()
+                    .compartmentId(compartment.id)
+                    .build(),
+                    Compartment.LifecycleState.Active)
+                .execute()
+        }
+
+        println("Compartment '${compartmentName}' has been provisioned. id = ${compartment.id}")
+        printCompartment(owner, compartment, 0)
+        compartment
     }
 }

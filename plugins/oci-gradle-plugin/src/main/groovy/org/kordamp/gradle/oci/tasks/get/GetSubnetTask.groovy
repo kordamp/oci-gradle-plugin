@@ -19,16 +19,17 @@ package org.kordamp.gradle.oci.tasks.get
 
 import com.oracle.bmc.auth.AuthenticationDetailsProvider
 import com.oracle.bmc.core.VirtualNetworkClient
-import com.oracle.bmc.core.model.Vcn
-import com.oracle.bmc.core.requests.GetVcnRequest
+import com.oracle.bmc.core.model.Subnet
+import com.oracle.bmc.core.requests.GetSubnetRequest
 import groovy.transform.CompileStatic
 import org.gradle.api.tasks.TaskAction
 import org.kordamp.gradle.oci.tasks.AbstractOCITask
 import org.kordamp.gradle.oci.tasks.interfaces.OCITask
+import org.kordamp.gradle.oci.tasks.traits.SubnetIdAwareTrait
 import org.kordamp.gradle.oci.tasks.traits.VcnIdAwareTrait
 import org.kordamp.jipsy.TypeProviderFor
 
-import static org.kordamp.gradle.oci.tasks.printers.VcnPrinter.printVcn
+import static org.kordamp.gradle.oci.tasks.printers.SubnetPrinter.printSubnet
 
 /**
  * @author Andres Almiray
@@ -36,8 +37,9 @@ import static org.kordamp.gradle.oci.tasks.printers.VcnPrinter.printVcn
  */
 @CompileStatic
 @TypeProviderFor(OCITask)
-class GetVcnTask extends AbstractOCITask implements VcnIdAwareTrait {
-    static final String TASK_DESCRIPTION = 'Displays information for an specific vcn.'
+class GetSubnetTask extends AbstractOCITask implements VcnIdAwareTrait,
+    SubnetIdAwareTrait {
+    static final String TASK_DESCRIPTION = 'Displays information for an specific subnet.'
 
     @TaskAction
     void executeTask() {
@@ -46,17 +48,17 @@ class GetVcnTask extends AbstractOCITask implements VcnIdAwareTrait {
         AuthenticationDetailsProvider provider = resolveAuthenticationDetailsProvider()
         VirtualNetworkClient client = new VirtualNetworkClient(provider)
 
-        Vcn vcn = client.getVcn(GetVcnRequest.builder()
-            .vcnId(getVcnId())
+        Subnet subnet = client.getSubnet(GetSubnetRequest.builder()
+            .subnetId(getSubnetId())
             .build())
-            .vcn
+            .subnet
         client.close()
 
-        if (vcn) {
-            println(vcn.displayName + ':')
-            printVcn(this, vcn, 0)
+        if (subnet) {
+            println(subnet.displayName + ':')
+            printSubnet(this, subnet, 0)
         } else {
-            println("Vcn with id ${vcnId} was not found")
+            println("Subnet with id ${getSubnetId()} was not found")
         }
     }
 }

@@ -66,7 +66,7 @@ class DeleteVcnTask extends AbstractOCITask implements CompartmentIdAwareTrait,
     @TaskAction
     void executeTask() {
         if (isBlank(getVcnId()) && isBlank(getVcnName())) {
-            throw new IllegalStateException("Missing value for either 'vcnId' or 'vncName' in $path")
+            throw new IllegalStateException("Missing value for either 'vcnId' or 'vcnName' in $path")
         }
 
         AuthenticationDetailsProvider provider = resolveAuthenticationDetailsProvider()
@@ -97,7 +97,7 @@ class DeleteVcnTask extends AbstractOCITask implements CompartmentIdAwareTrait,
             validateCompartmentId()
 
             vcnClient.listVcns(ListVcnsRequest.builder()
-                .compartmentId(compartmentId)
+                .compartmentId(getCompartmentId())
                 .displayName(getVcnName())
                 .build())
                 .items.each { vcn ->

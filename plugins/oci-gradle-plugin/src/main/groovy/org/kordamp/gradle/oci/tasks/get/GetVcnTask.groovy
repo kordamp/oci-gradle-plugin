@@ -37,7 +37,7 @@ import static org.kordamp.gradle.oci.tasks.printers.VcnPrinter.printVcn
 @CompileStatic
 @TypeProviderFor(OCITask)
 class GetVcnTask extends AbstractOCITask implements VcnIdAwareTrait {
-    static final String TASK_DESCRIPTION = 'Displays information for an specific vcn.'
+    static final String TASK_DESCRIPTION = 'Displays information for an specific Vcn.'
 
     @TaskAction
     void executeTask() {

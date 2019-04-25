@@ -41,7 +41,7 @@ import static org.kordamp.gradle.oci.tasks.printers.InstancePrinter.printInstanc
 @CompileStatic
 @TypeProviderFor(OCITask)
 class ListInstancesTask extends AbstractOCITask implements CompartmentIdAwareTrait, AvailabilityDomainAwareTrait, VerboseAwareTrait {
-    static final String TASK_DESCRIPTION = 'Lists available instances.'
+    static final String TASK_DESCRIPTION = 'Lists available Instances.'
 
     @TaskAction
     void executeTask() {

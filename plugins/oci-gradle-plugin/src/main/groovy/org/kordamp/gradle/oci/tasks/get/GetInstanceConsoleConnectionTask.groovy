@@ -37,7 +37,7 @@ import static org.kordamp.gradle.oci.tasks.printers.InstanceConsoleConnectionPri
 @CompileStatic
 @TypeProviderFor(OCITask)
 class GetInstanceConsoleConnectionTask extends AbstractOCITask implements InstanceConsoleConnectionIdAwareTrait {
-    static final String TASK_DESCRIPTION = 'Displays information for an specific instance console connection.'
+    static final String TASK_DESCRIPTION = 'Displays information for an specific InstanceConsoleConnection.'
 
     @TaskAction
     void executeTask() {
@@ -55,7 +55,7 @@ class GetInstanceConsoleConnectionTask extends AbstractOCITask implements Instan
         if (connection) {
             printInstanceConsoleConnection(this, connection, 0)
         } else {
-            println("Instance console connection with id ${instanceConsoleConnectionId} was not found")
+            println("InstanceConsoleConnection with id ${instanceConsoleConnectionId} was not found")
         }
     }
 }

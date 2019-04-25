@@ -40,7 +40,7 @@ import static org.kordamp.gradle.oci.tasks.printers.AvailabilityDomainPrinter.pr
 @CompileStatic
 @TypeProviderFor(OCITask)
 class ListAvailabilityDomainsTask extends AbstractOCITask implements CompartmentIdAwareTrait, VerboseAwareTrait {
-    static final String TASK_DESCRIPTION = 'Lists domains available on a compartment.'
+    static final String TASK_DESCRIPTION = 'Lists AvailabilityDomains available on a Compartment.'
 
     @TaskAction
     void executeTask() {
@@ -48,7 +48,9 @@ class ListAvailabilityDomainsTask extends AbstractOCITask implements Compartment
 
         AuthenticationDetailsProvider provider = resolveAuthenticationDetailsProvider()
         IdentityClient client = IdentityClient.builder().build(provider)
-        ListAvailabilityDomainsResponse response = client.listAvailabilityDomains(ListAvailabilityDomainsRequest.builder().compartmentId(compartmentId).build())
+        ListAvailabilityDomainsResponse response = client.listAvailabilityDomains(ListAvailabilityDomainsRequest.builder()
+            .compartmentId(getCompartmentId())
+            .build())
         client.close()
 
         AnsiConsole console = new AnsiConsole(project)

@@ -41,7 +41,7 @@ import static org.kordamp.gradle.oci.tasks.printers.InstanceConsoleConnectionPri
 @CompileStatic
 @TypeProviderFor(OCITask)
 class CreateInstanceConsoleConnectionTask extends AbstractOCITask implements CompartmentIdAwareTrait, InstanceIdAwareTrait, PublicKeyFileAwareTrait {
-    static final String TASK_DESCRIPTION = 'Creates an instance console connection.'
+    static final String TASK_DESCRIPTION = 'Creates an InstanceConsoleConnection.'
 
     private final Property<String> creactedConnectionId = project.objects.property(String)
 

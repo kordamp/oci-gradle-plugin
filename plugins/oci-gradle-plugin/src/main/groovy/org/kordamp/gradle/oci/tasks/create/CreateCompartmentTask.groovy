@@ -47,7 +47,7 @@ class CreateCompartmentTask extends AbstractOCITask implements CompartmentIdAwar
     CompartmentNameAwareTrait,
     CompartmentDescriptionAwareTrait,
     WaitForCompletionAwareTrait {
-    static final String TASK_DESCRIPTION = 'Creates a compartment.'
+    static final String TASK_DESCRIPTION = 'Creates a Compartment.'
 
     private final Property<String> createdCompartmentId = project.objects.property(String)
 

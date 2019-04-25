@@ -40,7 +40,7 @@ import static org.kordamp.gradle.oci.tasks.printers.ImagePrinter.printImage
 @CompileStatic
 @TypeProviderFor(OCITask)
 class ListImagesTask extends AbstractOCITask implements CompartmentIdAwareTrait, VerboseAwareTrait {
-    static final String TASK_DESCRIPTION = 'Lists images available on a compartment.'
+    static final String TASK_DESCRIPTION = 'Lists Images available on a Compartment.'
 
     @TaskAction
     void executeTask() {

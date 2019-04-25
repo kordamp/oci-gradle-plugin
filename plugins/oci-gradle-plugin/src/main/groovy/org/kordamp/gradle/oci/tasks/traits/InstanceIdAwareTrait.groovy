@@ -36,7 +36,7 @@ trait InstanceIdAwareTrait implements PathAware, ProjectAware {
     private final Property<String> instanceId = project.objects.property(String)
 
     @Input
-    @Option(option = 'instance-id', description = 'The id of the instance to query (REQUIRED).')
+    @Option(option = 'instance-id', description = 'The id of the Instance to query (REQUIRED).')
     void setInstanceId(String instanceId) {
         this.instanceId.set(instanceId)
     }

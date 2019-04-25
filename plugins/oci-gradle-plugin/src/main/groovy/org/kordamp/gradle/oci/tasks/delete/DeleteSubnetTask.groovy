@@ -50,7 +50,7 @@ class DeleteSubnetTask extends AbstractOCITask implements CompartmentIdAwareTrai
     VcnIdAwareTrait,
     SubnetIdAwareTrait,
     WaitForCompletionAwareTrait {
-    static final String TASK_DESCRIPTION = 'Deletes a subnet.'
+    static final String TASK_DESCRIPTION = 'Deletes a Subnet.'
 
     private final Property<String> subnetName = project.objects.property(String)
 
@@ -72,56 +72,49 @@ class DeleteSubnetTask extends AbstractOCITask implements CompartmentIdAwareTrai
         }
 
         AuthenticationDetailsProvider provider = resolveAuthenticationDetailsProvider()
-        VirtualNetworkClient subnetClient = new VirtualNetworkClient(provider)
+        VirtualNetworkClient client = new VirtualNetworkClient(provider)
 
         if (isNotBlank(getSubnetId())) {
-            Subnet subnet = subnetClient.getSubnet(GetSubnetRequest.builder()
+            Subnet subnet = client.getSubnet(GetSubnetRequest.builder()
                 .subnetId(getSubnetId())
                 .build())
                 .subnet
 
             if (subnet) {
                 setSubnetName(subnet.displayName)
-                println("Deleting subnet '${subnet.displayName}' with id ${subnet.id}")
-                subnetClient.deleteSubnet(DeleteSubnetRequest.builder()
-                    .subnetId(getSubnetId())
-                    .build())
-
-                if (isWaitForCompletion()) {
-                    println("Waiting for subnet to be Terminated")
-                    subnetClient.waiters
-                        .forSubnet(GetSubnetRequest.builder().subnetId(subnet.id).build(),
-                            Subnet.LifecycleState.Terminated)
-                        .execute()
-                }
+                deleteSubnet(client, subnet)
             }
         } else {
             validateCompartmentId()
             validateVcnId()
 
-            subnetClient.listSubnets(ListSubnetsRequest.builder()
+            client.listSubnets(ListSubnetsRequest.builder()
                 .compartmentId(getCompartmentId())
                 .vcnId(getVcnId())
                 .displayName(getSubnetName())
                 .build())
                 .items.each { subnet ->
                 setSubnetId(subnet.id)
-                println("Deleting subnet '${subnet.displayName}' with id ${subnet.id}")
-
-                subnetClient.deleteSubnet(DeleteSubnetRequest.builder()
-                    .subnetId(subnet.id)
-                    .build())
-
-                if (isWaitForCompletion()) {
-                    println("Waiting for subnet to be Terminated")
-                    subnetClient.waiters
-                        .forSubnet(GetSubnetRequest.builder().subnetId(subnet.id).build(),
-                            Subnet.LifecycleState.Terminated)
-                        .execute()
-                }
+                deleteSubnet(client, subnet)
             }
         }
 
-        subnetClient.close()
+        client.close()
+    }
+
+    private void deleteSubnet(VirtualNetworkClient client, Subnet subnet) {
+        println("Deleting Subnet '${subnet.displayName}' with id ${subnet.id}")
+
+        client.deleteSubnet(DeleteSubnetRequest.builder()
+            .subnetId(subnet.id)
+            .build())
+
+        if (isWaitForCompletion()) {
+            println("Waiting for Subnet to be Terminated")
+            client.waiters
+                .forSubnet(GetSubnetRequest.builder().subnetId(subnet.id).build(),
+                    Subnet.LifecycleState.Terminated)
+                .execute()
+        }
     }
 }

@@ -49,7 +49,7 @@ import static org.kordamp.gradle.StringUtils.isNotBlank
 class InstanceActionTask extends AbstractOCITask implements CompartmentIdAwareTrait,
     InstanceIdAwareTrait,
     WaitForCompletionAwareTrait {
-    static final String TASK_DESCRIPTION = 'Performs a given action on an instance.'
+    static final String TASK_DESCRIPTION = 'Performs a given action on an Instance.'
 
     private static enum InstanceAction {
         START(Instance.LifecycleState.Running),
@@ -89,7 +89,7 @@ class InstanceActionTask extends AbstractOCITask implements CompartmentIdAwareTr
 
     @Optional
     @Input
-    @Option(option = 'instance-name', description = 'The name of the instance (REQUIRED if instanceId = null).')
+    @Option(option = 'instance-name', description = 'The name of the Instance (REQUIRED if instanceId = null).')
     void setInstanceName(String instanceName) {
         this.instanceName.set(instanceName)
     }
@@ -108,54 +108,45 @@ class InstanceActionTask extends AbstractOCITask implements CompartmentIdAwareTr
         }
 
         AuthenticationDetailsProvider provider = resolveAuthenticationDetailsProvider()
-        ComputeClient computeClient = new ComputeClient(provider)
+        ComputeClient client = new ComputeClient(provider)
 
         if (isNotBlank(getInstanceId())) {
-            println("Sending ${getAction().name()} to instance with id ${instanceId}")
-            Instance instance = computeClient.instanceAction(InstanceActionRequest.builder()
-                .instanceId(getInstanceId())
-                .action(getAction().name())
-                .build())
-                .instance
-
-            if (instance) {
-                setInstanceName(instance.displayName)
-
-                if (isWaitForCompletion()) {
-                    println("Waiting for instance to be ${getAction().state()}")
-                    computeClient.waiters
-                        .forInstance(GetInstanceRequest.builder().instanceId(instance.id).build(),
-                            getAction().state())
-                        .execute()
-                }
-            }
+            Instance instance = instanceAction(client, getInstanceId(), getAction())
+            if (instance) setInstanceName(instance.displayName)
         } else {
             validateCompartmentId()
 
-            computeClient.listInstances(ListInstancesRequest.builder()
+            client.listInstances(ListInstancesRequest.builder()
                 .compartmentId(compartmentId)
                 .displayName(getInstanceName())
                 .build())
                 .items.each { instance ->
                 setInstanceId(instance.id)
-
-                println("Sending ${getAction().name()} to instance with id ${instance.id}")
-                computeClient.instanceAction(InstanceActionRequest.builder()
-                    .instanceId(getInstanceId())
-                    .action(getAction().name())
-                    .build())
-                    .instance
-
-                if (isWaitForCompletion()) {
-                    println("Waiting for instance to be ${getAction().state()}")
-                    computeClient.waiters
-                        .forInstance(GetInstanceRequest.builder().instanceId(instance.id).build(),
-                            getAction().state())
-                        .execute()
-                }
+                instanceAction(client, instance.id, getAction())
             }
         }
 
-        computeClient.close()
+        client.close()
+    }
+
+    private Instance instanceAction(ComputeClient client, String instanceId, InstanceAction action) {
+        println("Sending ${getAction().name()} to Instance with id ${instanceId}")
+        Instance instance = client.instanceAction(InstanceActionRequest.builder()
+            .instanceId(instanceId)
+            .action(action.name())
+            .build())
+            .instance
+
+        if (isWaitForCompletion()) {
+            println("Waiting for Instance to be ${action.state()}")
+            client.waiters
+                .forInstance(GetInstanceRequest.builder()
+                    .instanceId(instance.id).build(),
+                    action.state())
+                .execute()
+        }
+
+        instance
     }
 }
+

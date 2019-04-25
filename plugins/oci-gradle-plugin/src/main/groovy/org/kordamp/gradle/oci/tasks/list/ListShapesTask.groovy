@@ -37,7 +37,7 @@ import org.kordamp.jipsy.TypeProviderFor
 @CompileStatic
 @TypeProviderFor(OCITask)
 class ListShapesTask extends AbstractOCITask implements CompartmentIdAwareTrait {
-    static final String TASK_DESCRIPTION = 'Lists shapes available on a compartment.'
+    static final String TASK_DESCRIPTION = 'Lists Shapes available on a Compartment.'
 
     @TaskAction
     void executeTask() {

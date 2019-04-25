@@ -38,7 +38,7 @@ import org.kordamp.jipsy.TypeProviderFor
 @TypeProviderFor(OCITask)
 class DeleteCompartmentTask extends AbstractOCITask implements CompartmentIdAwareTrait,
     WaitForCompletionAwareTrait {
-    static final String TASK_DESCRIPTION = 'Deletes a compartment.'
+    static final String TASK_DESCRIPTION = 'Deletes a Compartment.'
 
     @TaskAction
     void executeTask() {
@@ -54,14 +54,14 @@ class DeleteCompartmentTask extends AbstractOCITask implements CompartmentIdAwar
             .build())
             .compartment
 
-        println("Deleting compartment ${compartment.name} with id ${compartmentId}")
+        println("Deleting Compartment ${compartment.name} with id ${compartmentId}")
 
         client.deleteCompartment(DeleteCompartmentRequest.builder()
             .compartmentId(compartmentId)
             .build())
 
         if (isWaitForCompletion()) {
-            println("Waiting for compartment to be Deleted")
+            println("Waiting for Compartment to be Deleted")
             client.waiters
                 .forCompartment(GetCompartmentRequest.builder()
                     .compartmentId(compartmentId)

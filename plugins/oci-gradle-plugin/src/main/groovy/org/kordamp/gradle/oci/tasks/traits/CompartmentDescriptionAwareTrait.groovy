@@ -35,7 +35,7 @@ trait CompartmentDescriptionAwareTrait implements PathAware, ProjectAware {
     private final Property<String> compartmentDescription = project.objects.property(String)
 
     @Input
-    @Option(option = 'compartment-escription', description = 'The description to use (REQUIRED).')
+    @Option(option = 'compartment-description', description = 'The Compartment description to use (REQUIRED).')
     void setCompartmentDescription(String compartmentDescription) {
         this.compartmentDescription.set(compartmentDescription)
     }

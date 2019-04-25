@@ -36,7 +36,7 @@ trait VcnIdAwareTrait implements PathAware, ProjectAware {
     private final Property<String> vcnId = project.objects.property(String)
 
     @Input
-    @Option(option = 'vcn-id', description = 'The id of the VCN to query (REQUIRED).')
+    @Option(option = 'vcn-id', description = 'The id of the Vcn to query (REQUIRED).')
     void setVcnId(String vcnId) {
         this.vcnId.set(vcnId)
     }
@@ -50,7 +50,7 @@ trait VcnIdAwareTrait implements PathAware, ProjectAware {
             throw new IllegalStateException("Missing value for 'vcnId' in $path")
         }
         if (!OCID.isValid(getVcnId())) {
-            throw new IllegalStateException("VCN id '${vcnId}' is invalid")
+            throw new IllegalStateException("Vcn id '${vcnId}' is invalid")
         }
     }
 }

@@ -38,7 +38,7 @@ import org.kordamp.jipsy.TypeProviderFor
 @TypeProviderFor(OCITask)
 class DeleteInstanceConsoleConnectionTask extends AbstractOCITask implements InstanceConsoleConnectionIdAwareTrait,
     WaitForCompletionAwareTrait {
-    static final String TASK_DESCRIPTION = 'Deletes an instance console connection.'
+    static final String TASK_DESCRIPTION = 'Deletes an InstanceConsoleConnection.'
 
     @TaskAction
     void executeTask() {
@@ -51,7 +51,7 @@ class DeleteInstanceConsoleConnectionTask extends AbstractOCITask implements Ins
             .build())
 
         if (isWaitForCompletion()) {
-            println("Waiting for connection to be Deleted")
+            println("Waiting for InstanceConsoleConnection to be Deleted")
             client.waiters
                 .forInstanceConsoleConnection(GetInstanceConsoleConnectionRequest.builder()
                     .instanceConsoleConnectionId(instanceConsoleConnectionId).build(),

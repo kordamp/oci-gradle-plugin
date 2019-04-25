@@ -40,7 +40,7 @@ import static org.kordamp.gradle.oci.tasks.printers.CompartmentPrinter.printComp
 @CompileStatic
 @TypeProviderFor(OCITask)
 class ListCompartmentsTask extends AbstractOCITask implements CompartmentIdAwareTrait, VerboseAwareTrait {
-    static final String TASK_DESCRIPTION = 'Lists available compartments.'
+    static final String TASK_DESCRIPTION = 'Lists available Compartments.'
 
     @TaskAction
     void executeTask() {

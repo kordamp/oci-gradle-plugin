@@ -40,7 +40,7 @@ import static org.kordamp.gradle.oci.tasks.printers.UserPrinter.printUser
 @CompileStatic
 @TypeProviderFor(OCITask)
 class ListUsersTask extends AbstractOCITask implements CompartmentIdAwareTrait, VerboseAwareTrait {
-    static final String TASK_DESCRIPTION = 'Lists available users.'
+    static final String TASK_DESCRIPTION = 'Lists available Users.'
 
     @TaskAction
     void executeTask() {

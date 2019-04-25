@@ -39,7 +39,7 @@ import static org.kordamp.gradle.oci.tasks.printers.SubnetPrinter.printSubnet
 @TypeProviderFor(OCITask)
 class GetSubnetTask extends AbstractOCITask implements VcnIdAwareTrait,
     SubnetIdAwareTrait {
-    static final String TASK_DESCRIPTION = 'Displays information for an specific subnet.'
+    static final String TASK_DESCRIPTION = 'Displays information for an specific Subnet.'
 
     @TaskAction
     void executeTask() {

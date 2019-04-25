@@ -40,7 +40,7 @@ import static org.kordamp.gradle.oci.tasks.printers.VcnPrinter.printVcn
 @CompileStatic
 @TypeProviderFor(OCITask)
 class ListVcnsTask extends AbstractOCITask implements CompartmentIdAwareTrait, VerboseAwareTrait {
-    static final String TASK_DESCRIPTION = 'Lists vcns available on a compartment.'
+    static final String TASK_DESCRIPTION = 'Lists Vcns available on a Compartment.'
 
     @TaskAction
     void executeTask() {

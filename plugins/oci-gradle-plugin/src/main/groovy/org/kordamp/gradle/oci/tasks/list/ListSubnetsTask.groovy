@@ -41,7 +41,7 @@ import static org.kordamp.gradle.oci.tasks.printers.SubnetPrinter.printSubnet
 @CompileStatic
 @TypeProviderFor(OCITask)
 class ListSubnetsTask extends AbstractOCITask implements CompartmentIdAwareTrait, VcnIdAwareTrait, VerboseAwareTrait {
-    static final String TASK_DESCRIPTION = 'Lists subnets available on a VCN.'
+    static final String TASK_DESCRIPTION = 'Lists Subnets available on a Vcn.'
 
     @TaskAction
     void executeTask() {

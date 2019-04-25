@@ -40,7 +40,7 @@ import static org.kordamp.gradle.oci.tasks.printers.InstanceConsoleConnectionPri
 @CompileStatic
 @TypeProviderFor(OCITask)
 class ListInstanceConsoleConnectionsTask extends AbstractOCITask implements CompartmentIdAwareTrait, InstanceIdAwareTrait {
-    static final String TASK_DESCRIPTION = 'Lists available console connections on an instance.'
+    static final String TASK_DESCRIPTION = 'Lists available InstanceConsoleConnection on an Instance.'
 
     @TaskAction
     void executeTask() {
@@ -60,7 +60,7 @@ class ListInstanceConsoleConnectionsTask extends AbstractOCITask implements Comp
         println(' ')
         int index = 0
         for (InstanceConsoleConnection connection : response.items) {
-            println("Instance Console Connection ${index.toString().padLeft(2, '0')}:")
+            println("InstanceConsoleConnection ${index.toString().padLeft(2, '0')}:")
             printInstanceConsoleConnection(this, connection, 0)
             index++
         }

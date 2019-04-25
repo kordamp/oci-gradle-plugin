@@ -48,13 +48,13 @@ import static org.kordamp.gradle.StringUtils.isNotBlank
 class TerminateInstanceTask extends AbstractOCITask implements CompartmentIdAwareTrait,
     InstanceIdAwareTrait,
     WaitForCompletionAwareTrait {
-    static final String TASK_DESCRIPTION = 'Terminates an instance.'
+    static final String TASK_DESCRIPTION = 'Terminates an Instance.'
 
     private final Property<String> instanceName = project.objects.property(String)
 
     @Optional
     @Input
-    @Option(option = 'instance-name', description = 'The name of the instance (REQUIRED if instanceId = null).')
+    @Option(option = 'instance-name', description = 'The name of the Instance (REQUIRED if instanceId = null).')
     void setInstanceName(String instanceName) {
         this.instanceName.set(instanceName)
     }
@@ -70,54 +70,47 @@ class TerminateInstanceTask extends AbstractOCITask implements CompartmentIdAwar
         }
 
         AuthenticationDetailsProvider provider = resolveAuthenticationDetailsProvider()
-        ComputeClient computeClient = new ComputeClient(provider)
+        ComputeClient client = new ComputeClient(provider)
 
         if (isNotBlank(getInstanceId())) {
-            Instance instance = computeClient.getInstance(GetInstanceRequest.builder()
+            Instance instance = client.getInstance(GetInstanceRequest.builder()
                 .instanceId(getInstanceId())
                 .build())
                 .instance
 
             if (instance) {
                 setInstanceName(instance.displayName)
-                println("Terminating instance '${instance.displayName}' with id ${instance.id}")
-                computeClient.terminateInstance(TerminateInstanceRequest.builder()
-                    .instanceId(instanceId)
-                    .build())
-
-                if (isWaitForCompletion()) {
-                    println("Waiting for instance to be Terminated")
-                    computeClient.waiters
-                        .forInstance(GetInstanceRequest.builder().instanceId(instance.id).build(),
-                            Instance.LifecycleState.Terminated)
-                        .execute()
-                }
+                terminateInstance(client, instance)
             }
         } else {
             validateCompartmentId()
 
-            computeClient.listInstances(ListInstancesRequest.builder()
+            client.listInstances(ListInstancesRequest.builder()
                 .compartmentId(compartmentId)
                 .displayName(getInstanceName())
                 .build())
                 .items.each { instance ->
                 setInstanceId(instance.id)
-                println("Terminating instance '${instance.displayName}' with id ${instance.id}")
-
-                computeClient.terminateInstance(TerminateInstanceRequest.builder()
-                    .instanceId(instanceId)
-                    .build())
-
-                if (isWaitForCompletion()) {
-                    println("Waiting for instance to be Terminated")
-                    computeClient.waiters
-                        .forInstance(GetInstanceRequest.builder().instanceId(instance.id).build(),
-                            Instance.LifecycleState.Terminated)
-                        .execute()
-                }
+                terminateInstance(client, instance)
             }
         }
 
-        computeClient.close()
+        client.close()
+    }
+
+    private void terminateInstance(ComputeClient client, Instance instance) {
+        println("Terminating Instance '${instance.displayName}' with id ${instance.id}")
+        client.terminateInstance(TerminateInstanceRequest.builder()
+            .instanceId(instance.id)
+            .build())
+
+        if (isWaitForCompletion()) {
+            println("Waiting for Instance to be Terminated")
+            client.waiters
+                .forInstance(GetInstanceRequest.builder()
+                    .instanceId(instance.id).build(),
+                    Instance.LifecycleState.Terminated)
+                .execute()
+        }
     }
 }

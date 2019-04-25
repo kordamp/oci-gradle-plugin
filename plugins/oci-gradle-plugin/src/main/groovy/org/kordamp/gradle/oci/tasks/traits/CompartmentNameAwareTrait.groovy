@@ -35,7 +35,7 @@ trait CompartmentNameAwareTrait implements PathAware, ProjectAware {
     private final Property<String> compartmentName = project.objects.property(String)
 
     @Input
-    @Option(option = 'compartment-name', description = 'The name of the compartment to query (REQUIRED).')
+    @Option(option = 'compartment-name', description = 'The name of the Compartment to query (REQUIRED).')
     void setCompartmentName(String compartmentName) {
         this.compartmentName.set(compartmentName)
     }

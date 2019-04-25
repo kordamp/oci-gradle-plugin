@@ -36,7 +36,7 @@ trait InstanceConsoleConnectionIdAwareTrait implements PathAware, ProjectAware {
     private final Property<String> connectionId = project.objects.property(String)
 
     @Input
-    @Option(option = 'connection-id', description = 'The id of the instance console connection to query (REQUIRED).')
+    @Option(option = 'connection-id', description = 'The id of the InstanceConsoleConnection to query (REQUIRED).')
     void setInstanceConsoleConnectionId(String connectionId) {
         this.connectionId.set(connectionId)
     }
@@ -50,7 +50,7 @@ trait InstanceConsoleConnectionIdAwareTrait implements PathAware, ProjectAware {
             throw new IllegalStateException("Missing value for 'connectionId' in $path")
         }
         if (!OCID.isValid(getInstanceConsoleConnectionId())) {
-            throw new IllegalStateException("Instance id '${connectionId}' is invalid")
+            throw new IllegalStateException("InstanceConsoleConnection id '${connectionId}' is invalid")
         }
     }
 }

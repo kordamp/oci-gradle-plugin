@@ -52,7 +52,7 @@ class CreateSubnetTask extends AbstractOCITask implements CompartmentIdAwareTrai
     AvailabilityDomainAwareTrait,
     VcnIdAwareTrait,
     WaitForCompletionAwareTrait {
-    static final String TASK_DESCRIPTION = 'Creates a subnet.'
+    static final String TASK_DESCRIPTION = 'Creates a Subnet.'
 
     private final Property<String> subnetName = project.objects.property(String)
     private final Property<String> createdSubnetId = project.objects.property(String)
@@ -137,7 +137,7 @@ class CreateSubnetTask extends AbstractOCITask implements CompartmentIdAwareTrai
             .subnet
 
         if (waitForCompletion) {
-            println("Waiting for Vcn to be Available")
+            println("Waiting for Subnet to be Available")
             client.waiters.forSubnet(GetSubnetRequest.builder()
                 .subnetId(subnet.id)
                 .build(),

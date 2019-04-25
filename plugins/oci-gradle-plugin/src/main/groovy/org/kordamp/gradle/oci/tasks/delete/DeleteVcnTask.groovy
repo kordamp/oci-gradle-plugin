@@ -70,54 +70,46 @@ class DeleteVcnTask extends AbstractOCITask implements CompartmentIdAwareTrait,
         }
 
         AuthenticationDetailsProvider provider = resolveAuthenticationDetailsProvider()
-        VirtualNetworkClient vcnClient = new VirtualNetworkClient(provider)
+        VirtualNetworkClient client = new VirtualNetworkClient(provider)
 
         if (isNotBlank(getVcnId())) {
-            Vcn vcn = vcnClient.getVcn(GetVcnRequest.builder()
+            Vcn vcn = client.getVcn(GetVcnRequest.builder()
                 .vcnId(getVcnId())
                 .build())
                 .vcn
 
             if (vcn) {
                 setVcnName(vcn.displayName)
-                println("Deleting Vcn '${vcn.displayName}' with id ${vcn.id}")
-                vcnClient.deleteVcn(DeleteVcnRequest.builder()
-                    .vcnId(getVcnId())
-                    .build())
-
-                if (isWaitForCompletion()) {
-                    println("Waiting for Vcn to be Terminated")
-                    vcnClient.waiters
-                        .forVcn(GetVcnRequest.builder().vcnId(vcn.id).build(),
-                            Vcn.LifecycleState.Terminated)
-                        .execute()
-                }
+                deleteVcn(client, vcn)
             }
         } else {
             validateCompartmentId()
 
-            vcnClient.listVcns(ListVcnsRequest.builder()
+            client.listVcns(ListVcnsRequest.builder()
                 .compartmentId(getCompartmentId())
                 .displayName(getVcnName())
                 .build())
                 .items.each { vcn ->
                 setVcnId(vcn.id)
-                println("Deleting Vcn '${vcn.displayName}' with id ${vcn.id}")
-
-                vcnClient.deleteVcn(DeleteVcnRequest.builder()
-                    .vcnId(vcn.id)
-                    .build())
-
-                if (isWaitForCompletion()) {
-                    println("Waiting for Vcn to be Terminated")
-                    vcnClient.waiters
-                        .forVcn(GetVcnRequest.builder().vcnId(vcn.id).build(),
-                            Vcn.LifecycleState.Terminated)
-                        .execute()
-                }
+                deleteVcn(client, vcn)
             }
         }
 
-        vcnClient.close()
+        client.close()
+    }
+
+    private void deleteVcn(VirtualNetworkClient client, Vcn vcn) {
+        println("Deleting Vcn '${vcn.displayName}' with id ${vcn.id}")
+        client.deleteVcn(DeleteVcnRequest.builder()
+            .vcnId(vcn.id)
+            .build())
+
+        if (isWaitForCompletion()) {
+            println("Waiting for Vcn to be Terminated")
+            client.waiters
+                .forVcn(GetVcnRequest.builder().vcnId(vcn.id).build(),
+                    Vcn.LifecycleState.Terminated)
+                .execute()
+        }
     }
 }

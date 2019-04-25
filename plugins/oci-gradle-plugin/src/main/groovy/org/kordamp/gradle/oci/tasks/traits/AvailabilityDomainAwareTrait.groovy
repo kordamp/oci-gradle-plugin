@@ -39,7 +39,7 @@ trait AvailabilityDomainAwareTrait implements PathAware, ProjectAware {
     private final Property<String> availabilityDomain = project.objects.property(String)
 
     @Input
-    @Option(option = 'availability-domain', description = 'The availability domain to query (REQUIRED).')
+    @Option(option = 'availability-domain', description = 'The AvailabilityDomain to query (REQUIRED).')
     void setAvailabilityDomain(String availabilityDomain) {
         this.availabilityDomain.set(availabilityDomain)
     }

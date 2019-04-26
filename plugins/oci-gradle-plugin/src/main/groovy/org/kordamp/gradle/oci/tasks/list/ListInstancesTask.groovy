@@ -17,7 +17,6 @@
  */
 package org.kordamp.gradle.oci.tasks.list
 
-import com.oracle.bmc.auth.AuthenticationDetailsProvider
 import com.oracle.bmc.core.ComputeClient
 import com.oracle.bmc.core.model.Instance
 import com.oracle.bmc.core.requests.ListInstancesRequest
@@ -47,11 +46,10 @@ class ListInstancesTask extends AbstractOCITask implements CompartmentIdAwareTra
     void executeTask() {
         validateCompartmentId()
 
-        AuthenticationDetailsProvider provider = resolveAuthenticationDetailsProvider()
-        ComputeClient client = ComputeClient.builder().build(provider)
+        ComputeClient client = createComputeClient()
         ListInstancesResponse response = client.listInstances(ListInstancesRequest.builder()
-            .compartmentId(compartmentId)
-            .availabilityDomain(availabilityDomain)
+            .compartmentId(getCompartmentId())
+            .availabilityDomain(getAvailabilityDomain())
             .build())
         client.close()
 
@@ -59,8 +57,8 @@ class ListInstancesTask extends AbstractOCITask implements CompartmentIdAwareTra
         println('Total Instances: ' + console.cyan(response.items.size().toString()))
         println(' ')
         for (Instance instance : response.items) {
-            println(instance.displayName + (verbose ? ':' : ''))
-            if (verbose) {
+            println(instance.displayName + (isVerbose() ? ':' : ''))
+            if (isVerbose()) {
                 printInstance(this, instance, 0)
             }
         }

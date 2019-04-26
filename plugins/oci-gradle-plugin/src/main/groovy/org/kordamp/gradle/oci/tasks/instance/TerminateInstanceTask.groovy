@@ -17,7 +17,6 @@
  */
 package org.kordamp.gradle.oci.tasks.instance
 
-import com.oracle.bmc.auth.AuthenticationDetailsProvider
 import com.oracle.bmc.core.ComputeClient
 import com.oracle.bmc.core.model.Instance
 import com.oracle.bmc.core.requests.GetInstanceRequest
@@ -56,8 +55,7 @@ class TerminateInstanceTask extends AbstractOCITask implements CompartmentIdAwar
             throw new IllegalStateException("Missing value for either 'instanceId' or 'instanceName' in $path")
         }
 
-        AuthenticationDetailsProvider provider = resolveAuthenticationDetailsProvider()
-        ComputeClient client = new ComputeClient(provider)
+        ComputeClient client = createComputeClient()
 
         // TODO: check if instance exists
         // TODO: check is instance is in a 'deletable' state

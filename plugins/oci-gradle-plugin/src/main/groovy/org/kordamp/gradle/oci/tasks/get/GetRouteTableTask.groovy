@@ -17,7 +17,6 @@
  */
 package org.kordamp.gradle.oci.tasks.get
 
-import com.oracle.bmc.auth.AuthenticationDetailsProvider
 import com.oracle.bmc.core.VirtualNetworkClient
 import com.oracle.bmc.core.model.RouteTable
 import com.oracle.bmc.core.requests.GetRouteTableRequest
@@ -43,8 +42,7 @@ class GetRouteTableTask extends AbstractOCITask implements RouteTableIdAwareTrai
     void executeTask() {
         validateRouteTableId()
 
-        AuthenticationDetailsProvider provider = resolveAuthenticationDetailsProvider()
-        VirtualNetworkClient client = new VirtualNetworkClient(provider)
+        VirtualNetworkClient client = createVirtualNetworkClient()
 
         RouteTable routeTable = client.getRouteTable(GetRouteTableRequest.builder()
             .rtId(getRouteTableId())

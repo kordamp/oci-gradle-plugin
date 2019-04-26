@@ -3,7 +3,7 @@
  *
  * Copyright 2019 Andres Almiray.
  *
- * Licensed under the Apache License, Version 2.0 (the "License")
+ * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
@@ -17,8 +17,6 @@
  */
 package org.kordamp.gradle.oci.tasks.get
 
-
-import com.oracle.bmc.auth.AuthenticationDetailsProvider
 import com.oracle.bmc.core.ComputeClient
 import com.oracle.bmc.core.VirtualNetworkClient
 import com.oracle.bmc.core.model.GetPublicIpByPrivateIpIdDetails
@@ -54,10 +52,8 @@ class GetInstancePublicIpTask extends AbstractOCITask implements CompartmentIdAw
         validateCompartmentId()
         validateInstanceId()
 
-        AuthenticationDetailsProvider provider = resolveAuthenticationDetailsProvider()
-
-        ComputeClient computeClient = new ComputeClient(provider)
-        VirtualNetworkClient vcnClient = new VirtualNetworkClient(provider)
+        ComputeClient computeClient = createComputeClient()
+        VirtualNetworkClient vcnClient = createVirtualNetworkClient()
 
         Set<String> publicIps = getInstancePublicIp(this,
             computeClient,

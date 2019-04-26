@@ -17,7 +17,6 @@
  */
 package org.kordamp.gradle.oci.tasks.list
 
-import com.oracle.bmc.auth.AuthenticationDetailsProvider
 import com.oracle.bmc.core.VirtualNetworkClient
 import com.oracle.bmc.core.model.InternetGateway
 import com.oracle.bmc.core.requests.ListInternetGatewaysRequest
@@ -48,11 +47,10 @@ class ListInternetGatewaysTask extends AbstractOCITask implements CompartmentIdA
         validateCompartmentId()
         validateVcnId()
 
-        AuthenticationDetailsProvider provider = resolveAuthenticationDetailsProvider()
-        VirtualNetworkClient client = new VirtualNetworkClient(provider)
+        VirtualNetworkClient client = createVirtualNetworkClient()
         ListInternetGatewaysResponse response = client.listInternetGateways(ListInternetGatewaysRequest.builder()
-            .compartmentId(compartmentId)
-            .vcnId(vcnId)
+            .compartmentId(getCompartmentId())
+            .vcnId(getVcnId())
             .build())
         client.close()
 
@@ -60,8 +58,8 @@ class ListInternetGatewaysTask extends AbstractOCITask implements CompartmentIdA
         println('Total InternetGateways: ' + console.cyan(response.items.size().toString()))
         println(' ')
         for (InternetGateway internetGateway : response.items) {
-            println(internetGateway.displayName + (verbose ? ':' : ''))
-            if (verbose) {
+            println(internetGateway.displayName + (isVerbose() ? ':' : ''))
+            if (isVerbose()) {
                 printInternetGateway(this, internetGateway, 0)
             }
         }

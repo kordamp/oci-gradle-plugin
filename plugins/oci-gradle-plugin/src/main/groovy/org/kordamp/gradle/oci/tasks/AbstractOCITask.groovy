@@ -23,6 +23,11 @@ import com.oracle.bmc.Region
 import com.oracle.bmc.auth.AuthenticationDetailsProvider
 import com.oracle.bmc.auth.ConfigFileAuthenticationDetailsProvider
 import com.oracle.bmc.auth.SimpleAuthenticationDetailsProvider
+import com.oracle.bmc.core.BlockstorageClient
+import com.oracle.bmc.core.ComputeClient
+import com.oracle.bmc.core.VirtualNetworkClient
+import com.oracle.bmc.identity.IdentityClient
+import com.oracle.bmc.resourcesearch.ResourceSearchClient
 import groovy.transform.CompileStatic
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
@@ -45,8 +50,10 @@ abstract class AbstractOCITask extends AbstractReportingTask implements OCITask 
 
     protected final OCIConfigExtension ociConfig
     protected final AnsiConsole console = new AnsiConsole(project)
+    private AuthenticationDetailsProvider authenticationDetailsProvider
 
     protected Property<String> profile = project.objects.property(String)
+    protected Property<String> region = project.objects.property(String)
 
     AbstractOCITask() {
         ociConfig = extensions.create('ociConfig', OCIConfigExtension, project)
@@ -54,7 +61,7 @@ abstract class AbstractOCITask extends AbstractReportingTask implements OCITask 
 
     @Optional
     @Input
-    @Option(option = 'profile', description = 'The profile to use. Defaults to DEFAULT.')
+    @Option(option = 'profile', description = 'The profile to use. Defaults to DEFAULT (OPTIONAL).')
     void setProfile(String profile) {
         this.profile.set(profile)
     }
@@ -63,12 +70,27 @@ abstract class AbstractOCITask extends AbstractReportingTask implements OCITask 
         profile.getOrElse('DEFAULT')
     }
 
+    @Optional
+    @Input
+    @Option(option = 'region', description = 'The region to use (OPTIONAL).')
+    void setRegion(String region) {
+        this.region.set(region)
+    }
+
+    String getRegion() {
+        region.orNull
+    }
+
     @Override
     AnsiConsole getConsole() {
         console
     }
 
     protected AuthenticationDetailsProvider resolveAuthenticationDetailsProvider() {
+        if (authenticationDetailsProvider) {
+            return authenticationDetailsProvider
+        }
+
         if (ociConfig.empty) {
             ConfigFileReader.ConfigFile configFile = ConfigFileReader.parse(CONFIG_LOCATION, getProfile())
             return new ConfigFileAuthenticationDetailsProvider(configFile)
@@ -95,7 +117,7 @@ abstract class AbstractOCITask extends AbstractReportingTask implements OCITask 
             throw new IllegalStateException(errors.join('\n'))
         }
 
-        SimpleAuthenticationDetailsProvider.builder()
+        authenticationDetailsProvider = SimpleAuthenticationDetailsProvider.builder()
             .userId(ociConfig.userId.get())
             .tenantId(ociConfig.tenantId.get())
             .fingerprint(ociConfig.fingerprint.get())
@@ -108,6 +130,48 @@ abstract class AbstractOCITask extends AbstractReportingTask implements OCITask 
             })
             .passPhrase(ociConfig.passphrase.present ? ociConfig.passphrase.get() : '')
             .build()
+
+        authenticationDetailsProvider
+    }
+
+    protected IdentityClient createIdentityClient() {
+        IdentityClient client = new IdentityClient(resolveAuthenticationDetailsProvider())
+        if (region.present && isNotBlank(getRegion())) {
+            client.setRegion(getRegion())
+        }
+        client
+    }
+
+    protected ComputeClient createComputeClient() {
+        ComputeClient client = new ComputeClient(resolveAuthenticationDetailsProvider())
+        if (region.present && isNotBlank(getRegion())) {
+            client.setRegion(getRegion())
+        }
+        client
+    }
+
+    protected VirtualNetworkClient createVirtualNetworkClient() {
+        VirtualNetworkClient client = new VirtualNetworkClient(resolveAuthenticationDetailsProvider())
+        if (region.present && isNotBlank(getRegion())) {
+            client.setRegion(getRegion())
+        }
+        client
+    }
+
+    protected BlockstorageClient createBlockstorageClient() {
+        BlockstorageClient client = new BlockstorageClient(resolveAuthenticationDetailsProvider())
+        if (region.present && isNotBlank(getRegion())) {
+            client.setRegion(getRegion())
+        }
+        client
+    }
+
+    protected ResourceSearchClient createResourceSearchClient() {
+        ResourceSearchClient client = new ResourceSearchClient(resolveAuthenticationDetailsProvider())
+        if (region.present && isNotBlank(getRegion())) {
+            client.setRegion(getRegion())
+        }
+        client
     }
 
     @Override

@@ -17,7 +17,6 @@
  */
 package org.kordamp.gradle.oci.tasks.create
 
-import com.oracle.bmc.auth.AuthenticationDetailsProvider
 import com.oracle.bmc.core.VirtualNetworkClient
 import com.oracle.bmc.core.model.CreateSubnetDetails
 import com.oracle.bmc.core.model.Subnet
@@ -71,9 +70,8 @@ class CreateSubnetTask extends AbstractOCITask implements CompartmentIdAwareTrai
         validateSubnetName()
         validateDnsLabel(getVcnId())
 
-        AuthenticationDetailsProvider provider = resolveAuthenticationDetailsProvider()
-        VirtualNetworkClient client = new VirtualNetworkClient(provider)
-        IdentityClient identityClient = IdentityClient.builder().build(provider)
+        VirtualNetworkClient client = createVirtualNetworkClient()
+        IdentityClient identityClient = createIdentityClient()
 
         AvailabilityDomain _availabilityDomain = validateAvailabilityDomain(identityClient, getCompartmentId())
 

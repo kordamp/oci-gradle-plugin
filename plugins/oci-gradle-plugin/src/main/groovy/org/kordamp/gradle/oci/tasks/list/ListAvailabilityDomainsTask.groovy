@@ -17,7 +17,6 @@
  */
 package org.kordamp.gradle.oci.tasks.list
 
-import com.oracle.bmc.auth.AuthenticationDetailsProvider
 import com.oracle.bmc.identity.IdentityClient
 import com.oracle.bmc.identity.model.AvailabilityDomain
 import com.oracle.bmc.identity.requests.ListAvailabilityDomainsRequest
@@ -46,8 +45,7 @@ class ListAvailabilityDomainsTask extends AbstractOCITask implements Compartment
     void executeTask() {
         validateCompartmentId()
 
-        AuthenticationDetailsProvider provider = resolveAuthenticationDetailsProvider()
-        IdentityClient client = IdentityClient.builder().build(provider)
+        IdentityClient client = createIdentityClient()
         ListAvailabilityDomainsResponse response = client.listAvailabilityDomains(ListAvailabilityDomainsRequest.builder()
             .compartmentId(getCompartmentId())
             .build())
@@ -57,8 +55,8 @@ class ListAvailabilityDomainsTask extends AbstractOCITask implements Compartment
         println('Total AvailabilityDomains: ' + console.cyan(response.items.size().toString()))
         println(' ')
         for (AvailabilityDomain domain : response.items) {
-            println(domain.name + (verbose ? ':' : ''))
-            if (verbose) {
+            println(domain.name + (isVerbose() ? ':' : ''))
+            if (isVerbose()) {
                 printAvailabilityDomain(this, domain, 0)
             }
         }

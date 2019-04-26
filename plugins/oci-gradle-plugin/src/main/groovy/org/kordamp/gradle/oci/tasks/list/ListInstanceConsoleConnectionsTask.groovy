@@ -17,7 +17,6 @@
  */
 package org.kordamp.gradle.oci.tasks.list
 
-import com.oracle.bmc.auth.AuthenticationDetailsProvider
 import com.oracle.bmc.core.ComputeClient
 import com.oracle.bmc.core.model.InstanceConsoleConnection
 import com.oracle.bmc.core.requests.ListInstanceConsoleConnectionsRequest
@@ -47,11 +46,10 @@ class ListInstanceConsoleConnectionsTask extends AbstractOCITask implements Comp
         validateCompartmentId()
         validateInstanceId()
 
-        AuthenticationDetailsProvider provider = resolveAuthenticationDetailsProvider()
-        ComputeClient client = ComputeClient.builder().build(provider)
+        ComputeClient client = createComputeClient()
         ListInstanceConsoleConnectionsResponse response = client.listInstanceConsoleConnections(ListInstanceConsoleConnectionsRequest.builder()
-            .compartmentId(compartmentId)
-            .instanceId(instanceId)
+            .compartmentId(getCompartmentId())
+            .instanceId(getInstanceId())
             .build())
         client.close()
 

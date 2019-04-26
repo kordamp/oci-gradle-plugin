@@ -17,7 +17,6 @@
  */
 package org.kordamp.gradle.oci.tasks.create
 
-import com.oracle.bmc.auth.AuthenticationDetailsProvider
 import com.oracle.bmc.core.VirtualNetworkClient
 import com.oracle.bmc.core.model.CreateVcnDetails
 import com.oracle.bmc.core.model.Vcn
@@ -63,8 +62,7 @@ class CreateVcnTask extends AbstractOCITask implements CompartmentIdAwareTrait,
         validateDnsLabel(getCompartmentId())
         validateVcnName()
 
-        AuthenticationDetailsProvider provider = resolveAuthenticationDetailsProvider()
-        VirtualNetworkClient client = new VirtualNetworkClient(provider)
+        VirtualNetworkClient client = createVirtualNetworkClient()
 
         Vcn vcn = maybeCreateVcn(this,
             client,

@@ -17,7 +17,6 @@
  */
 package org.kordamp.gradle.oci.tasks.instance
 
-import com.oracle.bmc.auth.AuthenticationDetailsProvider
 import com.oracle.bmc.core.ComputeClient
 import com.oracle.bmc.core.model.Instance
 import com.oracle.bmc.core.requests.GetInstanceRequest
@@ -98,8 +97,7 @@ class InstanceActionTask extends AbstractOCITask implements CompartmentIdAwareTr
             throw new IllegalStateException("Missing value for 'action' in $path")
         }
 
-        AuthenticationDetailsProvider provider = resolveAuthenticationDetailsProvider()
-        ComputeClient client = new ComputeClient(provider)
+        ComputeClient client = createComputeClient()
 
         if (isNotBlank(getInstanceId())) {
             Instance instance = instanceAction(client, getInstanceId(), getAction())

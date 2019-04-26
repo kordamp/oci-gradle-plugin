@@ -17,7 +17,6 @@
  */
 package org.kordamp.gradle.oci.tasks.delete
 
-import com.oracle.bmc.auth.AuthenticationDetailsProvider
 import com.oracle.bmc.identity.IdentityClient
 import com.oracle.bmc.identity.model.Compartment
 import com.oracle.bmc.identity.requests.DeleteCompartmentRequest
@@ -44,8 +43,7 @@ class DeleteCompartmentTask extends AbstractOCITask implements CompartmentIdAwar
     void executeTask() {
         validateCompartmentId()
 
-        AuthenticationDetailsProvider provider = resolveAuthenticationDetailsProvider()
-        IdentityClient client = new IdentityClient(provider)
+        IdentityClient client = createIdentityClient()
 
         // TODO: check if compartment exists
         // TODO: check is compartment is in a 'deletable' state

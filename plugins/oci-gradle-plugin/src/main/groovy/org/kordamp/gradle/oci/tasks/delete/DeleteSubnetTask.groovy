@@ -17,7 +17,6 @@
  */
 package org.kordamp.gradle.oci.tasks.delete
 
-import com.oracle.bmc.auth.AuthenticationDetailsProvider
 import com.oracle.bmc.core.VirtualNetworkClient
 import com.oracle.bmc.core.model.Subnet
 import com.oracle.bmc.core.requests.DeleteSubnetRequest
@@ -58,8 +57,7 @@ class DeleteSubnetTask extends AbstractOCITask implements CompartmentIdAwareTrai
             throw new IllegalStateException("Missing value for either 'subnetId' or 'subnetName' in $path")
         }
 
-        AuthenticationDetailsProvider provider = resolveAuthenticationDetailsProvider()
-        VirtualNetworkClient client = new VirtualNetworkClient(provider)
+        VirtualNetworkClient client = createVirtualNetworkClient()
 
         // TODO: check if subnet exists
         // TODO: check is subnet is in a 'deletable' state

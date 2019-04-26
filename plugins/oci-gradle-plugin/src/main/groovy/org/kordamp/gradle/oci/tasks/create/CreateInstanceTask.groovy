@@ -18,7 +18,6 @@
 package org.kordamp.gradle.oci.tasks.create
 
 import com.google.common.base.Strings
-import com.oracle.bmc.auth.AuthenticationDetailsProvider
 import com.oracle.bmc.core.BlockstorageClient
 import com.oracle.bmc.core.ComputeClient
 import com.oracle.bmc.core.VirtualNetworkClient
@@ -94,8 +93,7 @@ class CreateInstanceTask extends AbstractOCITask implements CompartmentIdAwareTr
         validateShape()
         validatePublicKeyFile()
 
-        AuthenticationDetailsProvider provider = resolveAuthenticationDetailsProvider()
-        ComputeClient computeClient = new ComputeClient(provider)
+        ComputeClient computeClient = createComputeClient()
 
         Image _image = validateImage(computeClient, getCompartmentId())
         Shape _shape = validateShape(computeClient, getCompartmentId())
@@ -104,8 +102,8 @@ class CreateInstanceTask extends AbstractOCITask implements CompartmentIdAwareTr
         String userDataFile = getUserDataFile()?.text
         String kmsKeyId = ''
 
-        VirtualNetworkClient vcnClient = new VirtualNetworkClient(provider)
-        BlockstorageClient blockstorageClient = new BlockstorageClient(provider)
+        VirtualNetworkClient vcnClient = createVirtualNetworkClient()
+        BlockstorageClient blockstorageClient = createBlockstorageClient()
 
         Subnet subnet = vcnClient.getSubnet(GetSubnetRequest.builder()
             .subnetId(getSubnetId())

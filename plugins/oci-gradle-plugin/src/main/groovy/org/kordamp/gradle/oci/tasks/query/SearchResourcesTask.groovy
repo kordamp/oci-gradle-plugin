@@ -17,9 +17,7 @@
  */
 package org.kordamp.gradle.oci.tasks.query
 
-import com.oracle.bmc.auth.AuthenticationDetailsProvider
 import com.oracle.bmc.resourcesearch.ResourceSearch
-import com.oracle.bmc.resourcesearch.ResourceSearchClient
 import com.oracle.bmc.resourcesearch.model.QueryableFieldDescription
 import com.oracle.bmc.resourcesearch.model.ResourceType
 import com.oracle.bmc.resourcesearch.requests.GetResourceTypeRequest
@@ -52,7 +50,7 @@ class SearchResourcesTask extends AbstractOCITask {
 
     @Optional
     @Input
-    @Option(option = 'type', description = 'The type to searchResources (OPTIONAL).')
+    @Option(option = 'type', description = 'The type to search (OPTIONAL).')
     void setType(String type) {
         this.type.set(type)
     }
@@ -63,9 +61,7 @@ class SearchResourcesTask extends AbstractOCITask {
 
     @TaskAction
     void executeTask() {
-        AuthenticationDetailsProvider provider = resolveAuthenticationDetailsProvider()
-
-        ResourceSearch client = ResourceSearchClient.builder().build(provider)
+        ResourceSearch client = createResourceSearchClient()
         if (isBlank(getType())) {
             listTypes(client)
         } else {
@@ -116,7 +112,6 @@ class SearchResourcesTask extends AbstractOCITask {
     private void doPrintQueryableFieldDescription(AnsiConsole console, QueryableFieldDescription desc, int offset) {
         println(('    ' * (offset + 1)) + desc.fieldName + ':')
         doPrintMapEntry(console, 'type', desc.fieldType, offset + 2)
-        // doPrintMapEntry(console, 'isArray', desc.isArray, offset + 2)
         if (desc.objectProperties?.size()) {
             println(('    ' * (offset + 2)) + 'fields:')
             doPrint(console, desc.objectProperties, offset + 2)

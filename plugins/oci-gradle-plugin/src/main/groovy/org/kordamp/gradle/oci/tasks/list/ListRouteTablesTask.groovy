@@ -17,7 +17,6 @@
  */
 package org.kordamp.gradle.oci.tasks.list
 
-import com.oracle.bmc.auth.AuthenticationDetailsProvider
 import com.oracle.bmc.core.VirtualNetworkClient
 import com.oracle.bmc.core.model.RouteTable
 import com.oracle.bmc.core.requests.ListRouteTablesRequest
@@ -40,8 +39,8 @@ import static org.kordamp.gradle.oci.tasks.printers.RouteTablePrinter.printRoute
  */
 @CompileStatic
 @TypeProviderFor(OCITask)
-class ListRouteTablesTask extends AbstractOCITask implements CompartmentIdAwareTrait, 
-    VcnIdAwareTrait, 
+class ListRouteTablesTask extends AbstractOCITask implements CompartmentIdAwareTrait,
+    VcnIdAwareTrait,
     VerboseAwareTrait {
     static final String TASK_DESCRIPTION = 'Lists RouteTables available on a Vcn.'
 
@@ -50,11 +49,10 @@ class ListRouteTablesTask extends AbstractOCITask implements CompartmentIdAwareT
         validateCompartmentId()
         validateVcnId()
 
-        AuthenticationDetailsProvider provider = resolveAuthenticationDetailsProvider()
-        VirtualNetworkClient client = new VirtualNetworkClient(provider)
+        VirtualNetworkClient client = createVirtualNetworkClient()
         ListRouteTablesResponse response = client.listRouteTables(ListRouteTablesRequest.builder()
-            .compartmentId(compartmentId)
-            .vcnId(vcnId)
+            .compartmentId(getCompartmentId())
+            .vcnId(getVcnId())
             .build())
         client.close()
 
@@ -62,8 +60,8 @@ class ListRouteTablesTask extends AbstractOCITask implements CompartmentIdAwareT
         println('Total RouteTables: ' + console.cyan(response.items.size().toString()))
         println(' ')
         for (RouteTable routeTable : response.items) {
-            println(routeTable.displayName + (verbose ? ':' : ''))
-            if (verbose) {
+            println(routeTable.displayName + (isVerbose() ? ':' : ''))
+            if (isVerbose()) {
                 printRouteTable(this, routeTable, 0)
             }
         }

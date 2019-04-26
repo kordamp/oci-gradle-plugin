@@ -17,7 +17,6 @@
  */
 package org.kordamp.gradle.oci.tasks.get
 
-import com.oracle.bmc.auth.AuthenticationDetailsProvider
 import com.oracle.bmc.core.ComputeClient
 import com.oracle.bmc.core.model.Instance
 import com.oracle.bmc.core.requests.GetInstanceRequest
@@ -43,8 +42,7 @@ class GetInstanceTask extends AbstractOCITask implements InstanceIdAwareTrait {
     void executeTask() {
         validateInstanceId()
 
-        AuthenticationDetailsProvider provider = resolveAuthenticationDetailsProvider()
-        ComputeClient client = new ComputeClient(provider)
+        ComputeClient client = createComputeClient()
 
         Instance instance = client.getInstance(GetInstanceRequest.builder()
             .instanceId(instanceId)

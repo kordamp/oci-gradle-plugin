@@ -17,7 +17,6 @@
  */
 package org.kordamp.gradle.oci.tasks.list
 
-import com.oracle.bmc.auth.AuthenticationDetailsProvider
 import com.oracle.bmc.core.VirtualNetworkClient
 import com.oracle.bmc.core.model.Subnet
 import com.oracle.bmc.core.requests.ListSubnetsRequest
@@ -48,11 +47,10 @@ class ListSubnetsTask extends AbstractOCITask implements CompartmentIdAwareTrait
         validateCompartmentId()
         validateVcnId()
 
-        AuthenticationDetailsProvider provider = resolveAuthenticationDetailsProvider()
-        VirtualNetworkClient client = new VirtualNetworkClient(provider)
+        VirtualNetworkClient client = createVirtualNetworkClient()
         ListSubnetsResponse response = client.listSubnets(ListSubnetsRequest.builder()
-            .compartmentId(compartmentId)
-            .vcnId(vcnId)
+            .compartmentId(getCompartmentId())
+            .vcnId(getVcnId())
             .build())
         client.close()
 
@@ -60,8 +58,8 @@ class ListSubnetsTask extends AbstractOCITask implements CompartmentIdAwareTrait
         println('Total Subnets: ' + console.cyan(response.items.size().toString()))
         println(' ')
         for (Subnet subnet : response.items) {
-            println(subnet.displayName + (verbose ? ':' : ''))
-            if (verbose) {
+            println(subnet.displayName + (isVerbose() ? ':' : ''))
+            if (isVerbose()) {
                 printSubnet(this, subnet, 0)
             }
         }

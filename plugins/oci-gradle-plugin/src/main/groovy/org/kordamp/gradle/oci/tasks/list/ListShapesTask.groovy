@@ -17,7 +17,6 @@
  */
 package org.kordamp.gradle.oci.tasks.list
 
-import com.oracle.bmc.auth.AuthenticationDetailsProvider
 import com.oracle.bmc.core.ComputeClient
 import com.oracle.bmc.core.model.Shape
 import com.oracle.bmc.core.requests.ListShapesRequest
@@ -43,8 +42,7 @@ class ListShapesTask extends AbstractOCITask implements CompartmentIdAwareTrait 
     void executeTask() {
         validateCompartmentId()
 
-        AuthenticationDetailsProvider provider = resolveAuthenticationDetailsProvider()
-        ComputeClient client = ComputeClient.builder().build(provider)
+        ComputeClient client = createComputeClient()
         ListShapesResponse response = client.listShapes(ListShapesRequest.builder().compartmentId(compartmentId).build())
         client.close()
 

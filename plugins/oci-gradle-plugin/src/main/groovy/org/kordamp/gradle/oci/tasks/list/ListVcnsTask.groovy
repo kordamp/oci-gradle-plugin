@@ -17,7 +17,6 @@
  */
 package org.kordamp.gradle.oci.tasks.list
 
-import com.oracle.bmc.auth.AuthenticationDetailsProvider
 import com.oracle.bmc.core.VirtualNetworkClient
 import com.oracle.bmc.core.model.Vcn
 import com.oracle.bmc.core.requests.ListVcnsRequest
@@ -46,17 +45,18 @@ class ListVcnsTask extends AbstractOCITask implements CompartmentIdAwareTrait, V
     void executeTask() {
         validateCompartmentId()
 
-        AuthenticationDetailsProvider provider = resolveAuthenticationDetailsProvider()
-        VirtualNetworkClient client = new VirtualNetworkClient(provider)
-        ListVcnsResponse response = client.listVcns(ListVcnsRequest.builder().compartmentId(compartmentId).build())
+        VirtualNetworkClient client = createVirtualNetworkClient()
+        ListVcnsResponse response = client.listVcns(ListVcnsRequest.builder()
+            .compartmentId(getCompartmentId())
+            .build())
         client.close()
 
         AnsiConsole console = new AnsiConsole(project)
         println('Total Vcns: ' + console.cyan(response.items.size().toString()))
         println(' ')
         for (Vcn vcn : response.items) {
-            println(vcn.displayName + (verbose ? ':' : ''))
-            if (verbose) {
+            println(vcn.displayName + (isVerbose() ? ':' : ''))
+            if (isVerbose()) {
                 printVcn(this, vcn, 0)
             }
         }

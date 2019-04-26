@@ -17,7 +17,6 @@
  */
 package org.kordamp.gradle.oci.tasks.create
 
-import com.oracle.bmc.auth.AuthenticationDetailsProvider
 import com.oracle.bmc.core.ComputeClient
 import com.oracle.bmc.core.model.CreateInstanceConsoleConnectionDetails
 import com.oracle.bmc.core.model.InstanceConsoleConnection
@@ -62,8 +61,7 @@ class CreateInstanceConsoleConnectionTask extends AbstractOCITask implements Com
         validateInstanceId()
         validatePublicKeyFile()
 
-        AuthenticationDetailsProvider provider = resolveAuthenticationDetailsProvider()
-        ComputeClient client = ComputeClient.builder().build(provider)
+        ComputeClient client = createComputeClient()
 
         InstanceConsoleConnection connection = createInstanceConsoleConnection(this,
             client,

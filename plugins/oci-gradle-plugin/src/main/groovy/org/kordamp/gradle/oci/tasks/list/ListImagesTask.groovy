@@ -17,7 +17,6 @@
  */
 package org.kordamp.gradle.oci.tasks.list
 
-import com.oracle.bmc.auth.AuthenticationDetailsProvider
 import com.oracle.bmc.core.ComputeClient
 import com.oracle.bmc.core.model.Image
 import com.oracle.bmc.core.requests.ListImagesRequest
@@ -46,17 +45,18 @@ class ListImagesTask extends AbstractOCITask implements CompartmentIdAwareTrait,
     void executeTask() {
         validateCompartmentId()
 
-        AuthenticationDetailsProvider provider = resolveAuthenticationDetailsProvider()
-        ComputeClient client = ComputeClient.builder().build(provider)
-        ListImagesResponse response = client.listImages(ListImagesRequest.builder().compartmentId(compartmentId).build())
+        ComputeClient client = createComputeClient()
+        ListImagesResponse response = client.listImages(ListImagesRequest.builder()
+            .compartmentId(getCompartmentId())
+            .build())
         client.close()
 
         AnsiConsole console = new AnsiConsole(project)
         println('Total Images: ' + console.cyan(response.items.size().toString()))
         println(' ')
         for (Image image : response.items) {
-            println(image.displayName + (verbose ? ':' : ''))
-            if (verbose) {
+            println(image.displayName + (isVerbose() ? ':' : ''))
+            if (isVerbose()) {
                 printImage(this, image, 0)
             }
         }

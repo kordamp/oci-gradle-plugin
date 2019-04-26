@@ -17,7 +17,6 @@
  */
 package org.kordamp.gradle.oci.tasks.get
 
-import com.oracle.bmc.auth.AuthenticationDetailsProvider
 import com.oracle.bmc.identity.IdentityClient
 import com.oracle.bmc.identity.model.Compartment
 import com.oracle.bmc.identity.requests.GetCompartmentRequest
@@ -43,8 +42,7 @@ class GetCompartmentTask extends AbstractOCITask implements CompartmentIdAwareTr
     void executeTask() {
         validateCompartmentId()
 
-        AuthenticationDetailsProvider provider = resolveAuthenticationDetailsProvider()
-        IdentityClient client = IdentityClient.builder().build(provider)
+        IdentityClient client = createIdentityClient()
         Compartment compartment = client.getCompartment(GetCompartmentRequest.builder()
             .compartmentId(compartmentId)
             .build())

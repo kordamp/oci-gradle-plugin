@@ -17,7 +17,6 @@
  */
 package org.kordamp.gradle.oci.tasks.create
 
-import com.oracle.bmc.auth.AuthenticationDetailsProvider
 import com.oracle.bmc.core.VirtualNetworkClient
 import com.oracle.bmc.core.model.CreateInternetGatewayDetails
 import com.oracle.bmc.core.model.InternetGateway
@@ -70,8 +69,7 @@ class CreateInternetGatewayTask extends AbstractOCITask implements CompartmentId
         validateVcnId()
         validateInternetGatewayName()
 
-        AuthenticationDetailsProvider provider = resolveAuthenticationDetailsProvider()
-        VirtualNetworkClient client = new VirtualNetworkClient(provider)
+        VirtualNetworkClient client = createVirtualNetworkClient()
 
         InternetGateway internetGateway = maybeCreateInternetGateway(this,
             client,

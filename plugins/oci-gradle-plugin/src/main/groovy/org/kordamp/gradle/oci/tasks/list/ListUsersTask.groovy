@@ -17,7 +17,6 @@
  */
 package org.kordamp.gradle.oci.tasks.list
 
-import com.oracle.bmc.auth.AuthenticationDetailsProvider
 import com.oracle.bmc.identity.IdentityClient
 import com.oracle.bmc.identity.model.User
 import com.oracle.bmc.identity.requests.ListUsersRequest
@@ -46,10 +45,9 @@ class ListUsersTask extends AbstractOCITask implements CompartmentIdAwareTrait, 
     void executeTask() {
         validateCompartmentId()
 
-        AuthenticationDetailsProvider provider = resolveAuthenticationDetailsProvider()
-        IdentityClient client = IdentityClient.builder().build(provider)
+        IdentityClient client = createIdentityClient()
         ListUsersResponse response = client.listUsers(ListUsersRequest.builder()
-            .compartmentId(compartmentId)
+            .compartmentId(getCompartmentId())
             .build())
         client.close()
 
@@ -57,8 +55,8 @@ class ListUsersTask extends AbstractOCITask implements CompartmentIdAwareTrait, 
         println('Total Users: ' + console.cyan(response.items.size().toString()))
         println(' ')
         for (User user : response.items) {
-            println(user.name + (verbose ? ':' : ''))
-            if (verbose) {
+            println(user.name + (isVerbose() ? ':' : ''))
+            if (isVerbose()) {
                 printUser(this, user, 0)
             }
         }

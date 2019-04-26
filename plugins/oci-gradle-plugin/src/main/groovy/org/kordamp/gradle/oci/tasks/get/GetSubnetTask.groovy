@@ -17,7 +17,6 @@
  */
 package org.kordamp.gradle.oci.tasks.get
 
-import com.oracle.bmc.auth.AuthenticationDetailsProvider
 import com.oracle.bmc.core.VirtualNetworkClient
 import com.oracle.bmc.core.model.Subnet
 import com.oracle.bmc.core.requests.GetSubnetRequest
@@ -43,8 +42,7 @@ class GetSubnetTask extends AbstractOCITask implements SubnetIdAwareTrait {
     void executeTask() {
         validateSubnetId()
 
-        AuthenticationDetailsProvider provider = resolveAuthenticationDetailsProvider()
-        VirtualNetworkClient client = new VirtualNetworkClient(provider)
+        VirtualNetworkClient client = createVirtualNetworkClient()
 
         Subnet subnet = client.getSubnet(GetSubnetRequest.builder()
             .subnetId(getSubnetId())

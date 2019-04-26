@@ -17,7 +17,6 @@
  */
 package org.kordamp.gradle.oci.tasks.create
 
-import com.oracle.bmc.auth.AuthenticationDetailsProvider
 import com.oracle.bmc.identity.IdentityClient
 import com.oracle.bmc.identity.model.Compartment
 import com.oracle.bmc.identity.model.CreateCompartmentDetails
@@ -63,8 +62,7 @@ class CreateCompartmentTask extends AbstractOCITask implements CompartmentIdAwar
         validateCompartmentName()
         validateCompartmentDescription()
 
-        AuthenticationDetailsProvider provider = resolveAuthenticationDetailsProvider()
-        IdentityClient client = new IdentityClient(provider)
+        IdentityClient client = createIdentityClient()
 
         Compartment compartment = maybeCreateCompartment(this,
             client,

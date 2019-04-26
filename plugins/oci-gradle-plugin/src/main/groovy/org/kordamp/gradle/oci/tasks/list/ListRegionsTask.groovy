@@ -17,7 +17,6 @@
  */
 package org.kordamp.gradle.oci.tasks.list
 
-import com.oracle.bmc.auth.AuthenticationDetailsProvider
 import com.oracle.bmc.identity.IdentityClient
 import com.oracle.bmc.identity.model.Region
 import com.oracle.bmc.identity.requests.ListRegionsRequest
@@ -43,8 +42,7 @@ class ListRegionsTask extends AbstractOCITask implements VerboseAwareTrait {
 
     @TaskAction
     void executeTask() {
-        AuthenticationDetailsProvider provider = resolveAuthenticationDetailsProvider()
-        IdentityClient client = IdentityClient.builder().build(provider)
+        IdentityClient client = createIdentityClient()
         ListRegionsResponse response = client.listRegions(ListRegionsRequest.builder()
             .build())
         client.close()
@@ -53,8 +51,8 @@ class ListRegionsTask extends AbstractOCITask implements VerboseAwareTrait {
         println('Total Regions: ' + console.cyan(response.items.size().toString()))
         println(' ')
         for (Region region : response.items) {
-            println(region.name + (verbose ? ':' : ''))
-            if (verbose) {
+            println(region.name + (isVerbose() ? ':' : ''))
+            if (isVerbose()) {
                 printRegion(this, region, 0)
             }
         }

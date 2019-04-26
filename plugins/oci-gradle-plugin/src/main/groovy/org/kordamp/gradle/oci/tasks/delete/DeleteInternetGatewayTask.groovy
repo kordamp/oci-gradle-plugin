@@ -17,7 +17,6 @@
  */
 package org.kordamp.gradle.oci.tasks.delete
 
-import com.oracle.bmc.auth.AuthenticationDetailsProvider
 import com.oracle.bmc.core.VirtualNetworkClient
 import com.oracle.bmc.core.model.InternetGateway
 import com.oracle.bmc.core.requests.DeleteInternetGatewayRequest
@@ -58,8 +57,7 @@ class DeleteInternetGatewayTask extends AbstractOCITask implements CompartmentId
             throw new IllegalStateException("Missing value for either 'internetGatewayId' or 'internetGatewayName' in $path")
         }
 
-        AuthenticationDetailsProvider provider = resolveAuthenticationDetailsProvider()
-        VirtualNetworkClient client = new VirtualNetworkClient(provider)
+        VirtualNetworkClient client = createVirtualNetworkClient()
 
         // TODO: check if gateway exists
         // TODO: check is gateway is in a 'deletable' state

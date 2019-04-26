@@ -17,7 +17,6 @@
  */
 package org.kordamp.gradle.oci.tasks.delete
 
-import com.oracle.bmc.auth.AuthenticationDetailsProvider
 import com.oracle.bmc.core.VirtualNetworkClient
 import com.oracle.bmc.core.model.Vcn
 import com.oracle.bmc.core.requests.DeleteVcnRequest
@@ -56,8 +55,7 @@ class DeleteVcnTask extends AbstractOCITask implements CompartmentIdAwareTrait,
             throw new IllegalStateException("Missing value for either 'vcnId' or 'vcnName' in $path")
         }
 
-        AuthenticationDetailsProvider provider = resolveAuthenticationDetailsProvider()
-        VirtualNetworkClient client = new VirtualNetworkClient(provider)
+        VirtualNetworkClient client = createVirtualNetworkClient()
 
         // TODO: check if vcn exists
         // TODO: check is vcn is in a 'deletable' state

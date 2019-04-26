@@ -17,7 +17,6 @@
  */
 package org.kordamp.gradle.oci.tasks.instance
 
-import com.oracle.bmc.auth.AuthenticationDetailsProvider
 import com.oracle.bmc.core.BlockstorageClient
 import com.oracle.bmc.core.ComputeClient
 import com.oracle.bmc.core.VirtualNetworkClient
@@ -78,8 +77,7 @@ class SetupInstanceTask extends AbstractOCITask implements CompartmentIdAwareTra
         validateShape()
         validatePublicKeyFile()
 
-        AuthenticationDetailsProvider provider = resolveAuthenticationDetailsProvider()
-        ComputeClient computeClient = new ComputeClient(provider)
+        ComputeClient computeClient = createComputeClient()
 
         Image _image = validateImage(computeClient, getCompartmentId())
         Shape _shape = validateShape(computeClient, getCompartmentId())
@@ -92,9 +90,9 @@ class SetupInstanceTask extends AbstractOCITask implements CompartmentIdAwareTra
         String internetGatewayDisplayName = getInstanceName() + '-internet-gateway'
         String kmsKeyId = ''
 
-        IdentityClient identityClient = IdentityClient.builder().build(provider)
-        VirtualNetworkClient vcnClient = new VirtualNetworkClient(provider)
-        BlockstorageClient blockstorageClient = new BlockstorageClient(provider)
+        IdentityClient identityClient = createIdentityClient()
+        VirtualNetworkClient vcnClient = createVirtualNetworkClient()
+        BlockstorageClient blockstorageClient = createBlockstorageClient()
 
         Vcn vcn = maybeCreateVcn(this,
             vcnClient,

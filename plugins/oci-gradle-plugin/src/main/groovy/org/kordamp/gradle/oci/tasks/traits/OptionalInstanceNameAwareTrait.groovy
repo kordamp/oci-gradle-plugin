@@ -1,5 +1,5 @@
 /*
- * SPDX-License-Identifier: Apache-2.0
+ * SPDX-License-Nameentifier: Apache-2.0
  *
  * Copyright 2019 Andres Almiray.
  *
@@ -20,37 +20,27 @@ package org.kordamp.gradle.oci.tasks.traits
 import groovy.transform.CompileStatic
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.options.Option
-import org.gradle.internal.hash.HashUtil
 import org.kordamp.gradle.oci.tasks.interfaces.PathAware
 import org.kordamp.gradle.oci.tasks.interfaces.ProjectAware
-
-import static org.kordamp.gradle.StringUtils.isBlank
 
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
 @CompileStatic
-trait DnsLabelAwareTrait implements PathAware, ProjectAware {
-    private final Property<String> dnsLabel = project.objects.property(String)
+trait OptionalInstanceNameAwareTrait implements PathAware, ProjectAware {
+    private final Property<String> instanceName = project.objects.property(String)
 
+    @Optional
     @Input
-    @Option(option = 'dns-label', description = 'The DNS label to use (REQUIRED).')
-    void setDnsLabel(String dnsLabel) {
-        String label = dnsLabel?.replace('.', '')?.replace('-', '')
-        if (label?.length() > 15) label = label?.substring(0, 14)
-        this.dnsLabel.set(label)
+    @Option(option = 'instance-name', description = 'The name of the Instance (OPTIONAL).')
+    void setInstanceName(String instanceName) {
+        this.instanceName.set(instanceName)
     }
 
-    String getDnsLabel() {
-        dnsLabel.orNull
-    }
-
-    void validateDnsLabel(String seed) {
-        if (isBlank(getDnsLabel())) {
-            setDnsLabel('dns' + HashUtil.sha1(seed.bytes).asHexString()[0..11])
-            project.logger.warn("Missing value for 'dnsLabel' in $path. Value set to ${getDnsLabel()}")
-        }
+    String getInstanceName() {
+        instanceName.orNull
     }
 }

@@ -24,15 +24,12 @@ import com.oracle.bmc.core.requests.DeleteVcnRequest
 import com.oracle.bmc.core.requests.GetVcnRequest
 import com.oracle.bmc.core.requests.ListVcnsRequest
 import groovy.transform.CompileStatic
-import org.gradle.api.provider.Property
-import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskAction
-import org.gradle.api.tasks.options.Option
 import org.kordamp.gradle.oci.tasks.AbstractOCITask
 import org.kordamp.gradle.oci.tasks.interfaces.OCITask
 import org.kordamp.gradle.oci.tasks.traits.CompartmentIdAwareTrait
-import org.kordamp.gradle.oci.tasks.traits.VcnIdAwareTrait
+import org.kordamp.gradle.oci.tasks.traits.OptionalVcnIdAwareTrait
+import org.kordamp.gradle.oci.tasks.traits.OptionalVcnNameAwareTrait
 import org.kordamp.gradle.oci.tasks.traits.WaitForCompletionAwareTrait
 import org.kordamp.jipsy.TypeProviderFor
 
@@ -46,31 +43,24 @@ import static org.kordamp.gradle.StringUtils.isNotBlank
 @CompileStatic
 @TypeProviderFor(OCITask)
 class DeleteVcnTask extends AbstractOCITask implements CompartmentIdAwareTrait,
-    VcnIdAwareTrait,
+    OptionalVcnIdAwareTrait,
+    OptionalVcnNameAwareTrait,
     WaitForCompletionAwareTrait {
     static final String TASK_DESCRIPTION = 'Deletes a Vcn.'
 
-    private final Property<String> vcnName = project.objects.property(String)
-
-    @Optional
-    @Input
-    @Option(option = 'vcn-name', description = 'The name of the Vcn (REQUIRED if vcnId = null).')
-    void setVcnName(String vcnName) {
-        this.vcnName.set(vcnName)
-    }
-
-    String getVcnName() {
-        return vcnName.orNull
-    }
-
     @TaskAction
     void executeTask() {
+        validateVcnId()
+
         if (isBlank(getVcnId()) && isBlank(getVcnName())) {
             throw new IllegalStateException("Missing value for either 'vcnId' or 'vcnName' in $path")
         }
 
         AuthenticationDetailsProvider provider = resolveAuthenticationDetailsProvider()
         VirtualNetworkClient client = new VirtualNetworkClient(provider)
+
+        // TODO: check if vcn exists
+        // TODO: check is vcn is in a 'deletable' state
 
         if (isNotBlank(getVcnId())) {
             Vcn vcn = client.getVcn(GetVcnRequest.builder()

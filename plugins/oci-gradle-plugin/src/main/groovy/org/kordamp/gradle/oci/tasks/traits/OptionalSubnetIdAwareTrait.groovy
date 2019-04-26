@@ -17,40 +17,40 @@
  */
 package org.kordamp.gradle.oci.tasks.traits
 
+
 import groovy.transform.CompileStatic
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.options.Option
-import org.gradle.internal.hash.HashUtil
 import org.kordamp.gradle.oci.tasks.interfaces.PathAware
 import org.kordamp.gradle.oci.tasks.interfaces.ProjectAware
 
-import static org.kordamp.gradle.StringUtils.isBlank
+import static com.oracle.bmc.OCID.isValid
+import static org.kordamp.gradle.StringUtils.isNotBlank
 
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
 @CompileStatic
-trait DnsLabelAwareTrait implements PathAware, ProjectAware {
-    private final Property<String> dnsLabel = project.objects.property(String)
+trait OptionalSubnetIdAwareTrait implements PathAware, ProjectAware {
+    private final Property<String> subnetId = project.objects.property(String)
 
+    @Optional
     @Input
-    @Option(option = 'dns-label', description = 'The DNS label to use (REQUIRED).')
-    void setDnsLabel(String dnsLabel) {
-        String label = dnsLabel?.replace('.', '')?.replace('-', '')
-        if (label?.length() > 15) label = label?.substring(0, 14)
-        this.dnsLabel.set(label)
+    @Option(option = 'subnet-id', description = 'The id of the Subnet (OPTIONAL).')
+    void setSubnetId(String subnetId) {
+        this.subnetId.set(subnetId)
     }
 
-    String getDnsLabel() {
-        dnsLabel.orNull
+    String getSubnetId() {
+        subnetId.orNull
     }
 
-    void validateDnsLabel(String seed) {
-        if (isBlank(getDnsLabel())) {
-            setDnsLabel('dns' + HashUtil.sha1(seed.bytes).asHexString()[0..11])
-            project.logger.warn("Missing value for 'dnsLabel' in $path. Value set to ${getDnsLabel()}")
+    void validateSubnetId() {
+        if (isNotBlank(getSubnetId()) && !isValid(getSubnetId())) {
+            throw new IllegalStateException("Subnet id '${getSubnetId()}' is invalid")
         }
     }
 }

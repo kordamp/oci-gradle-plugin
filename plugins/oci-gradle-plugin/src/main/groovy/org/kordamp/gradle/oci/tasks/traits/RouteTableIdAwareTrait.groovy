@@ -50,7 +50,7 @@ trait RouteTableIdAwareTrait implements PathAware, ProjectAware {
             throw new IllegalStateException("Missing value for 'routeTableId' in $path")
         }
         if (!OCID.isValid(getRouteTableId())) {
-            throw new IllegalStateException("RouteTable id '${routeTableId}' is invalid")
+            throw new IllegalStateException("RouteTable id '${getRouteTableId()}' is invalid")
         }
     }
 }

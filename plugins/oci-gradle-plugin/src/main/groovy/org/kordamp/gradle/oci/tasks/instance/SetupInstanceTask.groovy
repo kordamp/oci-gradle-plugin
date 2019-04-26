@@ -76,6 +76,7 @@ class SetupInstanceTask extends AbstractOCITask implements CompartmentIdAwareTra
         validateInstanceName()
         validateImage()
         validateShape()
+        validatePublicKeyFile()
 
         AuthenticationDetailsProvider provider = resolveAuthenticationDetailsProvider()
         ComputeClient computeClient = new ComputeClient(provider)

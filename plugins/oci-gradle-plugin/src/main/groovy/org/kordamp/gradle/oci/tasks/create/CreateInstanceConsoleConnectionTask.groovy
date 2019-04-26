@@ -60,6 +60,7 @@ class CreateInstanceConsoleConnectionTask extends AbstractOCITask implements Com
     void executeTask() {
         validateCompartmentId()
         validateInstanceId()
+        validatePublicKeyFile()
 
         AuthenticationDetailsProvider provider = resolveAuthenticationDetailsProvider()
         ComputeClient client = ComputeClient.builder().build(provider)

@@ -26,18 +26,16 @@ import com.oracle.bmc.core.requests.GetVcnRequest
 import com.oracle.bmc.core.requests.ListVcnsRequest
 import groovy.transform.CompileStatic
 import org.gradle.api.provider.Property
-import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.TaskAction
-import org.gradle.api.tasks.options.Option
 import org.kordamp.gradle.oci.tasks.AbstractOCITask
 import org.kordamp.gradle.oci.tasks.interfaces.OCITask
 import org.kordamp.gradle.oci.tasks.traits.CompartmentIdAwareTrait
 import org.kordamp.gradle.oci.tasks.traits.DnsLabelAwareTrait
+import org.kordamp.gradle.oci.tasks.traits.VcnNameAwareTrait
 import org.kordamp.gradle.oci.tasks.traits.VerboseAwareTrait
 import org.kordamp.gradle.oci.tasks.traits.WaitForCompletionAwareTrait
 import org.kordamp.jipsy.TypeProviderFor
 
-import static org.kordamp.gradle.StringUtils.isBlank
 import static org.kordamp.gradle.oci.tasks.printers.VcnPrinter.printVcn
 
 /**
@@ -47,23 +45,13 @@ import static org.kordamp.gradle.oci.tasks.printers.VcnPrinter.printVcn
 @CompileStatic
 @TypeProviderFor(OCITask)
 class CreateVcnTask extends AbstractOCITask implements CompartmentIdAwareTrait,
+    VcnNameAwareTrait,
     DnsLabelAwareTrait,
     WaitForCompletionAwareTrait,
     VerboseAwareTrait {
     static final String TASK_DESCRIPTION = 'Creates a Vcn.'
 
-    private final Property<String> vcnName = project.objects.property(String)
     private final Property<String> createdVcnId = project.objects.property(String)
-
-    @Input
-    @Option(option = 'vcn-name', description = 'The name of the Vcn to be created.')
-    void setVcnName(String vcnName) {
-        this.vcnName.set(vcnName)
-    }
-
-    String getVcnName() {
-        return vcnName.orNull
-    }
 
     String getCreatedVcnId() {
         return createdVcnId.orNull
@@ -72,12 +60,8 @@ class CreateVcnTask extends AbstractOCITask implements CompartmentIdAwareTrait,
     @TaskAction
     void executeTask() {
         validateCompartmentId()
-        validateDnsLabel()
-
-        if (isBlank(getVcnName())) {
-            setVcnName('vcn-' + UUID.randomUUID().toString())
-            project.logger.warn("Missing value for 'vcnName' in $path. Value set to ${getVcnName()}")
-        }
+        validateDnsLabel(getCompartmentId())
+        validateVcnName()
 
         AuthenticationDetailsProvider provider = resolveAuthenticationDetailsProvider()
         VirtualNetworkClient client = new VirtualNetworkClient(provider)

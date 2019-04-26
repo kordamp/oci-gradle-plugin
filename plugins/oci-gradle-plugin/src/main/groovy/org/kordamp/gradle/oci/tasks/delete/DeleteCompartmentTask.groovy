@@ -47,6 +47,8 @@ class DeleteCompartmentTask extends AbstractOCITask implements CompartmentIdAwar
         AuthenticationDetailsProvider provider = resolveAuthenticationDetailsProvider()
         IdentityClient client = new IdentityClient(provider)
 
+        // TODO: check if compartment exists
+        // TODO: check is compartment is in a 'deletable' state
         // TODO: check if compartment is empty
 
         Compartment compartment = client.getCompartment(GetCompartmentRequest.builder()

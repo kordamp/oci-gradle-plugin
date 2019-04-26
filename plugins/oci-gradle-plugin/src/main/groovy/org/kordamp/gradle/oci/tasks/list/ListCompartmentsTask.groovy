@@ -44,12 +44,12 @@ class ListCompartmentsTask extends AbstractOCITask implements CompartmentIdAware
 
     @TaskAction
     void executeTask() {
-        //validateCompartmentId()
+        validateCompartmentId()
 
         AuthenticationDetailsProvider provider = resolveAuthenticationDetailsProvider()
         IdentityClient client = IdentityClient.builder().build(provider)
         ListCompartmentsResponse response = client.listCompartments(ListCompartmentsRequest.builder()
-            .compartmentId(compartmentId)
+            .compartmentId(getCompartmentId())
             .build())
         client.close()
 

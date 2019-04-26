@@ -28,21 +28,18 @@ import com.oracle.bmc.identity.IdentityClient
 import com.oracle.bmc.identity.model.AvailabilityDomain
 import groovy.transform.CompileStatic
 import org.gradle.api.provider.Property
-import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskAction
-import org.gradle.api.tasks.options.Option
-import org.gradle.internal.hash.HashUtil
 import org.kordamp.gradle.oci.tasks.AbstractOCITask
 import org.kordamp.gradle.oci.tasks.interfaces.OCITask
 import org.kordamp.gradle.oci.tasks.traits.AvailabilityDomainAwareTrait
 import org.kordamp.gradle.oci.tasks.traits.CompartmentIdAwareTrait
+import org.kordamp.gradle.oci.tasks.traits.OptionalDnsLabelAwareTrait
+import org.kordamp.gradle.oci.tasks.traits.SubnetNameAwareTrait
 import org.kordamp.gradle.oci.tasks.traits.VcnIdAwareTrait
 import org.kordamp.gradle.oci.tasks.traits.VerboseAwareTrait
 import org.kordamp.gradle.oci.tasks.traits.WaitForCompletionAwareTrait
 import org.kordamp.jipsy.TypeProviderFor
 
-import static org.kordamp.gradle.StringUtils.isBlank
 import static org.kordamp.gradle.oci.tasks.printers.SubnetPrinter.printSubnet
 
 /**
@@ -54,36 +51,13 @@ import static org.kordamp.gradle.oci.tasks.printers.SubnetPrinter.printSubnet
 class CreateSubnetTask extends AbstractOCITask implements CompartmentIdAwareTrait,
     AvailabilityDomainAwareTrait,
     VcnIdAwareTrait,
+    SubnetNameAwareTrait,
+    OptionalDnsLabelAwareTrait,
     WaitForCompletionAwareTrait,
     VerboseAwareTrait {
     static final String TASK_DESCRIPTION = 'Creates a Subnet.'
 
-    private final Property<String> subnetName = project.objects.property(String)
-    private final Property<String> dnsLabel = project.objects.property(String)
     private final Property<String> createdSubnetId = project.objects.property(String)
-
-    @Input
-    @Option(option = 'subnet-name', description = 'The name of the Subnet to be created.')
-    void setSubnetName(String subnetName) {
-        this.subnetName.set(subnetName)
-    }
-
-    String getSubnetName() {
-        return subnetName.orNull
-    }
-
-    @Input
-    @Optional
-    @Option(option = 'dns-label', description = 'The DNS label to use (REQUIRED).')
-    void setDnsLabel(String dnsLabel) {
-        String label = dnsLabel?.replace('.', '')?.replace('-', '')
-        if (label?.length() > 15) label = label?.substring(0, 14)
-        this.dnsLabel.set(label)
-    }
-
-    String getDnsLabel() {
-        return dnsLabel.orNull
-    }
 
     String getCreatedSubnetId() {
         return createdSubnetId.orNull
@@ -94,22 +68,14 @@ class CreateSubnetTask extends AbstractOCITask implements CompartmentIdAwareTrai
         validateCompartmentId()
         validateVcnId()
         validateAvailabilityDomain()
-
-        if (isBlank(getSubnetName())) {
-            setSubnetName('subnet-' + UUID.randomUUID().toString())
-            project.logger.warn("Missing value for 'subnetName' in $path. Value set to ${getSubnetName()}")
-        }
+        validateSubnetName()
+        validateDnsLabel(getVcnId())
 
         AuthenticationDetailsProvider provider = resolveAuthenticationDetailsProvider()
         VirtualNetworkClient client = new VirtualNetworkClient(provider)
         IdentityClient identityClient = IdentityClient.builder().build(provider)
 
-        AvailabilityDomain _availabilityDomain = validateAvailabilityDomain(identityClient, compartmentId)
-
-        if (isBlank(getDnsLabel())) {
-            setDnsLabel('sub' + HashUtil.sha1(vcnId.bytes).asHexString()[0..11])
-            project.logger.warn("Missing value for 'dnsLabel' in $path. Value set to ${getDnsLabel()}")
-        }
+        AvailabilityDomain _availabilityDomain = validateAvailabilityDomain(identityClient, getCompartmentId())
 
         Subnet subnet = maybeCreateSubnet(this,
             client,

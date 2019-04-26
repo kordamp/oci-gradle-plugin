@@ -33,18 +33,16 @@ import com.oracle.bmc.core.requests.ListInternetGatewaysRequest
 import com.oracle.bmc.core.requests.UpdateRouteTableRequest
 import groovy.transform.CompileStatic
 import org.gradle.api.provider.Property
-import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.TaskAction
-import org.gradle.api.tasks.options.Option
 import org.kordamp.gradle.oci.tasks.AbstractOCITask
 import org.kordamp.gradle.oci.tasks.interfaces.OCITask
 import org.kordamp.gradle.oci.tasks.traits.CompartmentIdAwareTrait
+import org.kordamp.gradle.oci.tasks.traits.InternateGatewayNameAwareTrait
 import org.kordamp.gradle.oci.tasks.traits.VcnIdAwareTrait
 import org.kordamp.gradle.oci.tasks.traits.VerboseAwareTrait
 import org.kordamp.gradle.oci.tasks.traits.WaitForCompletionAwareTrait
 import org.kordamp.jipsy.TypeProviderFor
 
-import static org.kordamp.gradle.StringUtils.isBlank
 import static org.kordamp.gradle.oci.tasks.printers.InternetGatewayPrinter.printInternetGateway
 
 /**
@@ -55,22 +53,12 @@ import static org.kordamp.gradle.oci.tasks.printers.InternetGatewayPrinter.print
 @TypeProviderFor(OCITask)
 class CreateInternetGatewayTask extends AbstractOCITask implements CompartmentIdAwareTrait,
     VcnIdAwareTrait,
+    InternateGatewayNameAwareTrait,
     WaitForCompletionAwareTrait,
     VerboseAwareTrait {
     static final String TASK_DESCRIPTION = 'Creates a InternetGateway.'
 
-    private final Property<String> internetGatewayName = project.objects.property(String)
     private final Property<String> createdInternetGatewayId = project.objects.property(String)
-
-    @Input
-    @Option(option = 'internet-gateway-name', description = 'The name of the InternetGateway to be created.')
-    void setInternetGatewayName(String internetGatewayName) {
-        this.internetGatewayName.set(internetGatewayName)
-    }
-
-    String getInternetGatewayName() {
-        return internetGatewayName.orNull
-    }
 
     String getCreatedInternetGatewayId() {
         return createdInternetGatewayId.orNull
@@ -80,11 +68,7 @@ class CreateInternetGatewayTask extends AbstractOCITask implements CompartmentId
     void executeTask() {
         validateCompartmentId()
         validateVcnId()
-
-        if (isBlank(getInternetGatewayName())) {
-            setInternetGatewayName('internet-gateway-' + UUID.randomUUID().toString())
-            project.logger.warn("Missing value for 'internetGatewayName' in $path. Value set to ${getInternetGatewayName()}")
-        }
+        validateInternetGatewayName()
 
         AuthenticationDetailsProvider provider = resolveAuthenticationDetailsProvider()
         VirtualNetworkClient client = new VirtualNetworkClient(provider)

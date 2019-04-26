@@ -1,5 +1,5 @@
 /*
- * SPDX-License-Identifier: Apache-2.0
+ * SPDX-License-Nameentifier: Apache-2.0
  *
  * Copyright 2019 Andres Almiray.
  *
@@ -21,7 +21,6 @@ import groovy.transform.CompileStatic
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.options.Option
-import org.gradle.internal.hash.HashUtil
 import org.kordamp.gradle.oci.tasks.interfaces.PathAware
 import org.kordamp.gradle.oci.tasks.interfaces.ProjectAware
 
@@ -32,25 +31,23 @@ import static org.kordamp.gradle.StringUtils.isBlank
  * @since 0.1.0
  */
 @CompileStatic
-trait DnsLabelAwareTrait implements PathAware, ProjectAware {
-    private final Property<String> dnsLabel = project.objects.property(String)
+trait SubnetNameAwareTrait implements PathAware, ProjectAware {
+    private final Property<String> subnetName = project.objects.property(String)
 
     @Input
-    @Option(option = 'dns-label', description = 'The DNS label to use (REQUIRED).')
-    void setDnsLabel(String dnsLabel) {
-        String label = dnsLabel?.replace('.', '')?.replace('-', '')
-        if (label?.length() > 15) label = label?.substring(0, 14)
-        this.dnsLabel.set(label)
+    @Option(option = 'subnet-name', description = 'The name of the Subnet (REQUIRED).')
+    void setSubnetName(String subnetName) {
+        this.subnetName.set(subnetName)
     }
 
-    String getDnsLabel() {
-        dnsLabel.orNull
+    String getSubnetName() {
+        subnetName.orNull
     }
 
-    void validateDnsLabel(String seed) {
-        if (isBlank(getDnsLabel())) {
-            setDnsLabel('dns' + HashUtil.sha1(seed.bytes).asHexString()[0..11])
-            project.logger.warn("Missing value for 'dnsLabel' in $path. Value set to ${getDnsLabel()}")
+    void validateSubnetName() {
+        if (isBlank(getSubnetName())) {
+            setSubnetName('subnet-' + UUID.randomUUID().toString())
+            project.logger.warn("Missing value for 'subnetName' in $path. Value set to ${getSubnetName()}")
         }
     }
 }

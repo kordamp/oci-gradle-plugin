@@ -17,7 +17,7 @@
  */
 package org.kordamp.gradle.oci.tasks.traits
 
-import com.oracle.bmc.OCID
+
 import groovy.transform.CompileStatic
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
@@ -25,6 +25,7 @@ import org.gradle.api.tasks.options.Option
 import org.kordamp.gradle.oci.tasks.interfaces.PathAware
 import org.kordamp.gradle.oci.tasks.interfaces.ProjectAware
 
+import static com.oracle.bmc.OCID.isValid
 import static org.kordamp.gradle.StringUtils.isBlank
 
 /**
@@ -49,8 +50,8 @@ trait InstanceIdAwareTrait implements PathAware, ProjectAware {
         if (isBlank(getInstanceId())) {
             throw new IllegalStateException("Missing value for 'instanceId' in $path")
         }
-        if (!OCID.isValid(getInstanceId())) {
-            throw new IllegalStateException("Instance id '${instanceId}' is invalid")
+        if (!isValid(getInstanceId())) {
+            throw new IllegalStateException("Instance id '${getInstanceId()}' is invalid")
         }
     }
 }

@@ -43,8 +43,12 @@ class DeleteInstanceConsoleConnectionTask extends AbstractOCITask implements Ins
     @TaskAction
     void executeTask() {
         validateInstanceConsoleConnectionId()
+
         AuthenticationDetailsProvider provider = resolveAuthenticationDetailsProvider()
         ComputeClient client = new ComputeClient(provider)
+
+        // TODO: check if connection exists
+        // TODO: check is connection is in a 'deletable' state
 
         client.deleteInstanceConsoleConnection(DeleteInstanceConsoleConnectionRequest.builder()
             .instanceConsoleConnectionId(instanceConsoleConnectionId)

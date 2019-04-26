@@ -26,14 +26,14 @@ import com.oracle.bmc.core.requests.ListInstancesRequest
 import groovy.transform.CompileStatic
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.options.Option
 import org.gradle.api.tasks.options.OptionValues
 import org.kordamp.gradle.oci.tasks.AbstractOCITask
 import org.kordamp.gradle.oci.tasks.interfaces.OCITask
 import org.kordamp.gradle.oci.tasks.traits.CompartmentIdAwareTrait
-import org.kordamp.gradle.oci.tasks.traits.InstanceIdAwareTrait
+import org.kordamp.gradle.oci.tasks.traits.OptionalInstanceIdAwareTrait
+import org.kordamp.gradle.oci.tasks.traits.OptionalInstanceNameAwareTrait
 import org.kordamp.gradle.oci.tasks.traits.WaitForCompletionAwareTrait
 import org.kordamp.jipsy.TypeProviderFor
 
@@ -47,7 +47,8 @@ import static org.kordamp.gradle.StringUtils.isNotBlank
 @CompileStatic
 @TypeProviderFor(OCITask)
 class InstanceActionTask extends AbstractOCITask implements CompartmentIdAwareTrait,
-    InstanceIdAwareTrait,
+    OptionalInstanceIdAwareTrait,
+    OptionalInstanceNameAwareTrait,
     WaitForCompletionAwareTrait {
     static final String TASK_DESCRIPTION = 'Performs a given action on an Instance.'
 
@@ -69,7 +70,6 @@ class InstanceActionTask extends AbstractOCITask implements CompartmentIdAwareTr
         }
     }
 
-    private final Property<String> instanceName = project.objects.property(String)
     private final Property<InstanceAction> action = project.objects.property(InstanceAction)
 
     @Input
@@ -87,19 +87,10 @@ class InstanceActionTask extends AbstractOCITask implements CompartmentIdAwareTr
         return new ArrayList<InstanceAction>(Arrays.asList(InstanceAction.values()))
     }
 
-    @Optional
-    @Input
-    @Option(option = 'instance-name', description = 'The name of the Instance (REQUIRED if instanceId = null).')
-    void setInstanceName(String instanceName) {
-        this.instanceName.set(instanceName)
-    }
-
-    String getInstanceName() {
-        return instanceName.orNull
-    }
-
     @TaskAction
     void executeTask() {
+        validateInstanceId()
+
         if (isBlank(getInstanceId()) && isBlank(getInstanceName())) {
             throw new IllegalStateException("Missing value for either 'instanceId' or 'instanceName' in $path")
         }

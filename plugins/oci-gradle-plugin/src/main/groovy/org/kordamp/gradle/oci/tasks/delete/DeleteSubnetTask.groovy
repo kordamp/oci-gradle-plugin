@@ -24,15 +24,12 @@ import com.oracle.bmc.core.requests.DeleteSubnetRequest
 import com.oracle.bmc.core.requests.GetSubnetRequest
 import com.oracle.bmc.core.requests.ListSubnetsRequest
 import groovy.transform.CompileStatic
-import org.gradle.api.provider.Property
-import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskAction
-import org.gradle.api.tasks.options.Option
 import org.kordamp.gradle.oci.tasks.AbstractOCITask
 import org.kordamp.gradle.oci.tasks.interfaces.OCITask
 import org.kordamp.gradle.oci.tasks.traits.CompartmentIdAwareTrait
-import org.kordamp.gradle.oci.tasks.traits.SubnetIdAwareTrait
+import org.kordamp.gradle.oci.tasks.traits.OptionalSubnetIdAwareTrait
+import org.kordamp.gradle.oci.tasks.traits.OptionalSubnetNameAwareTrait
 import org.kordamp.gradle.oci.tasks.traits.VcnIdAwareTrait
 import org.kordamp.gradle.oci.tasks.traits.WaitForCompletionAwareTrait
 import org.kordamp.jipsy.TypeProviderFor
@@ -48,31 +45,24 @@ import static org.kordamp.gradle.StringUtils.isNotBlank
 @TypeProviderFor(OCITask)
 class DeleteSubnetTask extends AbstractOCITask implements CompartmentIdAwareTrait,
     VcnIdAwareTrait,
-    SubnetIdAwareTrait,
+    OptionalSubnetIdAwareTrait,
+    OptionalSubnetNameAwareTrait,
     WaitForCompletionAwareTrait {
     static final String TASK_DESCRIPTION = 'Deletes a Subnet.'
 
-    private final Property<String> subnetName = project.objects.property(String)
-
-    @Optional
-    @Input
-    @Option(option = 'subnet-name', description = 'The name of the Subnet (REQUIRED if subnetId = null).')
-    void setSubnetName(String subnetName) {
-        this.subnetName.set(subnetName)
-    }
-
-    String getSubnetName() {
-        return subnetName.orNull
-    }
-
     @TaskAction
     void executeTask() {
+        validateSubnetId()
+
         if (isBlank(getSubnetId()) && isBlank(getSubnetName())) {
             throw new IllegalStateException("Missing value for either 'subnetId' or 'subnetName' in $path")
         }
 
         AuthenticationDetailsProvider provider = resolveAuthenticationDetailsProvider()
         VirtualNetworkClient client = new VirtualNetworkClient(provider)
+
+        // TODO: check if subnet exists
+        // TODO: check is subnet is in a 'deletable' state
 
         if (isNotBlank(getSubnetId())) {
             Subnet subnet = client.getSubnet(GetSubnetRequest.builder()

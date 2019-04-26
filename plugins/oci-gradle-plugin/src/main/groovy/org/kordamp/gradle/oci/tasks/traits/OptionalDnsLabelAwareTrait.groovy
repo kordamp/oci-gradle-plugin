@@ -20,6 +20,7 @@ package org.kordamp.gradle.oci.tasks.traits
 import groovy.transform.CompileStatic
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.options.Option
 import org.gradle.internal.hash.HashUtil
 import org.kordamp.gradle.oci.tasks.interfaces.PathAware
@@ -32,11 +33,12 @@ import static org.kordamp.gradle.StringUtils.isBlank
  * @since 0.1.0
  */
 @CompileStatic
-trait DnsLabelAwareTrait implements PathAware, ProjectAware {
+trait OptionalDnsLabelAwareTrait implements PathAware, ProjectAware {
     private final Property<String> dnsLabel = project.objects.property(String)
 
+    @Optional
     @Input
-    @Option(option = 'dns-label', description = 'The DNS label to use (REQUIRED).')
+    @Option(option = 'dns-label', description = 'The DNS label to use (OPTIONAL).')
     void setDnsLabel(String dnsLabel) {
         String label = dnsLabel?.replace('.', '')?.replace('-', '')
         if (label?.length() > 15) label = label?.substring(0, 14)

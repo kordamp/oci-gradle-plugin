@@ -17,7 +17,7 @@
  */
 package org.kordamp.gradle.oci.tasks.traits
 
-import com.oracle.bmc.OCID
+
 import groovy.transform.CompileStatic
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
@@ -25,6 +25,7 @@ import org.gradle.api.tasks.options.Option
 import org.kordamp.gradle.oci.tasks.interfaces.PathAware
 import org.kordamp.gradle.oci.tasks.interfaces.ProjectAware
 
+import static com.oracle.bmc.OCID.isValid
 import static org.kordamp.gradle.StringUtils.isBlank
 
 /**
@@ -49,8 +50,8 @@ trait InternetGatewayIdAwareTrait implements PathAware, ProjectAware {
         if (isBlank(getInternetGatewayId())) {
             throw new IllegalStateException("Missing value for 'internetGatewayId' in $path")
         }
-        if (!OCID.isValid(getInternetGatewayId())) {
-            throw new IllegalStateException("InternetGateway id '${internetGatewayId}' is invalid")
+        if (!isValid(getInternetGatewayId())) {
+            throw new IllegalStateException("InternetGateway id '${getInternetGatewayId()}' is invalid")
         }
     }
 }

@@ -24,15 +24,12 @@ import com.oracle.bmc.core.requests.GetInstanceRequest
 import com.oracle.bmc.core.requests.ListInstancesRequest
 import com.oracle.bmc.core.requests.TerminateInstanceRequest
 import groovy.transform.CompileStatic
-import org.gradle.api.provider.Property
-import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskAction
-import org.gradle.api.tasks.options.Option
 import org.kordamp.gradle.oci.tasks.AbstractOCITask
 import org.kordamp.gradle.oci.tasks.interfaces.OCITask
 import org.kordamp.gradle.oci.tasks.traits.CompartmentIdAwareTrait
-import org.kordamp.gradle.oci.tasks.traits.InstanceIdAwareTrait
+import org.kordamp.gradle.oci.tasks.traits.OptionalInstanceIdAwareTrait
+import org.kordamp.gradle.oci.tasks.traits.OptionalInstanceNameAwareTrait
 import org.kordamp.gradle.oci.tasks.traits.WaitForCompletionAwareTrait
 import org.kordamp.jipsy.TypeProviderFor
 
@@ -46,31 +43,24 @@ import static org.kordamp.gradle.StringUtils.isNotBlank
 @CompileStatic
 @TypeProviderFor(OCITask)
 class TerminateInstanceTask extends AbstractOCITask implements CompartmentIdAwareTrait,
-    InstanceIdAwareTrait,
+    OptionalInstanceIdAwareTrait,
+    OptionalInstanceNameAwareTrait,
     WaitForCompletionAwareTrait {
     static final String TASK_DESCRIPTION = 'Terminates an Instance.'
 
-    private final Property<String> instanceName = project.objects.property(String)
-
-    @Optional
-    @Input
-    @Option(option = 'instance-name', description = 'The name of the Instance (REQUIRED if instanceId = null).')
-    void setInstanceName(String instanceName) {
-        this.instanceName.set(instanceName)
-    }
-
-    String getInstanceName() {
-        return instanceName.orNull
-    }
-
     @TaskAction
     void executeTask() {
+        validateInstanceId()
+
         if (isBlank(getInstanceId()) && isBlank(getInstanceName())) {
             throw new IllegalStateException("Missing value for either 'instanceId' or 'instanceName' in $path")
         }
 
         AuthenticationDetailsProvider provider = resolveAuthenticationDetailsProvider()
         ComputeClient client = new ComputeClient(provider)
+
+        // TODO: check if instance exists
+        // TODO: check is instance is in a 'deletable' state
 
         if (isNotBlank(getInstanceId())) {
             Instance instance = client.getInstance(GetInstanceRequest.builder()

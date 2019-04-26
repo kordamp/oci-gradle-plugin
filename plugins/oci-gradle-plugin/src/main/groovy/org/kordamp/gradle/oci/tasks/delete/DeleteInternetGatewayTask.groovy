@@ -24,15 +24,12 @@ import com.oracle.bmc.core.requests.DeleteInternetGatewayRequest
 import com.oracle.bmc.core.requests.GetInternetGatewayRequest
 import com.oracle.bmc.core.requests.ListInternetGatewaysRequest
 import groovy.transform.CompileStatic
-import org.gradle.api.provider.Property
-import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskAction
-import org.gradle.api.tasks.options.Option
 import org.kordamp.gradle.oci.tasks.AbstractOCITask
 import org.kordamp.gradle.oci.tasks.interfaces.OCITask
 import org.kordamp.gradle.oci.tasks.traits.CompartmentIdAwareTrait
-import org.kordamp.gradle.oci.tasks.traits.InternetGatewayIdAwareTrait
+import org.kordamp.gradle.oci.tasks.traits.OptionalInternetGatewayIdAwareTrait
+import org.kordamp.gradle.oci.tasks.traits.OptionalInternetGatewayNameAwareTrait
 import org.kordamp.gradle.oci.tasks.traits.VcnIdAwareTrait
 import org.kordamp.gradle.oci.tasks.traits.WaitForCompletionAwareTrait
 import org.kordamp.jipsy.TypeProviderFor
@@ -48,31 +45,24 @@ import static org.kordamp.gradle.StringUtils.isNotBlank
 @TypeProviderFor(OCITask)
 class DeleteInternetGatewayTask extends AbstractOCITask implements CompartmentIdAwareTrait,
     VcnIdAwareTrait,
-    InternetGatewayIdAwareTrait,
+    OptionalInternetGatewayIdAwareTrait,
+    OptionalInternetGatewayNameAwareTrait,
     WaitForCompletionAwareTrait {
     static final String TASK_DESCRIPTION = 'Deletes a InternetGateway.'
 
-    private final Property<String> internetGatewayName = project.objects.property(String)
-
-    @Optional
-    @Input
-    @Option(option = 'internet-gateway-name', description = 'The name of the InternetGateway (REQUIRED if internetGatewayId = null).')
-    void setInternetGatewayName(String internetGatewayName) {
-        this.internetGatewayName.set(internetGatewayName)
-    }
-
-    String getInternetGatewayName() {
-        return internetGatewayName.orNull
-    }
-
     @TaskAction
     void executeTask() {
+        validateInternetGatewayId()
+
         if (isBlank(getInternetGatewayId()) && isBlank(getInternetGatewayName())) {
             throw new IllegalStateException("Missing value for either 'internetGatewayId' or 'internetGatewayName' in $path")
         }
 
         AuthenticationDetailsProvider provider = resolveAuthenticationDetailsProvider()
         VirtualNetworkClient client = new VirtualNetworkClient(provider)
+
+        // TODO: check if gateway exists
+        // TODO: check is gateway is in a 'deletable' state
 
         if (isNotBlank(getInternetGatewayId())) {
             InternetGateway internetGateway = client.getInternetGateway(GetInternetGatewayRequest.builder()

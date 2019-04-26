@@ -108,8 +108,8 @@ class SetupInstanceTask extends AbstractOCITask implements CompartmentIdAwareTra
         maybeCreateInternetGateway(this,
             vcnClient,
             getCompartmentId(),
-            internetGatewayDisplayName,
             vcn.id,
+            internetGatewayDisplayName,
             true,
             isVerbose())
 

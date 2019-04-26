@@ -36,13 +36,13 @@ trait CompartmentIdAwareTrait implements PathAware, ProjectAware {
     private final Property<String> compartmentId = project.objects.property(String)
 
     @Input
-    @Option(option = 'compartment-id', description = 'The id of the Compartment to query (REQUIRED).')
+    @Option(option = 'compartment-id', description = 'The id of the Compartment (REQUIRED).')
     void setCompartmentId(String compartmentId) {
         this.compartmentId.set(compartmentId)
     }
 
     String getCompartmentId() {
-        return compartmentId.orNull
+        compartmentId.orNull
     }
 
     void validateCompartmentId() {

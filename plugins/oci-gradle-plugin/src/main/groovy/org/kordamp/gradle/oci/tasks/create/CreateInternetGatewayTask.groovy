@@ -40,6 +40,7 @@ import org.kordamp.gradle.oci.tasks.AbstractOCITask
 import org.kordamp.gradle.oci.tasks.interfaces.OCITask
 import org.kordamp.gradle.oci.tasks.traits.CompartmentIdAwareTrait
 import org.kordamp.gradle.oci.tasks.traits.VcnIdAwareTrait
+import org.kordamp.gradle.oci.tasks.traits.VerboseAwareTrait
 import org.kordamp.gradle.oci.tasks.traits.WaitForCompletionAwareTrait
 import org.kordamp.jipsy.TypeProviderFor
 
@@ -54,7 +55,8 @@ import static org.kordamp.gradle.oci.tasks.printers.InternetGatewayPrinter.print
 @TypeProviderFor(OCITask)
 class CreateInternetGatewayTask extends AbstractOCITask implements CompartmentIdAwareTrait,
     VcnIdAwareTrait,
-    WaitForCompletionAwareTrait {
+    WaitForCompletionAwareTrait,
+    VerboseAwareTrait {
     static final String TASK_DESCRIPTION = 'Creates a InternetGateway.'
 
     private final Property<String> internetGatewayName = project.objects.property(String)
@@ -92,7 +94,8 @@ class CreateInternetGatewayTask extends AbstractOCITask implements CompartmentId
             getCompartmentId(),
             getVcnId(),
             getInternetGatewayName(),
-            isWaitForCompletion())
+            isWaitForCompletion(),
+            isVerbose())
         createdInternetGatewayId.set(internetGateway.id)
 
         client.close()
@@ -103,13 +106,15 @@ class CreateInternetGatewayTask extends AbstractOCITask implements CompartmentId
                                                       String compartmentId,
                                                       String vcnId,
                                                       String internetGatewayName,
-                                                      boolean waitForCompletion) {
+                                                      boolean waitForCompletion,
+                                                      boolean verbose) {
         InternetGateway internetGateway = doMaybeCreateInternetGateway(owner,
             client,
             compartmentId,
             vcnId,
             internetGatewayName,
-            waitForCompletion)
+            waitForCompletion,
+            verbose)
 
         maybeAddInternetGatewayToVcn(client, vcnId, internetGateway)
 
@@ -121,7 +126,8 @@ class CreateInternetGatewayTask extends AbstractOCITask implements CompartmentId
                                                         String compartmentId,
                                                         String vcnId,
                                                         String internetGatewayName,
-                                                        boolean waitForCompletion) {
+                                                        boolean waitForCompletion,
+                                                        boolean verbose) {
         // 1. Check if it exists
         List<InternetGateway> internetGateways = client.listInternetGateways(ListInternetGatewaysRequest.builder()
             .compartmentId(compartmentId)
@@ -133,14 +139,14 @@ class CreateInternetGatewayTask extends AbstractOCITask implements CompartmentId
 
         if (internetGateway) {
             println("InternetGateway '${internetGatewayName}' already exists. id = ${internetGateway.id}")
-            printInternetGateway(owner, internetGateway, 0)
+            if (verbose) printInternetGateway(owner, internetGateway, 0)
             return internetGateway
         }
 
         if (!internetGateways.empty) {
             internetGateway = internetGateways[0]
             println("InternetGateway '${internetGateway.displayName}' exists. id = ${internetGateway.id}")
-            printInternetGateway(owner, internetGateway, 0)
+            if (verbose) printInternetGateway(owner, internetGateway, 0)
             return internetGateway
         }
 
@@ -164,7 +170,7 @@ class CreateInternetGatewayTask extends AbstractOCITask implements CompartmentId
         }
 
         println("InternetGateway '${internetGatewayName}' has been provisioned. id = ${internetGateway.id}")
-        printInternetGateway(owner, internetGateway, 0)
+        if (verbose) printInternetGateway(owner, internetGateway, 0)
         internetGateway
     }
 
@@ -184,7 +190,7 @@ class CreateInternetGatewayTask extends AbstractOCITask implements CompartmentId
             .routeTable
 
         // 3. is the IG already in the RT?
-        if (!routeTable.routeRules.find { RouteRule rr -> rr.destination == internetGateway.id }) {
+        if (!routeTable.routeRules.find { RouteRule rr -> rr.networkEntityId == internetGateway.id }) {
             List<RouteRule> routeRules = []
             routeRules << RouteRule.builder()
                 .destination('0.0.0.0/0')

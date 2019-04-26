@@ -17,40 +17,36 @@
  */
 package org.kordamp.gradle.oci.tasks.traits
 
-import com.oracle.bmc.OCID
 import groovy.transform.CompileStatic
-import org.gradle.api.provider.Property
+import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.options.Option
 import org.kordamp.gradle.oci.tasks.interfaces.PathAware
 import org.kordamp.gradle.oci.tasks.interfaces.ProjectAware
-
-import static org.kordamp.gradle.StringUtils.isBlank
 
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
 @CompileStatic
-trait VcnIdAwareTrait implements PathAware, ProjectAware {
-    private final Property<String> vcnId = project.objects.property(String)
+trait UserDataFileAwareTrait implements PathAware, ProjectAware {
+    private final RegularFileProperty userDataFile = project.objects.fileProperty()
 
+    @Optional
     @Input
-    @Option(option = 'vcn-id', description = 'The id of the Vcn (REQUIRED).')
-    void setVcnId(String vcnId) {
-        this.vcnId.set(vcnId)
+    @Option(option = 'user-data-file', description = 'Location of cloud init file (REQUIRED).')
+    void setUserDataFile(String userDataFile) {
+        this.userDataFile.set(project.file(userDataFile))
     }
 
-    String getVcnId() {
-        vcnId.orNull
+    File getUserDataFile() {
+        userDataFile.asFile.orNull
     }
 
-    void validateVcnId() {
-        if (isBlank(getVcnId())) {
-            throw new IllegalStateException("Missing value for 'vcnId' in $path")
-        }
-        if (!OCID.isValid(getVcnId())) {
-            throw new IllegalStateException("Vcn id '${vcnId}' is invalid")
+    void validateUserDataFile() {
+        if (!userDataFile.present) {
+            throw new IllegalStateException("Missing value for 'userDataFile' in $path")
         }
     }
 }

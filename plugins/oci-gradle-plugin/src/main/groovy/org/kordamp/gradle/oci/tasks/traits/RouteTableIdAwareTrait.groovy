@@ -36,13 +36,13 @@ trait RouteTableIdAwareTrait implements PathAware, ProjectAware {
     private final Property<String> routeTableId = project.objects.property(String)
 
     @Input
-    @Option(option = 'routeTable-id', description = 'The id of the RouteTable to query (REQUIRED).')
+    @Option(option = 'routeTable-id', description = 'The id of the RouteTable (REQUIRED).')
     void setRouteTableId(String routeTableId) {
         this.routeTableId.set(routeTableId)
     }
 
     String getRouteTableId() {
-        return routeTableId.orNull
+        routeTableId.orNull
     }
 
     void validateRouteTableId() {

@@ -17,7 +17,10 @@
  */
 package org.kordamp.gradle.oci.tasks.traits
 
-import com.oracle.bmc.OCID
+import com.oracle.bmc.core.ComputeClient
+import com.oracle.bmc.core.model.Image
+import com.oracle.bmc.core.requests.ListImagesRequest
+import com.oracle.bmc.core.responses.ListImagesResponse
 import groovy.transform.CompileStatic
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
@@ -32,25 +35,31 @@ import static org.kordamp.gradle.StringUtils.isBlank
  * @since 0.1.0
  */
 @CompileStatic
-trait VcnIdAwareTrait implements PathAware, ProjectAware {
-    private final Property<String> vcnId = project.objects.property(String)
+trait ImageAwareTrait implements PathAware, ProjectAware {
+    private final Property<String> image = project.objects.property(String)
 
     @Input
-    @Option(option = 'vcn-id', description = 'The id of the Vcn (REQUIRED).')
-    void setVcnId(String vcnId) {
-        this.vcnId.set(vcnId)
+    @Option(option = 'image', description = 'The Image of the Instance (REQUIRED).')
+    void setImage(String image) {
+        this.image.set(image)
     }
 
-    String getVcnId() {
-        vcnId.orNull
+    String getImage() {
+        image.orNull
     }
 
-    void validateVcnId() {
-        if (isBlank(getVcnId())) {
-            throw new IllegalStateException("Missing value for 'vcnId' in $path")
+    void validateImage() {
+        if (isBlank(getImage())) {
+            throw new IllegalStateException("Missing value for 'image' in $path")
         }
-        if (!OCID.isValid(getVcnId())) {
-            throw new IllegalStateException("Vcn id '${vcnId}' is invalid")
-        }
+    }
+
+    Image validateImage(ComputeClient client, String compartmentId) {
+        ListImagesResponse response = client.listImages(ListImagesRequest.builder()
+            .compartmentId(compartmentId)
+            .build())
+        Image image = response.items.find { Image img -> img.displayName == getImage() }
+        if (!image) throw new IllegalStateException("Invalid image ${getImage()}")
+        image
     }
 }

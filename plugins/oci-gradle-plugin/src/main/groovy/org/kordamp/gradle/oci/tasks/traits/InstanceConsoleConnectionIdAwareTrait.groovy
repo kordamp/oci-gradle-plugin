@@ -36,13 +36,13 @@ trait InstanceConsoleConnectionIdAwareTrait implements PathAware, ProjectAware {
     private final Property<String> connectionId = project.objects.property(String)
 
     @Input
-    @Option(option = 'connection-id', description = 'The id of the InstanceConsoleConnection to query (REQUIRED).')
+    @Option(option = 'connection-id', description = 'The id of the InstanceConsoleConnection (REQUIRED).')
     void setInstanceConsoleConnectionId(String connectionId) {
         this.connectionId.set(connectionId)
     }
 
     String getInstanceConsoleConnectionId() {
-        return connectionId.orNull
+        connectionId.orNull
     }
 
     void validateInstanceConsoleConnectionId() {

@@ -37,11 +37,13 @@ trait DnsLabelAwareTrait implements PathAware, ProjectAware {
     @Input
     @Option(option = 'dns-label', description = 'The DNS label to use (REQUIRED).')
     void setDnsLabel(String dnsLabel) {
-        this.dnsLabel.set(dnsLabel?.replace('.', '')?.replace('-', ''))
+        String label = dnsLabel?.replace('.', '')?.replace('-', '')
+        if (label?.length() > 15) label = label?.substring(0, 14)
+        this.dnsLabel.set(label)
     }
 
     String getDnsLabel() {
-        return dnsLabel.orNull
+        dnsLabel.orNull
     }
 
     void validateDnsLabel() {

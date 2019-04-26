@@ -32,6 +32,7 @@ import org.kordamp.gradle.oci.tasks.interfaces.OCITask
 import org.kordamp.gradle.oci.tasks.traits.CompartmentDescriptionAwareTrait
 import org.kordamp.gradle.oci.tasks.traits.CompartmentIdAwareTrait
 import org.kordamp.gradle.oci.tasks.traits.CompartmentNameAwareTrait
+import org.kordamp.gradle.oci.tasks.traits.VerboseAwareTrait
 import org.kordamp.gradle.oci.tasks.traits.WaitForCompletionAwareTrait
 import org.kordamp.jipsy.TypeProviderFor
 
@@ -46,7 +47,8 @@ import static org.kordamp.gradle.oci.tasks.printers.CompartmentPrinter.printComp
 class CreateCompartmentTask extends AbstractOCITask implements CompartmentIdAwareTrait,
     CompartmentNameAwareTrait,
     CompartmentDescriptionAwareTrait,
-    WaitForCompletionAwareTrait {
+    WaitForCompletionAwareTrait,
+    VerboseAwareTrait {
     static final String TASK_DESCRIPTION = 'Creates a Compartment.'
 
     private final Property<String> createdCompartmentId = project.objects.property(String)
@@ -69,7 +71,8 @@ class CreateCompartmentTask extends AbstractOCITask implements CompartmentIdAwar
             getCompartmentId(),
             getCompartmentName(),
             getCompartmentDescription(),
-            isWaitForCompletion())
+            isWaitForCompletion(),
+            isVerbose())
         createdCompartmentId.set(compartment.id)
 
         client.close()
@@ -80,7 +83,8 @@ class CreateCompartmentTask extends AbstractOCITask implements CompartmentIdAwar
                                               String parentCompartmentId,
                                               String compartmentName,
                                               String compartmentDescription,
-                                              boolean waitForCompletion) {
+                                              boolean waitForCompletion,
+                                              boolean verbose) {
         // 1. Check if it exists
         List<Compartment> compartments = client.listCompartments(ListCompartmentsRequest.builder()
             .compartmentId(parentCompartmentId)
@@ -89,7 +93,7 @@ class CreateCompartmentTask extends AbstractOCITask implements CompartmentIdAwar
 
         if (compartment) {
             println("Compartment '${compartmentName}' already exists. id = ${compartment.id}")
-            printCompartment(owner, compartment, 0)
+            if (verbose) printCompartment(owner, compartment, 0)
             return compartment
         }
         // 2. Create
@@ -114,7 +118,7 @@ class CreateCompartmentTask extends AbstractOCITask implements CompartmentIdAwar
         }
 
         println("Compartment '${compartmentName}' has been provisioned. id = ${compartment.id}")
-        printCompartment(owner, compartment, 0)
+        if (verbose) printCompartment(owner, compartment, 0)
         compartment
     }
 }

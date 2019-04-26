@@ -17,7 +17,10 @@
  */
 package org.kordamp.gradle.oci.tasks.traits
 
-import com.oracle.bmc.OCID
+import com.oracle.bmc.core.ComputeClient
+import com.oracle.bmc.core.model.Shape
+import com.oracle.bmc.core.requests.ListShapesRequest
+import com.oracle.bmc.core.responses.ListShapesResponse
 import groovy.transform.CompileStatic
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
@@ -32,25 +35,31 @@ import static org.kordamp.gradle.StringUtils.isBlank
  * @since 0.1.0
  */
 @CompileStatic
-trait VcnIdAwareTrait implements PathAware, ProjectAware {
-    private final Property<String> vcnId = project.objects.property(String)
+trait ShapeAwareTrait implements PathAware, ProjectAware {
+    private final Property<String> shape = project.objects.property(String)
 
     @Input
-    @Option(option = 'vcn-id', description = 'The id of the Vcn (REQUIRED).')
-    void setVcnId(String vcnId) {
-        this.vcnId.set(vcnId)
+    @Option(option = 'shape', description = 'The Shape of the Instance (REQUIRED).')
+    void setShape(String shape) {
+        this.shape.set(shape)
     }
 
-    String getVcnId() {
-        vcnId.orNull
+    String getShape() {
+        shape.orNull
     }
 
-    void validateVcnId() {
-        if (isBlank(getVcnId())) {
-            throw new IllegalStateException("Missing value for 'vcnId' in $path")
+    void validateShape() {
+        if (isBlank(getShape())) {
+            throw new IllegalStateException("Missing value for 'shape' in $path")
         }
-        if (!OCID.isValid(getVcnId())) {
-            throw new IllegalStateException("Vcn id '${vcnId}' is invalid")
-        }
+    }
+
+    Shape validateShape(ComputeClient client, String compartmentId) {
+        ListShapesResponse response = client.listShapes(ListShapesRequest.builder()
+            .compartmentId(compartmentId)
+            .build())
+        Shape shape = response.items.find { Shape sh -> sh.shape == getShape() }
+        if (!shape) throw new IllegalStateException("Invalid shape ${getShape()}")
+        shape
     }
 }

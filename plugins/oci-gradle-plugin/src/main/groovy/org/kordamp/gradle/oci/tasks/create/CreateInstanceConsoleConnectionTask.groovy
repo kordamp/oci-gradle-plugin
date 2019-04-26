@@ -22,6 +22,7 @@ import com.oracle.bmc.core.ComputeClient
 import com.oracle.bmc.core.model.CreateInstanceConsoleConnectionDetails
 import com.oracle.bmc.core.model.InstanceConsoleConnection
 import com.oracle.bmc.core.requests.CreateInstanceConsoleConnectionRequest
+import com.oracle.bmc.core.requests.GetInstanceConsoleConnectionRequest
 import groovy.transform.CompileStatic
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.TaskAction
@@ -30,6 +31,8 @@ import org.kordamp.gradle.oci.tasks.interfaces.OCITask
 import org.kordamp.gradle.oci.tasks.traits.CompartmentIdAwareTrait
 import org.kordamp.gradle.oci.tasks.traits.InstanceIdAwareTrait
 import org.kordamp.gradle.oci.tasks.traits.PublicKeyFileAwareTrait
+import org.kordamp.gradle.oci.tasks.traits.VerboseAwareTrait
+import org.kordamp.gradle.oci.tasks.traits.WaitForCompletionAwareTrait
 import org.kordamp.jipsy.TypeProviderFor
 
 import static org.kordamp.gradle.oci.tasks.printers.InstanceConsoleConnectionPrinter.printInstanceConsoleConnection
@@ -40,13 +43,17 @@ import static org.kordamp.gradle.oci.tasks.printers.InstanceConsoleConnectionPri
  */
 @CompileStatic
 @TypeProviderFor(OCITask)
-class CreateInstanceConsoleConnectionTask extends AbstractOCITask implements CompartmentIdAwareTrait, InstanceIdAwareTrait, PublicKeyFileAwareTrait {
+class CreateInstanceConsoleConnectionTask extends AbstractOCITask implements CompartmentIdAwareTrait,
+    InstanceIdAwareTrait,
+    PublicKeyFileAwareTrait,
+    WaitForCompletionAwareTrait,
+    VerboseAwareTrait {
     static final String TASK_DESCRIPTION = 'Creates an InstanceConsoleConnection.'
 
-    private final Property<String> creactedConnectionId = project.objects.property(String)
+    private final Property<String> createdConnectionId = project.objects.property(String)
 
     String getCreatedInstanceConsoleConnectionId() {
-        return creactedConnectionId.orNull
+        return createdConnectionId.orNull
     }
 
     @TaskAction
@@ -57,9 +64,26 @@ class CreateInstanceConsoleConnectionTask extends AbstractOCITask implements Com
         AuthenticationDetailsProvider provider = resolveAuthenticationDetailsProvider()
         ComputeClient client = ComputeClient.builder().build(provider)
 
+        InstanceConsoleConnection connection = createInstanceConsoleConnection(this,
+            client,
+            getInstanceId(),
+            getPublicKeyFile().text,
+            isWaitForCompletion(),
+            isVerbose())
+        createdConnectionId.set(connection.id)
+
+        client.close()
+    }
+
+    static InstanceConsoleConnection createInstanceConsoleConnection(OCITask owner,
+                                                                     ComputeClient client,
+                                                                     String instanceId,
+                                                                     String publicKeyFile,
+                                                                     boolean waitForCompletion,
+                                                                     boolean verbose) {
         println('Provisioning InstanceConsoleConnection. This may take a while.')
         CreateInstanceConsoleConnectionDetails details = CreateInstanceConsoleConnectionDetails.builder()
-            .publicKey(publicKeyFile.text)
+            .publicKey(publicKeyFile)
             .instanceId(instanceId)
             .build()
 
@@ -68,10 +92,17 @@ class CreateInstanceConsoleConnectionTask extends AbstractOCITask implements Com
             .build())
             .instanceConsoleConnection
 
-        creactedConnectionId.set(connection.id)
-        println("InstanceConsoleConnection has been provisioned.")
-        printInstanceConsoleConnection(this, connection, 0)
+        if (waitForCompletion) {
+            println("Waiting for InstanceConsoleConnection to be Active")
+            client.waiters.forInstanceConsoleConnection(GetInstanceConsoleConnectionRequest.builder()
+                .instanceConsoleConnectionId(connection.id)
+                .build(),
+                InstanceConsoleConnection.LifecycleState.Active)
+                .execute()
+        }
 
-        client.close()
+        println("InstanceConsoleConnection has been provisioned. id = ${connection.id}")
+        if (verbose) printInstanceConsoleConnection(owner, connection, 0)
+        connection
     }
 }

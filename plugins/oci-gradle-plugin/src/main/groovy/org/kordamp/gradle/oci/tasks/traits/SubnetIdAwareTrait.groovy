@@ -36,13 +36,13 @@ trait SubnetIdAwareTrait implements PathAware, ProjectAware {
     private final Property<String> subnetId = project.objects.property(String)
 
     @Input
-    @Option(option = 'subnet-id', description = 'The id of the Subnet to query (REQUIRED).')
+    @Option(option = 'subnet-id', description = 'The id of the Subnet (REQUIRED).')
     void setSubnetId(String subnetId) {
         this.subnetId.set(subnetId)
     }
 
     String getSubnetId() {
-        return subnetId.orNull
+        subnetId.orNull
     }
 
     void validateSubnetId() {

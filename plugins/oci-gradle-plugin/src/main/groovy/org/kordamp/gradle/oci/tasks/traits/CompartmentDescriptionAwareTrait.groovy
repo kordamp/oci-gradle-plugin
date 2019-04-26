@@ -41,7 +41,7 @@ trait CompartmentDescriptionAwareTrait implements PathAware, ProjectAware {
     }
 
     String getCompartmentDescription() {
-        return compartmentDescription.orNull
+        compartmentDescription.orNull
     }
 
     void validateCompartmentDescription() {

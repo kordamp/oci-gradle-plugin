@@ -21,10 +21,8 @@ import com.oracle.bmc.auth.AuthenticationDetailsProvider
 import com.oracle.bmc.core.VirtualNetworkClient
 import com.oracle.bmc.core.model.CreateSubnetDetails
 import com.oracle.bmc.core.model.Subnet
-import com.oracle.bmc.core.model.Vcn
 import com.oracle.bmc.core.requests.CreateSubnetRequest
 import com.oracle.bmc.core.requests.GetSubnetRequest
-import com.oracle.bmc.core.requests.GetVcnRequest
 import com.oracle.bmc.core.requests.ListSubnetsRequest
 import com.oracle.bmc.identity.IdentityClient
 import com.oracle.bmc.identity.model.AvailabilityDomain
@@ -40,6 +38,7 @@ import org.kordamp.gradle.oci.tasks.interfaces.OCITask
 import org.kordamp.gradle.oci.tasks.traits.AvailabilityDomainAwareTrait
 import org.kordamp.gradle.oci.tasks.traits.CompartmentIdAwareTrait
 import org.kordamp.gradle.oci.tasks.traits.VcnIdAwareTrait
+import org.kordamp.gradle.oci.tasks.traits.VerboseAwareTrait
 import org.kordamp.gradle.oci.tasks.traits.WaitForCompletionAwareTrait
 import org.kordamp.jipsy.TypeProviderFor
 
@@ -55,7 +54,8 @@ import static org.kordamp.gradle.oci.tasks.printers.SubnetPrinter.printSubnet
 class CreateSubnetTask extends AbstractOCITask implements CompartmentIdAwareTrait,
     AvailabilityDomainAwareTrait,
     VcnIdAwareTrait,
-    WaitForCompletionAwareTrait {
+    WaitForCompletionAwareTrait,
+    VerboseAwareTrait {
     static final String TASK_DESCRIPTION = 'Creates a Subnet.'
 
     private final Property<String> subnetName = project.objects.property(String)
@@ -76,7 +76,9 @@ class CreateSubnetTask extends AbstractOCITask implements CompartmentIdAwareTrai
     @Optional
     @Option(option = 'dns-label', description = 'The DNS label to use (REQUIRED).')
     void setDnsLabel(String dnsLabel) {
-        this.dnsLabel.set(dnsLabel?.replace('.', '')?.replace('-', ''))
+        String label = dnsLabel?.replace('.', '')?.replace('-', '')
+        if (label?.length() > 15) label = label?.substring(0, 14)
+        this.dnsLabel.set(label)
     }
 
     String getDnsLabel() {
@@ -105,7 +107,7 @@ class CreateSubnetTask extends AbstractOCITask implements CompartmentIdAwareTrai
         AvailabilityDomain _availabilityDomain = validateAvailabilityDomain(identityClient, compartmentId)
 
         if (isBlank(getDnsLabel())) {
-            setDnsLabel('sub' + HashUtil.sha1(vcnId.bytes).asCompactString()[0..10])
+            setDnsLabel('sub' + HashUtil.sha1(vcnId.bytes).asHexString()[0..11])
             project.logger.warn("Missing value for 'dnsLabel' in $path. Value set to ${getDnsLabel()}")
         }
 
@@ -117,7 +119,8 @@ class CreateSubnetTask extends AbstractOCITask implements CompartmentIdAwareTrai
             _availabilityDomain.name,
             getSubnetName(),
             '10.0.0.0/24',
-            isWaitForCompletion())
+            isWaitForCompletion(),
+            isVerbose())
         createdSubnetId.set(subnet.id)
 
         client.close()
@@ -131,7 +134,8 @@ class CreateSubnetTask extends AbstractOCITask implements CompartmentIdAwareTrai
                                     String availabilityDomain,
                                     String subnetName,
                                     String cidrBlock,
-                                    boolean waitForCompletion) {
+                                    boolean waitForCompletion,
+                                    boolean verbose) {
         // 1. Check if it exists
         List<Subnet> subnets = client.listSubnets(ListSubnetsRequest.builder()
             .compartmentId(compartmentId)
@@ -143,14 +147,9 @@ class CreateSubnetTask extends AbstractOCITask implements CompartmentIdAwareTrai
         if (!subnets.empty) {
             Subnet subnet = subnets[0]
             println("Subnet '${subnetName}' already exists. id = ${subnet.id}")
-            printSubnet(owner, subnet, 0)
+            if (verbose) printSubnet(owner, subnet, 0)
             return subnets[0]
         }
-
-        Vcn vcn = client.getVcn(GetVcnRequest.builder()
-            .vcnId(vcnId)
-            .build())
-            .vcn
 
         Subnet subnet = client.createSubnet(CreateSubnetRequest.builder()
             .createSubnetDetails(CreateSubnetDetails.builder()
@@ -174,7 +173,7 @@ class CreateSubnetTask extends AbstractOCITask implements CompartmentIdAwareTrai
         }
 
         println("Subnet '${subnetName}' has been provisioned. id = ${subnet.id}")
-        printSubnet(owner, subnet, 0)
+        if (verbose) printSubnet(owner, subnet, 0)
         subnet
     }
 }

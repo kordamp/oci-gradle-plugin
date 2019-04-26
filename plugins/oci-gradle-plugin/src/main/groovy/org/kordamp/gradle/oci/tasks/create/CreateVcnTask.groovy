@@ -33,6 +33,7 @@ import org.kordamp.gradle.oci.tasks.AbstractOCITask
 import org.kordamp.gradle.oci.tasks.interfaces.OCITask
 import org.kordamp.gradle.oci.tasks.traits.CompartmentIdAwareTrait
 import org.kordamp.gradle.oci.tasks.traits.DnsLabelAwareTrait
+import org.kordamp.gradle.oci.tasks.traits.VerboseAwareTrait
 import org.kordamp.gradle.oci.tasks.traits.WaitForCompletionAwareTrait
 import org.kordamp.jipsy.TypeProviderFor
 
@@ -47,7 +48,8 @@ import static org.kordamp.gradle.oci.tasks.printers.VcnPrinter.printVcn
 @TypeProviderFor(OCITask)
 class CreateVcnTask extends AbstractOCITask implements CompartmentIdAwareTrait,
     DnsLabelAwareTrait,
-    WaitForCompletionAwareTrait {
+    WaitForCompletionAwareTrait,
+    VerboseAwareTrait {
     static final String TASK_DESCRIPTION = 'Creates a Vcn.'
 
     private final Property<String> vcnName = project.objects.property(String)
@@ -86,7 +88,8 @@ class CreateVcnTask extends AbstractOCITask implements CompartmentIdAwareTrait,
             getVcnName(),
             getDnsLabel(),
             '10.0.0.0/16',
-            isWaitForCompletion())
+            isWaitForCompletion(),
+            isVerbose())
         createdVcnId.set(vcn.id)
 
         client.close()
@@ -98,7 +101,8 @@ class CreateVcnTask extends AbstractOCITask implements CompartmentIdAwareTrait,
                               String vcnName,
                               String dnsLabel,
                               String cidrBlock,
-                              boolean waitForCompletion) {
+                              boolean waitForCompletion,
+                              boolean verbose) {
         // 1. Check if it exists
         List<Vcn> vcns = client.listVcns(ListVcnsRequest.builder()
             .compartmentId(compartmentId)
@@ -109,7 +113,7 @@ class CreateVcnTask extends AbstractOCITask implements CompartmentIdAwareTrait,
         if (!vcns.empty) {
             Vcn vcn = vcns[0]
             println("Vcn '${vcnName}' already exists. id = ${vcn.id}")
-            printVcn(owner, vcn, 0)
+            if (verbose) printVcn(owner, vcn, 0)
             return vcn
         }
 
@@ -136,7 +140,7 @@ class CreateVcnTask extends AbstractOCITask implements CompartmentIdAwareTrait,
         }
 
         println("Vcn '${vcnName}' has been provisioned. id = ${vcn.id}")
-        printVcn(owner, vcn, 0)
+        if (verbose) printVcn(owner, vcn, 0)
         vcn
     }
 }

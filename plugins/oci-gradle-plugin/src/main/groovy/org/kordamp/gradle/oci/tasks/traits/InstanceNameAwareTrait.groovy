@@ -1,5 +1,5 @@
 /*
- * SPDX-License-Identifier: Apache-2.0
+ * SPDX-License-Nameentifier: Apache-2.0
  *
  * Copyright 2019 Andres Almiray.
  *
@@ -17,7 +17,7 @@
  */
 package org.kordamp.gradle.oci.tasks.traits
 
-import com.oracle.bmc.OCID
+
 import groovy.transform.CompileStatic
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
@@ -32,25 +32,23 @@ import static org.kordamp.gradle.StringUtils.isBlank
  * @since 0.1.0
  */
 @CompileStatic
-trait VcnIdAwareTrait implements PathAware, ProjectAware {
-    private final Property<String> vcnId = project.objects.property(String)
+trait InstanceNameAwareTrait implements PathAware, ProjectAware {
+    private final Property<String> instanceName = project.objects.property(String)
 
     @Input
-    @Option(option = 'vcn-id', description = 'The id of the Vcn (REQUIRED).')
-    void setVcnId(String vcnId) {
-        this.vcnId.set(vcnId)
+    @Option(option = 'instance-name', description = 'The name of the Instance (REQUIRED).')
+    void setInstanceName(String instanceName) {
+        this.instanceName.set(instanceName)
     }
 
-    String getVcnId() {
-        vcnId.orNull
+    String getInstanceName() {
+        instanceName.orNull
     }
 
-    void validateVcnId() {
-        if (isBlank(getVcnId())) {
-            throw new IllegalStateException("Missing value for 'vcnId' in $path")
-        }
-        if (!OCID.isValid(getVcnId())) {
-            throw new IllegalStateException("Vcn id '${vcnId}' is invalid")
+    void validateInstanceName() {
+        if (isBlank(getInstanceName())) {
+            setInstanceName(UUID.randomUUID().toString())
+            project.logger.warn("Missing value of 'instanceName' in $path. Value set to ${getInstanceName()}")
         }
     }
 }

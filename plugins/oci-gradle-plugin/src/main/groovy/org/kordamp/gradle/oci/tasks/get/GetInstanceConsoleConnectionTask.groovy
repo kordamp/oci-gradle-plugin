@@ -55,7 +55,7 @@ class GetInstanceConsoleConnectionTask extends AbstractOCITask implements Instan
         if (connection) {
             printInstanceConsoleConnection(this, connection, 0)
         } else {
-            println("InstanceConsoleConnection with id ${instanceConsoleConnectionId} was not found")
+            println("InstanceConsoleConnection with id ${getInstanceConsoleConnectionId()} was not found")
         }
     }
 }

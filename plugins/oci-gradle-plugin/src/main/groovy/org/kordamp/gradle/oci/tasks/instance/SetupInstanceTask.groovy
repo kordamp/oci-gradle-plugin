@@ -139,6 +139,7 @@ class SetupInstanceTask extends AbstractOCITask implements CompartmentIdAwareTra
 
         Instance instance = maybeCreateInstance(this,
             computeClient,
+            vcnClient,
             blockstorageClient,
             getCompartmentId(),
             getInstanceName(),
@@ -148,7 +149,7 @@ class SetupInstanceTask extends AbstractOCITask implements CompartmentIdAwareTra
             publicKeyFile,
             userDataFile,
             kmsKeyId,
-            isVerbose())
+            true)
         createdInstanceId.set(instance.id)
 
         identityClient.close()

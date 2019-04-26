@@ -56,7 +56,7 @@ class GetVcnTask extends AbstractOCITask implements VcnIdAwareTrait {
             println(vcn.displayName + ':')
             printVcn(this, vcn, 0)
         } else {
-            println("Vcn with id ${vcnId} was not found")
+            println("Vcn with id ${getVcnId()} was not found")
         }
     }
 }

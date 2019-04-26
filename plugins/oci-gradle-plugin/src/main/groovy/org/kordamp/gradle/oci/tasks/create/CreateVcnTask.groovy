@@ -96,7 +96,7 @@ class CreateVcnTask extends AbstractOCITask implements CompartmentIdAwareTrait,
 
         if (!vcns.empty) {
             Vcn vcn = vcns[0]
-            println("Vcn '${vcnName}' already exists. id = ${vcn.id}")
+            println("Vcn '${vcnName}' already exists. id = ${owner.console.yellow(vcn.id)}")
             if (verbose) printVcn(owner, vcn, 0)
             return vcn
         }
@@ -114,7 +114,7 @@ class CreateVcnTask extends AbstractOCITask implements CompartmentIdAwareTrait,
             .vcn
 
         if (waitForCompletion) {
-            println("Waiting for Vcn to be Available")
+            println("Waiting for Vcn to be ${owner.console.green('Available')}")
             client.waiters
                 .forVcn(GetVcnRequest.builder()
                     .vcnId(vcn.id)
@@ -123,7 +123,7 @@ class CreateVcnTask extends AbstractOCITask implements CompartmentIdAwareTrait,
                 .execute()
         }
 
-        println("Vcn '${vcnName}' has been provisioned. id = ${vcn.id}")
+        println("Vcn '${vcnName}' has been provisioned. id = ${owner.console.yellow(vcn.id)}")
         if (verbose) printVcn(owner, vcn, 0)
         vcn
     }

@@ -55,7 +55,7 @@ class DeleteInstanceConsoleConnectionTask extends AbstractOCITask implements Ins
             .build())
 
         if (isWaitForCompletion()) {
-            println("Waiting for InstanceConsoleConnection to be Deleted")
+            println("Waiting for InstanceConsoleConnection to be ${console.red('Deleted')}")
             client.waiters
                 .forInstanceConsoleConnection(GetInstanceConsoleConnectionRequest.builder()
                     .instanceConsoleConnectionId(instanceConsoleConnectionId).build(),

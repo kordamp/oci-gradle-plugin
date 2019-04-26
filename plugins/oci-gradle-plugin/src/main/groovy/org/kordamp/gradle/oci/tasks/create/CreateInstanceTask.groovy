@@ -59,6 +59,7 @@ import org.kordamp.jipsy.TypeProviderFor
 
 import static org.kordamp.gradle.StringUtils.isNotBlank
 import static org.kordamp.gradle.oci.tasks.create.CreateInstanceConsoleConnectionTask.createInstanceConsoleConnection
+import static org.kordamp.gradle.oci.tasks.get.GetInstancePublicIpTask.getInstancePublicIp
 import static org.kordamp.gradle.oci.tasks.printers.BootVolumePrinter.printBootVolume
 import static org.kordamp.gradle.oci.tasks.printers.InstancePrinter.printInstance
 
@@ -113,6 +114,7 @@ class CreateInstanceTask extends AbstractOCITask implements CompartmentIdAwareTr
 
         Instance instance = maybeCreateInstance(this,
             computeClient,
+            vcnClient,
             blockstorageClient,
             getCompartmentId(),
             getInstanceName(),
@@ -132,6 +134,7 @@ class CreateInstanceTask extends AbstractOCITask implements CompartmentIdAwareTr
 
     static Instance maybeCreateInstance(OCITask owner,
                                         ComputeClient computeClient,
+                                        VirtualNetworkClient vcnClient,
                                         BlockstorageClient blockstorageClient,
                                         String compartmentId,
                                         String instanceName,
@@ -144,6 +147,7 @@ class CreateInstanceTask extends AbstractOCITask implements CompartmentIdAwareTr
                                         boolean verbose) {
         Instance instance = doMaybeCreateInstance(owner,
             computeClient,
+            vcnClient,
             compartmentId,
             instanceName,
             subnet.availabilityDomain,
@@ -176,6 +180,7 @@ class CreateInstanceTask extends AbstractOCITask implements CompartmentIdAwareTr
 
     private static Instance doMaybeCreateInstance(OCITask owner,
                                                   ComputeClient client,
+                                                  VirtualNetworkClient vcnClient,
                                                   String compartmentId,
                                                   String instanceName,
                                                   String availabilityDomain,
@@ -196,7 +201,7 @@ class CreateInstanceTask extends AbstractOCITask implements CompartmentIdAwareTr
 
         if (!instances.empty) {
             Instance instance = instances[0]
-            println("Instance '${instanceName}' already exists. id = ${instance.id}")
+            println("Instance '${instanceName}' already exists. id = ${owner.console.yellow(instance.id)}")
             if (verbose) printInstance(owner, instance, 0)
             return instances[0]
         }
@@ -234,15 +239,24 @@ class CreateInstanceTask extends AbstractOCITask implements CompartmentIdAwareTr
             .build())
             .instance
 
-        println("Waiting for Instance to be Available")
+        println("Waiting for Instance to be ${owner.console.green('Available')}")
         client.waiters.forInstance(GetInstanceRequest.builder()
             .instanceId(instance.id)
             .build(),
             Instance.LifecycleState.Running)
             .execute()
 
-        println("Instance '${instanceName}' has been provisioned. id = ${instance.id}")
+        println("Instance '${instanceName}' has been provisioned. id = ${owner.console.yellow(instance.id)}")
         if (verbose) printInstance(owner, instance, 0)
+
+        Set<String> publicIps = getInstancePublicIp(owner,
+            client,
+            vcnClient,
+            compartmentId,
+            instance.id)
+
+        owner.printCollection('Ip Addresses', publicIps, 0)
+
         instance
     }
 
@@ -289,14 +303,14 @@ class CreateInstanceTask extends AbstractOCITask implements CompartmentIdAwareTr
             .build())
             .bootVolume
 
-        println("Waiting for BootVolume to be Available")
+        println("Waiting for BootVolume to be ${owner.console.green('Available')}")
         client.waiters.forBootVolume(
             GetBootVolumeRequest.builder().bootVolumeId(bootVolumeId).build(),
             BootVolume.LifecycleState.Available)
             .execute()
             .bootVolume
 
-        println("BootVolume '${bootVolume.displayName}' has been provisioned. id = ${bootVolume.id}")
+        println("BootVolume '${bootVolume.displayName}' has been provisioned. id = ${owner.console.yellow(bootVolume.id)}")
         if (verbose) printBootVolume(owner, bootVolume, 0)
         bootVolume
     }

@@ -100,7 +100,7 @@ class CreateInternetGatewayTask extends AbstractOCITask implements CompartmentId
             waitForCompletion,
             verbose)
 
-        maybeAddInternetGatewayToVcn(client, vcnId, internetGateway)
+        maybeAddInternetGatewayToVcn(owner, client, vcnId, internetGateway)
 
         internetGateway
     }
@@ -145,7 +145,7 @@ class CreateInternetGatewayTask extends AbstractOCITask implements CompartmentId
             .internetGateway
 
         if (waitForCompletion) {
-            println("Waiting for InternetGateway to be Available")
+            println("Waiting for InternetGateway to be ${owner.console.green('Available')}")
             client.waiters.forInternetGateway(GetInternetGatewayRequest.builder()
                 .igId(internetGateway.id)
                 .build(),
@@ -153,12 +153,13 @@ class CreateInternetGatewayTask extends AbstractOCITask implements CompartmentId
                 .execute()
         }
 
-        println("InternetGateway '${internetGatewayName}' has been provisioned. id = ${internetGateway.id}")
+        println("InternetGateway '${internetGatewayName}' has been provisioned. id = ${owner.console.yellow(internetGateway.id)}")
         if (verbose) printInternetGateway(owner, internetGateway, 0)
         internetGateway
     }
 
-    static void maybeAddInternetGatewayToVcn(VirtualNetworkClient client,
+    static void maybeAddInternetGatewayToVcn(OCITask owner,
+                                             VirtualNetworkClient client,
                                              String vcnId,
                                              InternetGateway internetGateway) {
         // 1. fetch the VCN
@@ -182,7 +183,7 @@ class CreateInternetGatewayTask extends AbstractOCITask implements CompartmentId
                 .networkEntityId(internetGateway.id)
                 .build()
 
-            println("Adding InternetGateway '${internetGateway.displayName}' to RouteTable. vcnId = ${vcnId}")
+            println("Adding InternetGateway '${internetGateway.displayName}' to RouteTable. vcnId = ${owner.console.yellow(vcnId)}")
             client.updateRouteTable(UpdateRouteTableRequest.builder()
                 .updateRouteTableDetails(UpdateRouteTableDetails.builder()
                     .routeRules(routeRules).build())

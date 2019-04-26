@@ -56,7 +56,7 @@ class GetInstanceTask extends AbstractOCITask implements InstanceIdAwareTrait {
             println(instance.displayName + ':')
             printInstance(this, instance, 0)
         } else {
-            println("Instance with id ${instanceId} was not found")
+            println("Instance with id ${getInstanceId()} was not found")
         }
     }
 }

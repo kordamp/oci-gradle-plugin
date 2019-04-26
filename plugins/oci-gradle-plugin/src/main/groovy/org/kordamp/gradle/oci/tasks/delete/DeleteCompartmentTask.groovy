@@ -56,14 +56,14 @@ class DeleteCompartmentTask extends AbstractOCITask implements CompartmentIdAwar
             .build())
             .compartment
 
-        println("Deleting Compartment ${compartment.name} with id ${compartmentId}")
+        println("Deleting Compartment ${compartment.name} with id ${getCompartmentId()}")
 
         client.deleteCompartment(DeleteCompartmentRequest.builder()
             .compartmentId(compartmentId)
             .build())
 
         if (isWaitForCompletion()) {
-            println("Waiting for Compartment to be Deleted")
+            println("Waiting for Compartment to be ${console.red('Deleted')}")
             client.waiters
                 .forCompartment(GetCompartmentRequest.builder()
                     .compartmentId(compartmentId)

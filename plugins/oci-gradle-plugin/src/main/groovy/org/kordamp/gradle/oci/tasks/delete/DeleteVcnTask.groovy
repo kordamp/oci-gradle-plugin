@@ -95,7 +95,7 @@ class DeleteVcnTask extends AbstractOCITask implements CompartmentIdAwareTrait,
             .build())
 
         if (isWaitForCompletion()) {
-            println("Waiting for Vcn to be Terminated")
+            println("Waiting for Vcn to be ${console.red('Terminated')}")
             client.waiters
                 .forVcn(GetVcnRequest.builder().vcnId(vcn.id).build(),
                     Vcn.LifecycleState.Terminated)

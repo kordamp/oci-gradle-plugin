@@ -94,7 +94,7 @@ class CreateInstanceConsoleConnectionTask extends AbstractOCITask implements Com
             .instanceConsoleConnection
 
         if (waitForCompletion) {
-            println("Waiting for InstanceConsoleConnection to be Active")
+            println("Waiting for InstanceConsoleConnection to be ${owner.console.green('Active')}")
             client.waiters.forInstanceConsoleConnection(GetInstanceConsoleConnectionRequest.builder()
                 .instanceConsoleConnectionId(connection.id)
                 .build(),
@@ -102,7 +102,7 @@ class CreateInstanceConsoleConnectionTask extends AbstractOCITask implements Com
                 .execute()
         }
 
-        println("InstanceConsoleConnection has been provisioned. id = ${connection.id}")
+        println("InstanceConsoleConnection has been provisioned. id = ${owner.console.yellow(connection.id)}")
         if (verbose) printInstanceConsoleConnection(owner, connection, 0)
         connection
     }

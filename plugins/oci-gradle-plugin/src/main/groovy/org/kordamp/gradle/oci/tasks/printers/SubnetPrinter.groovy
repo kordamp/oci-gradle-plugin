@@ -35,7 +35,7 @@ class SubnetPrinter {
         printer.printKeyValue('CIDR Block', subnet.cidrBlock, offset + 1)
         printer.printKeyValue('DNS Label', subnet.dnsLabel, offset + 1)
         printer.printKeyValue('Time Created', subnet.timeCreated, offset + 1)
-        printer.printKeyValue('Lifecycle State', subnet.lifecycleState, offset + 1)
+        printer.printKeyValue('Lifecycle State', printer.state(subnet.lifecycleState.name()), offset + 1)
         printer.printMap('Defined Tags', subnet.definedTags, offset + 1)
         printer.printMap('Freeform Tags', subnet.freeformTags, offset + 1)
     }

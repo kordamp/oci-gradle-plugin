@@ -90,7 +90,7 @@ class CreateCompartmentTask extends AbstractOCITask implements CompartmentIdAwar
         Compartment compartment = compartments.find { Compartment c -> c.name == compartmentName }
 
         if (compartment) {
-            println("Compartment '${compartmentName}' already exists. id = ${owner.console.yellow(compartment.id)}")
+            println("Compartment '${compartmentName}' already exists. id = ${owner.state(compartment.id)}")
             if (verbose) printCompartment(owner, compartment, 0)
             return compartment
         }
@@ -106,7 +106,7 @@ class CreateCompartmentTask extends AbstractOCITask implements CompartmentIdAwar
             .compartment
 
         if (waitForCompletion) {
-            println("Waiting for Compartment to be ${owner.console.green('Active')}")
+            println("Waiting for Compartment to be ${owner.state('Active')}")
             client.waiters
                 .forCompartment(GetCompartmentRequest.builder()
                     .compartmentId(compartment.id)
@@ -115,7 +115,7 @@ class CreateCompartmentTask extends AbstractOCITask implements CompartmentIdAwar
                 .execute()
         }
 
-        println("Compartment '${compartmentName}' has been provisioned. id = ${owner.console.yellow(compartment.id)}")
+        println("Compartment '${compartmentName}' has been provisioned. id = ${owner.state(compartment.id)}")
         if (verbose) printCompartment(owner, compartment, 0)
         compartment
     }

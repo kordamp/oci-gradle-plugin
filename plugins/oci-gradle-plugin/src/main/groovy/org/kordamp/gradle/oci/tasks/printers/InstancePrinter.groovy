@@ -35,7 +35,7 @@ class InstancePrinter {
         printer.printKeyValue('Image ID', instance.imageId, offset + 1)
         printer.printKeyValue('Shape', instance.shape, offset + 1)
         printer.printKeyValue('Time Created', instance.timeCreated, offset + 1)
-        printer.printKeyValue('Lifecycle State', instance.lifecycleState, offset + 1)
+        printer.printKeyValue('Lifecycle State', printer.state(instance.lifecycleState.name()), offset + 1)
         printer.printMap('Defined Tags', instance.definedTags, offset + 1)
         printer.printMap('Freeform Tags', instance.freeformTags, offset + 1)
         printer.printMap('Metadata', instance.metadata, offset + 1)

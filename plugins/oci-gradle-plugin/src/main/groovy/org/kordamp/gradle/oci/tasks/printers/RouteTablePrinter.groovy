@@ -33,7 +33,7 @@ class RouteTablePrinter {
         printer.printKeyValue('Compartment ID', routeTable.compartmentId, offset + 1)
         printer.printKeyValue('VCN ID', routeTable.vcnId, offset + 1)
         printer.printKeyValue('Time Created', routeTable.timeCreated, offset + 1)
-        printer.printKeyValue('Lifecycle State', routeTable.lifecycleState, offset + 1)
+        printer.printKeyValue('Lifecycle State', printer.state(routeTable.lifecycleState.name()), offset + 1)
         printer.printMap('Defined Tags', routeTable.definedTags, offset + 1)
         printer.printMap('Freeform Tags', routeTable.freeformTags, offset + 1)
         if (!routeTable.routeRules.empty) {

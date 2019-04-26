@@ -127,7 +127,7 @@ class InstanceActionTask extends AbstractOCITask implements CompartmentIdAwareTr
             .instance
 
         if (isWaitForCompletion()) {
-            println("Waiting for Instance to be ${console.green(action.state().name())}")
+            println("Waiting for Instance to be ${state(action.state().name())}")
             client.waiters
                 .forInstance(GetInstanceRequest.builder()
                     .instanceId(instance.id).build(),

@@ -205,4 +205,37 @@ abstract class AbstractOCITask extends AbstractReportingTask implements OCITask 
             doPrintCollection(console, collection, offset + 1)
         }
     }
+
+    @Override
+    String state(String state) {
+        if(isNotBlank(state)) {
+            switch(state) {
+                case 'Creating':
+                case 'Provisioning':
+                case 'Restoring':
+                case 'Importing':
+                case 'Exporting':
+                case 'Starting':
+                case 'CreatingImage':
+                    return console.yellow(state)
+                case 'Available':
+                case 'Running':
+                case 'Active':
+                    return console.green(state)
+                case 'Inactive':
+                case 'Stopping':
+                case 'Stopped':
+                    return console.cyan(state)
+                case 'Disabled':
+                case 'Deleting':
+                case 'Deleted':
+                case 'Terminating':
+                case 'Terminated':
+                case 'Faulty':
+                case 'Failed':
+                    return console.red(state)
+            }
+        }
+        state
+    }
 }

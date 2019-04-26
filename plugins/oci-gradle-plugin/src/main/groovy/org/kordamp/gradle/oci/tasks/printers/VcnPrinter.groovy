@@ -34,7 +34,7 @@ class VcnPrinter {
         printer.printKeyValue('DNS Label', vcn.dnsLabel, offset + 1)
         printer.printKeyValue('Time Created', vcn.timeCreated, offset + 1)
         printer.printKeyValue('VCN Domain Name', vcn.vcnDomainName, offset + 1)
-        printer.printKeyValue('Lifecycle State', vcn.lifecycleState, offset + 1)
+        printer.printKeyValue('Lifecycle State', printer.state(vcn.lifecycleState.name()), offset + 1)
         printer.printMap('Defined Tags', vcn.definedTags, offset + 1)
         printer.printMap('Freeform Tags', vcn.freeformTags, offset + 1)
     }

@@ -37,7 +37,7 @@ class BootVolumePrinter {
         printer.printKeyValue('Size (MBs)', bootVolume.sizeInMBs, offset + 1)
         printer.printKeyValue('Hydrated', bootVolume.isHydrated, offset + 1)
         printer.printKeyValue('Time Created', bootVolume.timeCreated, offset + 1)
-        printer.printKeyValue('Lifecycle State', bootVolume.lifecycleState, offset + 1)
+        printer.printKeyValue('Lifecycle State', printer.state(bootVolume.lifecycleState.name()), offset + 1)
         printer.printMap('Defined Tags', bootVolume.definedTags, offset + 1)
         printer.printMap('Freeform Tags', bootVolume.freeformTags, offset + 1)
     }

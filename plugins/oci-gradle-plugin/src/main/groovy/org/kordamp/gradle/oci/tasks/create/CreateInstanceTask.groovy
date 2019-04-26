@@ -199,7 +199,7 @@ class CreateInstanceTask extends AbstractOCITask implements CompartmentIdAwareTr
 
         if (!instances.empty) {
             Instance instance = instances[0]
-            println("Instance '${instanceName}' already exists. id = ${owner.console.yellow(instance.id)}")
+            println("Instance '${instanceName}' already exists. id = ${owner.state(instance.id)}")
             if (verbose) printInstance(owner, instance, 0)
             return instances[0]
         }
@@ -237,14 +237,14 @@ class CreateInstanceTask extends AbstractOCITask implements CompartmentIdAwareTr
             .build())
             .instance
 
-        println("Waiting for Instance to be ${owner.console.green('Available')}")
+        println("Waiting for Instance to be ${owner.state('Available')}")
         client.waiters.forInstance(GetInstanceRequest.builder()
             .instanceId(instance.id)
             .build(),
             Instance.LifecycleState.Running)
             .execute()
 
-        println("Instance '${instanceName}' has been provisioned. id = ${owner.console.yellow(instance.id)}")
+        println("Instance '${instanceName}' has been provisioned. id = ${owner.state(instance.id)}")
         if (verbose) printInstance(owner, instance, 0)
 
         Set<String> publicIps = getInstancePublicIp(owner,
@@ -301,14 +301,14 @@ class CreateInstanceTask extends AbstractOCITask implements CompartmentIdAwareTr
             .build())
             .bootVolume
 
-        println("Waiting for BootVolume to be ${owner.console.green('Available')}")
+        println("Waiting for BootVolume to be ${owner.state('Available')}")
         client.waiters.forBootVolume(
             GetBootVolumeRequest.builder().bootVolumeId(bootVolumeId).build(),
             BootVolume.LifecycleState.Available)
             .execute()
             .bootVolume
 
-        println("BootVolume '${bootVolume.displayName}' has been provisioned. id = ${owner.console.yellow(bootVolume.id)}")
+        println("BootVolume '${bootVolume.displayName}' has been provisioned. id = ${owner.state(bootVolume.id)}")
         if (verbose) printBootVolume(owner, bootVolume, 0)
         bootVolume
     }

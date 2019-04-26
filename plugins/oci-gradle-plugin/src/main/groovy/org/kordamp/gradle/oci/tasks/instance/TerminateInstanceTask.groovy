@@ -93,7 +93,7 @@ class TerminateInstanceTask extends AbstractOCITask implements CompartmentIdAwar
             .build())
 
         if (isWaitForCompletion()) {
-            println("Waiting for Instance to be ${console.red('Terminated')}")
+            println("Waiting for Instance to be ${state('Terminated')}")
             client.waiters
                 .forInstance(GetInstanceRequest.builder()
                     .instanceId(instance.id).build(),

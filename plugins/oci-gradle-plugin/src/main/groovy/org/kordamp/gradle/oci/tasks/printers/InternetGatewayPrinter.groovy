@@ -33,7 +33,7 @@ class InternetGatewayPrinter {
         printer.printKeyValue('VCN ID', internetGateway.vcnId, offset + 1)
         printer.printKeyValue('Enabled', internetGateway.isEnabled, offset + 1)
         printer.printKeyValue('Time Created', internetGateway.timeCreated, offset + 1)
-        printer.printKeyValue('Lifecycle State', internetGateway.lifecycleState, offset + 1)
+        printer.printKeyValue('Lifecycle State', printer.state(internetGateway.lifecycleState.name()), offset + 1)
         printer.printMap('Defined Tags', internetGateway.definedTags, offset + 1)
         printer.printMap('Freeform Tags', internetGateway.freeformTags, offset + 1)
     }

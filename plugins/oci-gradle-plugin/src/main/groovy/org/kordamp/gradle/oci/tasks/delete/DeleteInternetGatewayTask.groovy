@@ -98,7 +98,7 @@ class DeleteInternetGatewayTask extends AbstractOCITask implements CompartmentId
             .build())
 
         if (isWaitForCompletion()) {
-            println("Waiting for InternetGateway to be ${console.red('Terminated')}")
+            println("Waiting for InternetGateway to be ${state('Terminated')}")
             client.waiters
                 .forInternetGateway(GetInternetGatewayRequest.builder()
                     .igId(internetGateway.id).build(),

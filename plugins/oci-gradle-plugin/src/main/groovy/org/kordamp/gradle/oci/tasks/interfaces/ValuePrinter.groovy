@@ -26,4 +26,6 @@ interface ValuePrinter {
     void printMap(String key, Map<String, ?> map, int offset)
 
     void printCollection(String key, Collection<?> collection, int offset)
+
+    String state(String state)
 }

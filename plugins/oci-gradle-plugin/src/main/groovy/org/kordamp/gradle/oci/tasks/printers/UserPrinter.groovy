@@ -34,7 +34,7 @@ class UserPrinter {
         printer.printKeyValue('Description', user.description, offset + 1)
         printer.printKeyValue('Email', user.email, offset + 1)
         printer.printKeyValue('Time Created', user.timeCreated, offset + 1)
-        printer.printKeyValue('Lifecycle State', user.lifecycleState, offset + 1)
+        printer.printKeyValue('Lifecycle State', printer.state(user.lifecycleState.name()), offset + 1)
         printer.printMap('Defined Tags', user.definedTags, offset + 1)
         printer.printMap('Freeform Tags', user.freeformTags, offset + 1)
     }

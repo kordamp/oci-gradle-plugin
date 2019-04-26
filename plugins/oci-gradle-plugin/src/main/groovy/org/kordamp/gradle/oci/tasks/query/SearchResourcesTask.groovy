@@ -77,7 +77,7 @@ class SearchResourcesTask extends AbstractOCITask {
         println('Total resources: ' + console.cyan(response.items.size().toString()))
         println(' ')
         for (ResourceType type : response.items) {
-            println('Resource: ' + console.yellow(type.name))
+            println('Resource: ' + state(type.name))
         }
     }
 
@@ -86,7 +86,7 @@ class SearchResourcesTask extends AbstractOCITask {
         GetResourceTypeResponse response = client.getResourceType(request)
 
         AnsiConsole console = new AnsiConsole(project)
-        println('Resource: ' + console.yellow(response.resourceType.name))
+        println('Resource: ' + state(response.resourceType.name))
         println('fields:')
         doPrint(console, response.resourceType.fields, 0)
     }

@@ -98,7 +98,7 @@ class DeleteSubnetTask extends AbstractOCITask implements CompartmentIdAwareTrai
             .build())
 
         if (isWaitForCompletion()) {
-            println("Waiting for Subnet to be ${console.red('Terminated')}")
+            println("Waiting for Subnet to be ${state('Terminated')}")
             client.waiters
                 .forSubnet(GetSubnetRequest.builder().subnetId(subnet.id).build(),
                     Subnet.LifecycleState.Terminated)

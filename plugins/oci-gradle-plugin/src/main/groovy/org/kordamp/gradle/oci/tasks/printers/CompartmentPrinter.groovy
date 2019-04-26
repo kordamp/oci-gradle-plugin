@@ -32,7 +32,7 @@ class CompartmentPrinter {
         printer.printKeyValue('Compartment Id', compartment.compartmentId, offset + 1)
         printer.printKeyValue('Description', compartment.description, offset + 1)
         printer.printKeyValue('Time Created', compartment.timeCreated, offset + 1)
-        printer.printKeyValue('Lifecycle State', compartment.lifecycleState, offset + 1)
+        printer.printKeyValue('Lifecycle State', printer.state(compartment.lifecycleState.name()), offset + 1)
         printer.printMap('Defined Tags', compartment.definedTags, offset + 1)
         printer.printMap('Freeform Tags', compartment.freeformTags, offset + 1)
     }

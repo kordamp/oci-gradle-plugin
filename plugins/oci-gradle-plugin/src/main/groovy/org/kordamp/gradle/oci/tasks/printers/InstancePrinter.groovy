@@ -38,6 +38,6 @@ class InstancePrinter {
         printer.printKeyValue('Lifecycle State', printer.state(instance.lifecycleState.name()), offset + 1)
         printer.printMap('Defined Tags', instance.definedTags, offset + 1)
         printer.printMap('Freeform Tags', instance.freeformTags, offset + 1)
-        printer.printMap('Metadata', instance.metadata, offset + 1)
+        // printer.printMap('Metadata', instance.metadata, offset + 1)
     }
 }

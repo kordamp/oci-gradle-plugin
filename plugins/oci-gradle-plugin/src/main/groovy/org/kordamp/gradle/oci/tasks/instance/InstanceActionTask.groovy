@@ -119,7 +119,7 @@ class InstanceActionTask extends AbstractOCITask implements CompartmentIdAwareTr
     }
 
     private Instance instanceAction(ComputeClient client, String instanceId, InstanceAction action) {
-        println("Sending ${getAction().name()} to Instance with id ${instanceId}")
+        println("Sending ${getAction().name()} to Instance with id ${console.yellow(instanceId)}")
         Instance instance = client.instanceAction(InstanceActionRequest.builder()
             .instanceId(instanceId)
             .action(action.name())

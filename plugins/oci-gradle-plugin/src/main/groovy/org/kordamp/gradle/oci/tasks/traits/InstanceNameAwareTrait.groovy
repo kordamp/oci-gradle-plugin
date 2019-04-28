@@ -17,15 +17,12 @@
  */
 package org.kordamp.gradle.oci.tasks.traits
 
-
 import groovy.transform.CompileStatic
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.options.Option
 import org.kordamp.gradle.oci.tasks.interfaces.PathAware
 import org.kordamp.gradle.oci.tasks.interfaces.ProjectAware
-
-import static org.kordamp.gradle.StringUtils.isBlank
 
 /**
  * @author Andres Almiray
@@ -43,12 +40,5 @@ trait InstanceNameAwareTrait implements PathAware, ProjectAware {
 
     String getInstanceName() {
         instanceName.orNull
-    }
-
-    void validateInstanceName() {
-        if (isBlank(getInstanceName())) {
-            setInstanceName(UUID.randomUUID().toString())
-            project.logger.warn("Missing value of 'instanceName' in $path. Value set to ${getInstanceName()}")
-        }
     }
 }

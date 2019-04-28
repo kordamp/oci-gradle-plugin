@@ -151,7 +151,7 @@ class CreateInternetGatewayTask extends AbstractOCITask implements CompartmentId
                 .execute()
         }
 
-        println("InternetGateway '${internetGatewayName}' has been provisioned. id = ${owner.state(internetGateway.id)}")
+        println("InternetGateway '${internetGatewayName}' has been provisioned. id = ${owner.console.yellow(internetGateway.id)}")
         if (verbose) printInternetGateway(owner, internetGateway, 0)
         internetGateway
     }
@@ -181,7 +181,7 @@ class CreateInternetGatewayTask extends AbstractOCITask implements CompartmentId
                 .networkEntityId(internetGateway.id)
                 .build()
 
-            println("Adding InternetGateway '${internetGateway.displayName}' to RouteTable. vcnId = ${owner.state(vcnId)}")
+            println("Adding InternetGateway '${internetGateway.displayName}' to RouteTable. vcnId = ${owner.console.yellow(vcnId)}")
             client.updateRouteTable(UpdateRouteTableRequest.builder()
                 .updateRouteTableDetails(UpdateRouteTableDetails.builder()
                     .routeRules(routeRules).build())

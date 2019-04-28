@@ -110,7 +110,7 @@ class CreateSubnetTask extends AbstractOCITask implements CompartmentIdAwareTrai
 
         if (!subnets.empty) {
             Subnet subnet = subnets[0]
-            println("Subnet '${subnetName}' already exists. id = ${owner.state(subnet.id)}")
+            println("Subnet '${subnetName}' already exists. id = ${owner.console.yellow(subnet.id)}")
             if (verbose) printSubnet(owner, subnet, 0)
             return subnets[0]
         }
@@ -136,7 +136,7 @@ class CreateSubnetTask extends AbstractOCITask implements CompartmentIdAwareTrai
                 .execute()
         }
 
-        println("Subnet '${subnetName}' has been provisioned. id = ${owner.state(subnet.id)}")
+        println("Subnet '${subnetName}' has been provisioned. id = ${owner.console.yellow(subnet.id)}")
         if (verbose) printSubnet(owner, subnet, 0)
         subnet
     }

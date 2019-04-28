@@ -22,6 +22,7 @@ import com.oracle.bmc.core.ComputeClient
 import com.oracle.bmc.core.VirtualNetworkClient
 import com.oracle.bmc.core.model.Image
 import com.oracle.bmc.core.model.Instance
+import com.oracle.bmc.core.model.InternetGateway
 import com.oracle.bmc.core.model.Shape
 import com.oracle.bmc.core.model.Subnet
 import com.oracle.bmc.core.model.Vcn
@@ -29,7 +30,10 @@ import com.oracle.bmc.identity.IdentityClient
 import com.oracle.bmc.identity.model.AvailabilityDomain
 import com.oracle.bmc.identity.requests.ListAvailabilityDomainsRequest
 import groovy.transform.CompileStatic
+import org.gradle.api.file.RegularFile
+import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
+import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
 import org.gradle.internal.hash.HashUtil
 import org.kordamp.gradle.oci.tasks.AbstractOCITask
@@ -47,6 +51,7 @@ import static org.kordamp.gradle.oci.tasks.create.CreateInstanceTask.maybeCreate
 import static org.kordamp.gradle.oci.tasks.create.CreateInternetGatewayTask.maybeCreateInternetGateway
 import static org.kordamp.gradle.oci.tasks.create.CreateSubnetTask.maybeCreateSubnet
 import static org.kordamp.gradle.oci.tasks.create.CreateVcnTask.maybeCreateVcn
+import static org.kordamp.gradle.oci.tasks.get.GetInstancePublicIpTask.getInstancePublicIp
 
 /**
  * @author Andres Almiray
@@ -64,18 +69,31 @@ class SetupInstanceTask extends AbstractOCITask implements CompartmentIdAwareTra
     static final String TASK_DESCRIPTION = 'Setups an Instance with Vcn, InternetGateway, Subnets, InstanceConsoleConnection, and Volume.'
 
     private final Property<String> createdInstanceId = project.objects.property(String)
+    private final RegularFileProperty result = project.objects.fileProperty()
 
     String getCreatedInstanceId() {
         return createdInstanceId.orNull
     }
 
+    @OutputFile
+    RegularFile getResult() {
+        if (!result.present) {
+            result.set(project.file("${project.buildDir}/oci/${getInstanceName()}.properties"))
+        }
+        this.result.get()
+    }
+
     @TaskAction
     void executeTask() {
         validateCompartmentId()
-        validateInstanceName()
         validateImage()
         validateShape()
         validatePublicKeyFile()
+
+        result.get().asFile.parentFile.mkdirs()
+
+        Properties props = new Properties()
+        props.put('compartment.id', getCompartmentId())
 
         ComputeClient computeClient = createComputeClient()
 
@@ -102,21 +120,28 @@ class SetupInstanceTask extends AbstractOCITask implements CompartmentIdAwareTra
             networkCidrBlock,
             true,
             isVerbose())
+        props.put('vcn.id', vcn.id)
+        props.put('vcn.name', vcn.displayName)
+        props.put('vcn.security-list.id', vcn.defaultSecurityListId)
+        props.put('vcn.route-table.id', vcn.defaultRouteTableId)
 
-        maybeCreateInternetGateway(this,
+        InternetGateway internetGateway = maybeCreateInternetGateway(this,
             vcnClient,
             getCompartmentId(),
             vcn.id,
             internetGatewayDisplayName,
             true,
             isVerbose())
+        props.put('internet-gateway.id', internetGateway.id)
 
         Subnet subnet = null
         int subnetIndex = 0
         // create a Subnet per AvailabilityDomain
-        for (AvailabilityDomain domain : identityClient.listAvailabilityDomains(ListAvailabilityDomainsRequest.builder()
+        List<AvailabilityDomain> availabilityDomains = identityClient.listAvailabilityDomains(ListAvailabilityDomainsRequest.builder()
             .compartmentId(getCompartmentId())
-            .build()).items) {
+            .build()).items
+        props.put('vcn.subnets', availabilityDomains.size().toString())
+        for (AvailabilityDomain domain : availabilityDomains) {
             String subnetDnsLabel = 'sub' + HashUtil.sha1(vcn.id.bytes).asHexString()[0..8] + (subnetIndex.toString().padLeft(3, '0'))
 
             Subnet s = maybeCreateSubnet(this,
@@ -129,6 +154,8 @@ class SetupInstanceTask extends AbstractOCITask implements CompartmentIdAwareTra
                 "10.0.${subnetIndex}.0/24".toString(),
                 true,
                 isVerbose())
+            props.put("subnet.${subnetIndex}.id".toString(), s.id)
+            props.put("subnet.${subnetIndex}.name".toString(), s.displayName)
 
             // save the first one
             if (subnet == null) subnet = s
@@ -149,10 +176,27 @@ class SetupInstanceTask extends AbstractOCITask implements CompartmentIdAwareTra
             kmsKeyId,
             true)
         createdInstanceId.set(instance.id)
+        props.put('instance.id', instance.id)
+        props.put('instance.name', instance.displayName)
+
+        Set<String> publicIps = getInstancePublicIp(this,
+            computeClient,
+            vcnClient,
+            getCompartmentId(),
+            instance.id)
+
+        props.put('instance.public-ips', publicIps.size().toString())
+        int publicIpIndex = 0
+        for (String publicIp : publicIps) {
+            props.put("instance.public-ip.${publicIpIndex++}".toString(), publicIp)
+        }
 
         identityClient.close()
         computeClient.close()
         vcnClient.close()
         blockstorageClient.close()
+
+        props.store(new FileWriter(getResult().asFile), '')
+        println("Result stored at ${console.yellow(getResult().asFile.absolutePath)}")
     }
 }

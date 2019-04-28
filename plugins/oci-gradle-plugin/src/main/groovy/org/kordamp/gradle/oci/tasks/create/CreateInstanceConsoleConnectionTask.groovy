@@ -100,7 +100,7 @@ class CreateInstanceConsoleConnectionTask extends AbstractOCITask implements Com
                 .execute()
         }
 
-        println("InstanceConsoleConnection has been provisioned. id = ${owner.state(connection.id)}")
+        println("InstanceConsoleConnection has been provisioned. id = ${owner.console.yellow(connection.id)}")
         if (verbose) printInstanceConsoleConnection(owner, connection, 0)
         connection
     }

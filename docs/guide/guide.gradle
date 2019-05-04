@@ -34,8 +34,9 @@ guide {
 asciidoctor {
     configurations 'asciidoctorExtensions'
     attributes = [
-        'gradle-version': project.gradle.gradleVersion,
-        'source-highlighter': 'prettify'
+        'gradle-version'      : project.gradle.gradleVersion,
+        'source-highlighter'  : 'prettify',
+        'oci-java-sdk-version': project.ociJavaSdkVersion
     ]
 }
 

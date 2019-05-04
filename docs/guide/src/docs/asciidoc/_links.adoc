@@ -1,0 +1,2 @@
+
+:link_oci_java_sdk: link:http://github.com/oracle/oci-java-sdk[Oracle Cloud Infrastructure Java SDK]

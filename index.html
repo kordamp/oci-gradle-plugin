@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Asciidoctor 1.5.8">
+<meta name="author" content="Andres Almiray">
+<title>OCI Java SDK Gradle Plugin</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
+<link rel="stylesheet" href="./asciidoctor.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<style>
+.hidden {
+    display: none;
+}
+
+.switch {
+    border-width: 1px 1px 0 1px;
+    border-style: solid;
+    border-color: #7a2518;
+    display: inline-block;
+}
+
+.switch--item {
+    padding: 10px;
+    background-color: #ffffff;
+    color: #7a2518;
+    display: inline-block;
+    cursor: pointer;
+}
+
+.switch--item.selected {
+    background-color: #7a2519;
+    color: #ffffff;
+}
+
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/zepto/1.2.0/zepto.min.js"></script>
+<script type="text/javascript">
+function addBlockSwitches() {
+    $('.primary').each(function() {
+        primary = $(this);
+        createSwitchItem(primary, createBlockSwitch(primary)).item.addClass("selected");
+        primary.children('.title').remove();
+    });
+    $('.secondary').each(function(idx, node) {
+        secondary = $(node);
+        primary = findPrimary(secondary);
+        switchItem = createSwitchItem(secondary, primary.children('.switch'));
+        switchItem.content.addClass('hidden');
+        findPrimary(secondary).append(switchItem.content);
+        secondary.remove();
+    });
+}
+
+function createBlockSwitch(primary) {
+    blockSwitch = $('<div class="switch"></div>');
+    primary.prepend(blockSwitch);
+    return blockSwitch;
+}
+
+function findPrimary(secondary) {
+    candidate = secondary.prev();
+    while (!candidate.is('.primary')) {
+        candidate = candidate.prev();
+    }
+    return candidate;
+}
+
+function createSwitchItem(block, blockSwitch) {
+    blockName = block.children('.title').text();
+    content = block.children('.content').first().append(block.next('.colist'));
+    item = $('<div class="switch--item">' + blockName + '</div>');
+    item.on('click', '', content, function(e) {
+        $(this).addClass('selected');
+        $(this).siblings().removeClass('selected');
+        e.data.siblings('.content').addClass('hidden');
+        e.data.removeClass('hidden');
+    });
+    blockSwitch.append(item);
+    return {'item': item, 'content': content};
+}
+
+$(addBlockSwitches);
+
+</script>
+
+</head>
+<body class="book toc2 toc-left">
+<div id="header">
+<h1>OCI Java SDK Gradle Plugin</h1>
+<div class="details">
+<span id="author" class="author">Andres Almiray</span><br>
+<span id="revnumber">version 0.1.0-SNAPSHOT</span>
+</div>
+<div id="toc" class="toc2">
+<div id="toctitle">Table of Contents</div>
+<ul class="sectlevel1">
+<li><a href="#_introduction">1. Introduction</a></li>
+<li><a href="#_usage">2. Usage</a>
+<ul class="sectlevel2">
+<li><a href="#_requirements">2.1. Requirements</a>
+<ul class="sectlevel3">
+<li><a href="#_example">2.1.1. Example</a></li>
+</ul>
+</li>
+<li><a href="#_configuration">2.2. Configuration</a>
+<ul class="sectlevel3">
+<li><a href="#_standard_config_file">2.2.1. Standard Config File</a></li>
+<li><a href="#_ociconfig_extension_block">2.2.2. OciConfig Extension Block</a></li>
+<li><a href="#_common_properties">2.2.3. Common Properties</a></li>
+</ul>
+</li>
+<li><a href="#_tasks">2.3. Tasks</a>
+<ul class="sectlevel3">
+<li><a href="#_oci_create">2.3.1. OCI Create</a>
+<ul class="sectlevel4">
+<li><a href="#_oci_delete">OCI Delete</a></li>
+</ul>
+</li>
+<li><a href="#_oci_get">2.3.2. OCI Get</a></li>
+<li><a href="#_oci_instance">2.3.3. OCI Instance</a></li>
+<li><a href="#_oci_list">2.3.4. OCI List</a></li>
+<li><a href="#_oci_query">2.3.5. OCI Query</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#_links">3. Links</a></li>
+</ul>
+</div>
+</div>
+<div id="content">
+<div class="sect1">
+<h2 id="_introduction"><a class="anchor" href="#_introduction"></a>1. Introduction</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>A Gradle plugin for the <a href="http://github.com/oracle/oci-java-sdk">Oracle Cloud Infrastructure Java SDK</a>.</p>
+</div>
+<div class="paragraph">
+<p>Currently supported OCI Java SDK version is <strong><code>1.5.2</code></strong>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_usage"><a class="anchor" href="#_usage"></a>2. Usage</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>There are two choices for applying any of the plugins described in this document</p>
+</div>
+<div class="paragraph">
+<p>Option #1</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">buildscript {
+    repositories {
+        jcenter()
+        gradlePluginPortal()
+    }
+    dependencies {
+        classpath 'org.kordamp.gradle:oci-gradle-plugin:0.1.0-SNAPSHOT'
+    }
+}
+apply plugin: 'org.kordamp.gradle.oci'</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Option #2</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">plugins {
+    id 'org.kordamp.gradle.oci' version '0.1.0-SNAPSHOT'
+}</code></pre>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_requirements"><a class="anchor" href="#_requirements"></a>2.1. Requirements</h3>
+<div class="paragraph">
+<p>Java 8 and Gradle 5 are the minimum requirements to use this plugin.</p>
+</div>
+<div class="sect3">
+<h4 id="_example"><a class="anchor" href="#_example"></a>2.1.1. Example</h4>
+<div class="paragraph">
+<p>Provisioning an Instance with brand new Vcn, Subnets, InternetGateway, and InstanceConsoleConnection, making sure that OpenJDK
+is installed and port <code>8080</code> is open</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">gradle setupInstance \
+  --compartment-id=ocid1.compartment.oc1... \
+  --verbose \
+  --instance-name=myInstance \
+  --image=Oracle-Linux-7.6-2019.04.18-0 \
+  --shape=VM.Standard2.1 \
+  --public-key-file=/home/myuser/.oci/oci-key.pub \
+  --user-data-file=/home/myuser/oci/cloud-init.sh</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">cloud-init.sh</div>
+<div class="content">
+<pre class="prettyprint highlight"><code>#!/bin/bash
+
+# install Java
+yum install -y yum java-1.8.0-openjdk
+
+# amend firewall rules to allow port 8080
+firewall-cmd --permanent --zone=public --add-port=8080/tcp
+firewall-cmd --reload</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_configuration"><a class="anchor" href="#_configuration"></a>2.2. Configuration</h3>
+<div class="paragraph">
+<p>You can configure tasks in two ways:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Using the standard <code>~/.oci/config</code> file.</p>
+</li>
+<li>
+<p>Defining an <code>ociConfig</code> block on a task.</p>
+</li>
+</ol>
+</div>
+<div class="sect3">
+<h4 id="_standard_config_file"><a class="anchor" href="#_standard_config_file"></a>2.2.1. Standard Config File</h4>
+<div class="paragraph">
+<p>The format of the configuration file is specified at <a href="https://docs.cloud.oracle.com/iaas/Content/API/SDKDocs/javasdkgettingstarted.htm">this page</a>,
+it looks something similar to</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code>[DEFAULT]
+user=ocid1.user.oc1...
+fingerprint=f9:14:d0:...
+key_file=~/.oci/oci_api_key.pem
+tenancy=ocid1.tenancy.oc1...
+region=eu-frankfurt-1
+pass_phrase=&lt;secret&gt;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_ociconfig_extension_block"><a class="anchor" href="#_ociconfig_extension_block"></a>2.2.2. OciConfig Extension Block</h4>
+<div class="paragraph">
+<p>Alternatively you may define an <code>ociConfig</code> block in a task. This block defines properties that match settings
+found on the config file</p>
+</div>
+<div class="listingblock">
+<div class="title">build.gradle</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">listInstances {
+    ociConfig {
+        userId.set('ocid1.user.oc1...'
+        tenantId.set('ocid1.tenancy.oc1...')
+        fingerprint.set('f9:14:d0:...')
+        region.set('eu-frankfurt-1')
+        keyfile.set(project.file('/.oci/oci_api_key.pem'))
+        passphrase.set('&lt;secret&gt;')
+    }
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_common_properties"><a class="anchor" href="#_common_properties"></a>2.2.3. Common Properties</h4>
+<div class="paragraph">
+<p>All tasks share the following properties</p>
+</div>
+<div class="hdlist">
+<table>
+<tr>
+<td class="hdlist1">
+profile
+</td>
+<td class="hdlist2">
+<p>The profile to use. Defaults to DEFAULT (OPTIONAL).</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+region
+</td>
+<td class="hdlist2">
+<p>The region to use (OPTIONAL).</p>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_tasks"><a class="anchor" href="#_tasks"></a>2.3. Tasks</h3>
+<div class="paragraph">
+<p>Invoke <code>gradle help --task &lt;taskname&gt;</code> to learn more about the properties that can be set for a particular task.</p>
+</div>
+<div class="sect3">
+<h4 id="_oci_create"><a class="anchor" href="#_oci_create"></a>2.3.1. OCI Create</h4>
+<div class="hdlist">
+<table>
+<tr>
+<td class="hdlist1">
+createCompartment
+</td>
+<td class="hdlist2">
+<p>Creates a Compartment.</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+createInstance
+</td>
+<td class="hdlist2">
+<p>Creates an Instance.</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+createInstanceConsoleConnection
+</td>
+<td class="hdlist2">
+<p>Creates an InstanceConsoleConnection.</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+createInternetGateway
+</td>
+<td class="hdlist2">
+<p>Creates a InternetGateway.</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+createSubnet
+</td>
+<td class="hdlist2">
+<p>Creates a Subnet.</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+createVcn
+</td>
+<td class="hdlist2">
+<p>Creates a Vcn.</p>
+</td>
+</tr>
+</table>
+</div>
+<div class="sect4">
+<h5 id="_oci_delete"><a class="anchor" href="#_oci_delete"></a>OCI Delete</h5>
+<div class="hdlist">
+<table>
+<tr>
+<td class="hdlist1">
+deleteCompartment
+</td>
+<td class="hdlist2">
+<p>Deletes a Compartment.</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+deleteInstanceConsoleConnection
+</td>
+<td class="hdlist2">
+<p>Deletes an InstanceConsoleConnection.</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+deleteInternetGateway
+</td>
+<td class="hdlist2">
+<p>Deletes a InternetGateway.</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+deleteSubnet
+</td>
+<td class="hdlist2">
+<p>Deletes a Subnet.</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+deleteVcn
+</td>
+<td class="hdlist2">
+<p>Deletes a Vcn.</p>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_oci_get"><a class="anchor" href="#_oci_get"></a>2.3.2. OCI Get</h4>
+<div class="hdlist">
+<table>
+<tr>
+<td class="hdlist1">
+getCompartment
+</td>
+<td class="hdlist2">
+<p>Displays information for an specific Compartment.</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+getInstance
+</td>
+<td class="hdlist2">
+<p>Displays information for an specific Instance.</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+getInstanceConsoleConnection
+</td>
+<td class="hdlist2">
+<p>Displays information for an specific InstanceConsoleConnection.</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+getInstancePublicIp
+</td>
+<td class="hdlist2">
+<p>Displays public Ip addresses for a particular Instance.</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+getInternetGateway
+</td>
+<td class="hdlist2">
+<p>Displays information for an specific InternetGateway.</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+getRouteTable
+</td>
+<td class="hdlist2">
+<p>Displays information for an specific RouteTable.</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+getSecurityList
+</td>
+<td class="hdlist2">
+<p>Displays information for an specific SecurityList.</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+getSubnet
+</td>
+<td class="hdlist2">
+<p>Displays information for an specific Subnet.</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+getVcn
+</td>
+<td class="hdlist2">
+<p>Displays information for an specific Vcn.</p>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_oci_instance"><a class="anchor" href="#_oci_instance"></a>2.3.3. OCI Instance</h4>
+<div class="hdlist">
+<table>
+<tr>
+<td class="hdlist1">
+addIngressSecurityRule
+</td>
+<td class="hdlist2">
+<p>Adds IngressSecurityRules to a SecurityList.</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+instanceAction
+</td>
+<td class="hdlist2">
+<p>Performs a given action on an Instance.</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+setupInstance
+</td>
+<td class="hdlist2">
+<p>Setups an Instance with Vcn, InternetGateway, Subnets, InstanceConsoleConnection, and Volume.</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+terminateInstance
+</td>
+<td class="hdlist2">
+<p>Terminates an Instance.</p>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_oci_list"><a class="anchor" href="#_oci_list"></a>2.3.4. OCI List</h4>
+<div class="hdlist">
+<table>
+<tr>
+<td class="hdlist1">
+listAvailabilityDomains
+</td>
+<td class="hdlist2">
+<p>Lists AvailabilityDomains available on a Compartment.</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+listCompartments
+</td>
+<td class="hdlist2">
+<p>Lists available Compartments.</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+listImages
+</td>
+<td class="hdlist2">
+<p>Lists Images available on a Compartment.</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+listInstanceConsoleConnections
+</td>
+<td class="hdlist2">
+<p>Lists available InstanceConsoleConnection on an Instance.</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+listInstances
+</td>
+<td class="hdlist2">
+<p>Lists available Instances.</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+listInternetGateways
+</td>
+<td class="hdlist2">
+<p>Lists InternetGateways available on a Vcn.</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+listRegions
+</td>
+<td class="hdlist2">
+<p>Lists available Regions.</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+listRouteTables
+</td>
+<td class="hdlist2">
+<p>Lists RouteTables available on a Vcn.</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+listSecurityLists
+</td>
+<td class="hdlist2">
+<p>Lists SecurityLists available on a Vcn.</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+listShapes
+</td>
+<td class="hdlist2">
+<p>Lists Shapes available on a Compartment.</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+listSubnets
+</td>
+<td class="hdlist2">
+<p>Lists Subnets available on a Vcn.</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+listUsers
+</td>
+<td class="hdlist2">
+<p>Lists available Users.</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+listVcns
+</td>
+<td class="hdlist2">
+<p>Lists Vcns available on a Compartment.</p>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_oci_query"><a class="anchor" href="#_oci_query"></a>2.3.5. OCI Query</h4>
+<div class="hdlist">
+<table>
+<tr>
+<td class="hdlist1">
+searchResources
+</td>
+<td class="hdlist2">
+<p>Lists information on resource types.</p>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_links"><a class="anchor" href="#_links"></a>3. Links</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><a href="api/index.html" target="_blank" rel="noopener">Javadoc</a></p>
+</div>
+<div class="paragraph">
+<p><a href="api-html/index.html" target="_blank" rel="noopener">Source</a></p>
+</div>
+</div>
+</div>
+</div>
+<div id="footer">
+<div id="footer-text">
+Version 0.1.0-SNAPSHOT<br>
+Last updated 2019-05-04 12:22:14 +0200
+</div>
+</div>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.min.js"></script>
+<script>prettyPrint()</script>
+</body>
+</html>

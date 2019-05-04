@@ -24,7 +24,7 @@ buildscript {
         gradlePluginPortal()
     }
     dependencies {
-        classpath 'org.kordamp.gradle:{project-name}-plugin:{plugin-version}'
+        classpath 'org.kordamp.gradle:{project-name}:{plugin-version}'
     }
 }
 apply plugin: 'org.kordamp.gradle.oci'

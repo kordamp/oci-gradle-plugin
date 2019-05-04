@@ -22,7 +22,6 @@ import com.oracle.bmc.core.model.InstanceConsoleConnection
 import com.oracle.bmc.core.requests.ListInstanceConsoleConnectionsRequest
 import com.oracle.bmc.core.responses.ListInstanceConsoleConnectionsResponse
 import groovy.transform.CompileStatic
-import org.gradle.api.tasks.TaskAction
 import org.kordamp.gradle.AnsiConsole
 import org.kordamp.gradle.oci.tasks.AbstractOCITask
 import org.kordamp.gradle.oci.tasks.interfaces.OCITask
@@ -41,8 +40,8 @@ import static org.kordamp.gradle.oci.tasks.printers.InstanceConsoleConnectionPri
 class ListInstanceConsoleConnectionsTask extends AbstractOCITask implements CompartmentIdAwareTrait, InstanceIdAwareTrait {
     static final String TASK_DESCRIPTION = 'Lists available InstanceConsoleConnection on an Instance.'
 
-    @TaskAction
-    void executeTask() {
+    @Override
+    protected void doExecuteTask() {
         validateCompartmentId()
         validateInstanceId()
 
@@ -51,7 +50,6 @@ class ListInstanceConsoleConnectionsTask extends AbstractOCITask implements Comp
             .compartmentId(getCompartmentId())
             .instanceId(getInstanceId())
             .build())
-        client.close()
 
         AnsiConsole console = new AnsiConsole(project)
         println('Total InstanceConsoleConnections: ' + console.cyan(response.items.size().toString()))

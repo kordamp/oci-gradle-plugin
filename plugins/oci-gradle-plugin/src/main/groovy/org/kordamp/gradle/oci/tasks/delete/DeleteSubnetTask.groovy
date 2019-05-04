@@ -23,7 +23,6 @@ import com.oracle.bmc.core.requests.DeleteSubnetRequest
 import com.oracle.bmc.core.requests.GetSubnetRequest
 import com.oracle.bmc.core.requests.ListSubnetsRequest
 import groovy.transform.CompileStatic
-import org.gradle.api.tasks.TaskAction
 import org.kordamp.gradle.oci.tasks.AbstractOCITask
 import org.kordamp.gradle.oci.tasks.interfaces.OCITask
 import org.kordamp.gradle.oci.tasks.traits.CompartmentIdAwareTrait
@@ -49,8 +48,8 @@ class DeleteSubnetTask extends AbstractOCITask implements CompartmentIdAwareTrai
     WaitForCompletionAwareTrait {
     static final String TASK_DESCRIPTION = 'Deletes a Subnet.'
 
-    @TaskAction
-    void executeTask() {
+    @Override
+    protected void doExecuteTask() {
         validateSubnetId()
 
         if (isBlank(getSubnetId()) && isBlank(getSubnetName())) {
@@ -86,8 +85,6 @@ class DeleteSubnetTask extends AbstractOCITask implements CompartmentIdAwareTrai
                 deleteSubnet(client, subnet)
             }
         }
-
-        client.close()
     }
 
     private void deleteSubnet(VirtualNetworkClient client, Subnet subnet) {

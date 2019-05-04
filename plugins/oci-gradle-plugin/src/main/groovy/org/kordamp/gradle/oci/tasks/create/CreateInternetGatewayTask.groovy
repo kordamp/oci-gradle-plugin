@@ -32,7 +32,6 @@ import com.oracle.bmc.core.requests.ListInternetGatewaysRequest
 import com.oracle.bmc.core.requests.UpdateRouteTableRequest
 import groovy.transform.CompileStatic
 import org.gradle.api.provider.Property
-import org.gradle.api.tasks.TaskAction
 import org.kordamp.gradle.oci.tasks.AbstractOCITask
 import org.kordamp.gradle.oci.tasks.interfaces.OCITask
 import org.kordamp.gradle.oci.tasks.traits.CompartmentIdAwareTrait
@@ -63,8 +62,8 @@ class CreateInternetGatewayTask extends AbstractOCITask implements CompartmentId
         return createdInternetGatewayId.orNull
     }
 
-    @TaskAction
-    void executeTask() {
+    @Override
+    void doExecuteTask() {
         validateCompartmentId()
         validateVcnId()
         validateInternetGatewayName()
@@ -79,8 +78,6 @@ class CreateInternetGatewayTask extends AbstractOCITask implements CompartmentId
             isWaitForCompletion(),
             isVerbose())
         createdInternetGatewayId.set(internetGateway.id)
-
-        client.close()
     }
 
     static InternetGateway maybeCreateInternetGateway(OCITask owner,

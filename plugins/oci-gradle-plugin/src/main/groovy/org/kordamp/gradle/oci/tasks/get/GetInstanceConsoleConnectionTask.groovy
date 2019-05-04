@@ -21,7 +21,6 @@ import com.oracle.bmc.core.ComputeClient
 import com.oracle.bmc.core.model.InstanceConsoleConnection
 import com.oracle.bmc.core.requests.GetInstanceConsoleConnectionRequest
 import groovy.transform.CompileStatic
-import org.gradle.api.tasks.TaskAction
 import org.kordamp.gradle.oci.tasks.AbstractOCITask
 import org.kordamp.gradle.oci.tasks.interfaces.OCITask
 import org.kordamp.gradle.oci.tasks.traits.InstanceConsoleConnectionIdAwareTrait
@@ -38,8 +37,8 @@ import static org.kordamp.gradle.oci.tasks.printers.InstanceConsoleConnectionPri
 class GetInstanceConsoleConnectionTask extends AbstractOCITask implements InstanceConsoleConnectionIdAwareTrait {
     static final String TASK_DESCRIPTION = 'Displays information for an specific InstanceConsoleConnection.'
 
-    @TaskAction
-    void executeTask() {
+    @Override
+    protected void doExecuteTask() {
         validateInstanceConsoleConnectionId()
 
         ComputeClient client = createComputeClient()
@@ -48,7 +47,6 @@ class GetInstanceConsoleConnectionTask extends AbstractOCITask implements Instan
             .instanceConsoleConnectionId(getInstanceConsoleConnectionId())
             .build())
             .instanceConsoleConnection
-        client.close()
 
         if (connection) {
             printInstanceConsoleConnection(this, connection, 0)

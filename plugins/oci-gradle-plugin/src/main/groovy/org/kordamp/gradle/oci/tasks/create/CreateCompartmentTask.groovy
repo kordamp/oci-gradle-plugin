@@ -25,7 +25,6 @@ import com.oracle.bmc.identity.requests.GetCompartmentRequest
 import com.oracle.bmc.identity.requests.ListCompartmentsRequest
 import groovy.transform.CompileStatic
 import org.gradle.api.provider.Property
-import org.gradle.api.tasks.TaskAction
 import org.kordamp.gradle.oci.tasks.AbstractOCITask
 import org.kordamp.gradle.oci.tasks.interfaces.OCITask
 import org.kordamp.gradle.oci.tasks.traits.CompartmentDescriptionAwareTrait
@@ -56,8 +55,8 @@ class CreateCompartmentTask extends AbstractOCITask implements CompartmentIdAwar
         return createdCompartmentId.orNull
     }
 
-    @TaskAction
-    void executeTask() {
+    @Override
+    void doExecuteTask() {
         validateCompartmentId()
         validateCompartmentName()
         validateCompartmentDescription()
@@ -72,8 +71,6 @@ class CreateCompartmentTask extends AbstractOCITask implements CompartmentIdAwar
             isWaitForCompletion(),
             isVerbose())
         createdCompartmentId.set(compartment.id)
-
-        client.close()
     }
 
     static Compartment maybeCreateCompartment(OCITask owner,

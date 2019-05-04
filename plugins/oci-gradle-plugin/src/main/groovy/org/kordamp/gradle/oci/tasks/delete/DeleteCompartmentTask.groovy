@@ -22,7 +22,6 @@ import com.oracle.bmc.identity.model.Compartment
 import com.oracle.bmc.identity.requests.DeleteCompartmentRequest
 import com.oracle.bmc.identity.requests.GetCompartmentRequest
 import groovy.transform.CompileStatic
-import org.gradle.api.tasks.TaskAction
 import org.kordamp.gradle.oci.tasks.AbstractOCITask
 import org.kordamp.gradle.oci.tasks.interfaces.OCITask
 import org.kordamp.gradle.oci.tasks.traits.CompartmentIdAwareTrait
@@ -39,8 +38,8 @@ class DeleteCompartmentTask extends AbstractOCITask implements CompartmentIdAwar
     WaitForCompletionAwareTrait {
     static final String TASK_DESCRIPTION = 'Deletes a Compartment.'
 
-    @TaskAction
-    void executeTask() {
+    @Override
+    protected void doExecuteTask() {
         validateCompartmentId()
 
         IdentityClient client = createIdentityClient()
@@ -69,7 +68,5 @@ class DeleteCompartmentTask extends AbstractOCITask implements CompartmentIdAwar
                     Compartment.LifecycleState.Deleted)
                 .execute()
         }
-
-        client.close()
     }
 }

@@ -21,7 +21,6 @@ import com.oracle.bmc.core.VirtualNetworkClient
 import com.oracle.bmc.core.model.RouteTable
 import com.oracle.bmc.core.requests.GetRouteTableRequest
 import groovy.transform.CompileStatic
-import org.gradle.api.tasks.TaskAction
 import org.kordamp.gradle.oci.tasks.AbstractOCITask
 import org.kordamp.gradle.oci.tasks.interfaces.OCITask
 import org.kordamp.gradle.oci.tasks.traits.RouteTableIdAwareTrait
@@ -38,8 +37,8 @@ import static org.kordamp.gradle.oci.tasks.printers.RouteTablePrinter.printRoute
 class GetRouteTableTask extends AbstractOCITask implements RouteTableIdAwareTrait {
     static final String TASK_DESCRIPTION = 'Displays information for an specific RouteTable.'
 
-    @TaskAction
-    void executeTask() {
+    @Override
+    protected void doExecuteTask() {
         validateRouteTableId()
 
         VirtualNetworkClient client = createVirtualNetworkClient()
@@ -48,7 +47,6 @@ class GetRouteTableTask extends AbstractOCITask implements RouteTableIdAwareTrai
             .rtId(getRouteTableId())
             .build())
             .routeTable
-        client.close()
 
         if (routeTable) {
             println(routeTable.displayName + ':')

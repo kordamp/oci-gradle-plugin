@@ -22,7 +22,6 @@ import com.oracle.bmc.identity.model.Compartment
 import com.oracle.bmc.identity.requests.ListCompartmentsRequest
 import com.oracle.bmc.identity.responses.ListCompartmentsResponse
 import groovy.transform.CompileStatic
-import org.gradle.api.tasks.TaskAction
 import org.kordamp.gradle.AnsiConsole
 import org.kordamp.gradle.oci.tasks.AbstractOCITask
 import org.kordamp.gradle.oci.tasks.interfaces.OCITask
@@ -41,15 +40,14 @@ import static org.kordamp.gradle.oci.tasks.printers.CompartmentPrinter.printComp
 class ListCompartmentsTask extends AbstractOCITask implements CompartmentIdAwareTrait, VerboseAwareTrait {
     static final String TASK_DESCRIPTION = 'Lists available Compartments.'
 
-    @TaskAction
-    void executeTask() {
+    @Override
+    protected void doExecuteTask() {
         validateCompartmentId()
 
         IdentityClient client = createIdentityClient()
         ListCompartmentsResponse response = client.listCompartments(ListCompartmentsRequest.builder()
             .compartmentId(getCompartmentId())
             .build())
-        client.close()
 
         AnsiConsole console = new AnsiConsole(project)
         println('Total Compartments: ' + console.cyan(response.items.size().toString()))

@@ -22,7 +22,6 @@ import com.oracle.bmc.core.model.Subnet
 import com.oracle.bmc.core.requests.ListSubnetsRequest
 import com.oracle.bmc.core.responses.ListSubnetsResponse
 import groovy.transform.CompileStatic
-import org.gradle.api.tasks.TaskAction
 import org.kordamp.gradle.AnsiConsole
 import org.kordamp.gradle.oci.tasks.AbstractOCITask
 import org.kordamp.gradle.oci.tasks.interfaces.OCITask
@@ -42,8 +41,8 @@ import static org.kordamp.gradle.oci.tasks.printers.SubnetPrinter.printSubnet
 class ListSubnetsTask extends AbstractOCITask implements CompartmentIdAwareTrait, VcnIdAwareTrait, VerboseAwareTrait {
     static final String TASK_DESCRIPTION = 'Lists Subnets available on a Vcn.'
 
-    @TaskAction
-    void executeTask() {
+    @Override
+    protected void doExecuteTask() {
         validateCompartmentId()
         validateVcnId()
 
@@ -52,7 +51,6 @@ class ListSubnetsTask extends AbstractOCITask implements CompartmentIdAwareTrait
             .compartmentId(getCompartmentId())
             .vcnId(getVcnId())
             .build())
-        client.close()
 
         AnsiConsole console = new AnsiConsole(project)
         println('Total Subnets: ' + console.cyan(response.items.size().toString()))

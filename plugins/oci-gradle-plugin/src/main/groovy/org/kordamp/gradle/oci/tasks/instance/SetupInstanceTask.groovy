@@ -34,7 +34,6 @@ import org.gradle.api.file.RegularFile
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.OutputFile
-import org.gradle.api.tasks.TaskAction
 import org.gradle.internal.hash.HashUtil
 import org.kordamp.gradle.oci.tasks.AbstractOCITask
 import org.kordamp.gradle.oci.tasks.interfaces.OCITask
@@ -83,8 +82,8 @@ class SetupInstanceTask extends AbstractOCITask implements CompartmentIdAwareTra
         this.result.get()
     }
 
-    @TaskAction
-    void executeTask() {
+    @Override
+    protected void doExecuteTask() {
         validateCompartmentId()
         validateImage()
         validateShape()
@@ -190,11 +189,6 @@ class SetupInstanceTask extends AbstractOCITask implements CompartmentIdAwareTra
         for (String publicIp : publicIps) {
             props.put("instance.public-ip.${publicIpIndex++}".toString(), publicIp)
         }
-
-        identityClient.close()
-        computeClient.close()
-        vcnClient.close()
-        blockstorageClient.close()
 
         props.store(new FileWriter(getResult().asFile), '')
         println("Result stored at ${console.yellow(getResult().asFile.absolutePath)}")

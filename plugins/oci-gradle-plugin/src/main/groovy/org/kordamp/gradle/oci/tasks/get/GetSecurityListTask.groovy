@@ -21,7 +21,6 @@ import com.oracle.bmc.core.VirtualNetworkClient
 import com.oracle.bmc.core.model.SecurityList
 import com.oracle.bmc.core.requests.GetSecurityListRequest
 import groovy.transform.CompileStatic
-import org.gradle.api.tasks.TaskAction
 import org.kordamp.gradle.oci.tasks.AbstractOCITask
 import org.kordamp.gradle.oci.tasks.interfaces.OCITask
 import org.kordamp.gradle.oci.tasks.traits.SecurityListIdAwareTrait
@@ -38,8 +37,8 @@ import static org.kordamp.gradle.oci.tasks.printers.SecurityListPrinter.printSec
 class GetSecurityListTask extends AbstractOCITask implements SecurityListIdAwareTrait {
     static final String TASK_DESCRIPTION = 'Displays information for an specific SecurityList.'
 
-    @TaskAction
-    void executeTask() {
+    @Override
+    protected void doExecuteTask() {
         validateSecurityListId()
 
         VirtualNetworkClient client = createVirtualNetworkClient()
@@ -48,7 +47,6 @@ class GetSecurityListTask extends AbstractOCITask implements SecurityListIdAware
             .securityListId(getSecurityListId())
             .build())
             .securityList
-        client.close()
 
         if (securityList) {
             println(securityList.displayName + ':')

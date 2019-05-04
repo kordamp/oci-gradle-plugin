@@ -22,7 +22,6 @@ import com.oracle.bmc.core.model.InstanceConsoleConnection
 import com.oracle.bmc.core.requests.DeleteInstanceConsoleConnectionRequest
 import com.oracle.bmc.core.requests.GetInstanceConsoleConnectionRequest
 import groovy.transform.CompileStatic
-import org.gradle.api.tasks.TaskAction
 import org.kordamp.gradle.oci.tasks.AbstractOCITask
 import org.kordamp.gradle.oci.tasks.interfaces.OCITask
 import org.kordamp.gradle.oci.tasks.traits.InstanceConsoleConnectionIdAwareTrait
@@ -39,8 +38,8 @@ class DeleteInstanceConsoleConnectionTask extends AbstractOCITask implements Ins
     WaitForCompletionAwareTrait {
     static final String TASK_DESCRIPTION = 'Deletes an InstanceConsoleConnection.'
 
-    @TaskAction
-    void executeTask() {
+    @Override
+    protected void doExecuteTask() {
         validateInstanceConsoleConnectionId()
 
         ComputeClient client = createComputeClient()
@@ -60,7 +59,5 @@ class DeleteInstanceConsoleConnectionTask extends AbstractOCITask implements Ins
                     InstanceConsoleConnection.LifecycleState.Deleted)
                 .execute()
         }
-
-        client.close()
     }
 }

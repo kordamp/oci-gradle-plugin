@@ -21,7 +21,6 @@ import com.oracle.bmc.core.ComputeClient
 import com.oracle.bmc.core.model.Instance
 import com.oracle.bmc.core.requests.GetInstanceRequest
 import groovy.transform.CompileStatic
-import org.gradle.api.tasks.TaskAction
 import org.kordamp.gradle.oci.tasks.AbstractOCITask
 import org.kordamp.gradle.oci.tasks.interfaces.OCITask
 import org.kordamp.gradle.oci.tasks.traits.InstanceIdAwareTrait
@@ -38,8 +37,8 @@ import static org.kordamp.gradle.oci.tasks.printers.InstancePrinter.printInstanc
 class GetInstanceTask extends AbstractOCITask implements InstanceIdAwareTrait {
     static final String TASK_DESCRIPTION = 'Displays information for an specific Instance.'
 
-    @TaskAction
-    void executeTask() {
+    @Override
+    protected void doExecuteTask() {
         validateInstanceId()
 
         ComputeClient client = createComputeClient()
@@ -48,7 +47,6 @@ class GetInstanceTask extends AbstractOCITask implements InstanceIdAwareTrait {
             .instanceId(instanceId)
             .build())
             .instance
-        client.close()
 
         if (instance) {
             println(instance.displayName + ':')

@@ -28,7 +28,6 @@ import groovy.transform.CompileStatic
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Optional
-import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.options.Option
 import org.kordamp.gradle.AnsiConsole
 import org.kordamp.gradle.oci.tasks.AbstractOCITask
@@ -59,8 +58,8 @@ class SearchResourcesTask extends AbstractOCITask {
         return type.orNull
     }
 
-    @TaskAction
-    void executeTask() {
+    @Override
+    protected void doExecuteTask() {
         ResourceSearch client = createResourceSearchClient()
         if (isBlank(getType())) {
             listTypes(client)

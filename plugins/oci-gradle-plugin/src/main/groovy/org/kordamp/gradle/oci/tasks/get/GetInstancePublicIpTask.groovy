@@ -30,7 +30,6 @@ import com.oracle.bmc.core.responses.GetPublicIpByPrivateIpIdResponse
 import com.oracle.bmc.core.responses.GetVnicResponse
 import com.oracle.bmc.model.BmcException
 import groovy.transform.CompileStatic
-import org.gradle.api.tasks.TaskAction
 import org.kordamp.gradle.oci.tasks.AbstractOCITask
 import org.kordamp.gradle.oci.tasks.interfaces.OCITask
 import org.kordamp.gradle.oci.tasks.traits.CompartmentIdAwareTrait
@@ -47,8 +46,8 @@ class GetInstancePublicIpTask extends AbstractOCITask implements CompartmentIdAw
     InstanceIdAwareTrait {
     static final String TASK_DESCRIPTION = 'Displays public Ip addresses for a particular Instance.'
 
-    @TaskAction
-    void executeTask() {
+    @Override
+    protected void doExecuteTask() {
         validateCompartmentId()
         validateInstanceId()
 
@@ -64,9 +63,6 @@ class GetInstancePublicIpTask extends AbstractOCITask implements CompartmentIdAw
         for (String publicIp : publicIps) {
             println(publicIp)
         }
-
-        computeClient.close()
-        vcnClient.close()
     }
 
     static Set<String> getInstancePublicIp(OCITask owner,

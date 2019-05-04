@@ -27,7 +27,6 @@ import com.oracle.bmc.identity.IdentityClient
 import com.oracle.bmc.identity.model.AvailabilityDomain
 import groovy.transform.CompileStatic
 import org.gradle.api.provider.Property
-import org.gradle.api.tasks.TaskAction
 import org.kordamp.gradle.oci.tasks.AbstractOCITask
 import org.kordamp.gradle.oci.tasks.interfaces.OCITask
 import org.kordamp.gradle.oci.tasks.traits.AvailabilityDomainAwareTrait
@@ -62,8 +61,8 @@ class CreateSubnetTask extends AbstractOCITask implements CompartmentIdAwareTrai
         return createdSubnetId.orNull
     }
 
-    @TaskAction
-    void executeTask() {
+    @Override
+    void doExecuteTask() {
         validateCompartmentId()
         validateVcnId()
         validateAvailabilityDomain()
@@ -86,8 +85,6 @@ class CreateSubnetTask extends AbstractOCITask implements CompartmentIdAwareTrai
             isWaitForCompletion(),
             isVerbose())
         createdSubnetId.set(subnet.id)
-
-        client.close()
     }
 
     static Subnet maybeCreateSubnet(OCITask owner,

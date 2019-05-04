@@ -43,7 +43,6 @@ import com.oracle.bmc.core.requests.ListInstancesRequest
 import groovy.transform.CompileStatic
 import org.apache.commons.codec.binary.Base64
 import org.gradle.api.provider.Property
-import org.gradle.api.tasks.TaskAction
 import org.kordamp.gradle.oci.tasks.AbstractOCITask
 import org.kordamp.gradle.oci.tasks.interfaces.OCITask
 import org.kordamp.gradle.oci.tasks.traits.CompartmentIdAwareTrait
@@ -84,8 +83,8 @@ class CreateInstanceTask extends AbstractOCITask implements CompartmentIdAwareTr
         return createdInstanceId.orNull
     }
 
-    @TaskAction
-    void executeTask() {
+    @Override
+    void doExecuteTask() {
         validateCompartmentId()
         validateSubnetId()
         validateImage()
@@ -123,10 +122,6 @@ class CreateInstanceTask extends AbstractOCITask implements CompartmentIdAwareTr
             kmsKeyId,
             isVerbose())
         createdInstanceId.set(instance.id)
-
-        computeClient.close()
-        vcnClient.close()
-        blockstorageClient.close()
     }
 
     static Instance maybeCreateInstance(OCITask owner,

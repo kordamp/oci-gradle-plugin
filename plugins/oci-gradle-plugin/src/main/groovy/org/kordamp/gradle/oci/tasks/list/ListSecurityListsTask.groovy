@@ -22,7 +22,6 @@ import com.oracle.bmc.core.model.SecurityList
 import com.oracle.bmc.core.requests.ListSecurityListsRequest
 import com.oracle.bmc.core.responses.ListSecurityListsResponse
 import groovy.transform.CompileStatic
-import org.gradle.api.tasks.TaskAction
 import org.kordamp.gradle.AnsiConsole
 import org.kordamp.gradle.oci.tasks.AbstractOCITask
 import org.kordamp.gradle.oci.tasks.interfaces.OCITask
@@ -44,8 +43,8 @@ class ListSecurityListsTask extends AbstractOCITask implements CompartmentIdAwar
     VerboseAwareTrait {
     static final String TASK_DESCRIPTION = 'Lists SecurityLists available on a Vcn.'
 
-    @TaskAction
-    void executeTask() {
+    @Override
+    protected void doExecuteTask() {
         validateCompartmentId()
         validateVcnId()
 
@@ -54,7 +53,6 @@ class ListSecurityListsTask extends AbstractOCITask implements CompartmentIdAwar
             .compartmentId(getCompartmentId())
             .vcnId(getVcnId())
             .build())
-        client.close()
 
         AnsiConsole console = new AnsiConsole(project)
         println('Total SecurityLists: ' + console.cyan(response.items.size().toString()))

@@ -25,7 +25,6 @@ import com.oracle.bmc.core.requests.GetVcnRequest
 import com.oracle.bmc.core.requests.ListVcnsRequest
 import groovy.transform.CompileStatic
 import org.gradle.api.provider.Property
-import org.gradle.api.tasks.TaskAction
 import org.kordamp.gradle.oci.tasks.AbstractOCITask
 import org.kordamp.gradle.oci.tasks.interfaces.OCITask
 import org.kordamp.gradle.oci.tasks.traits.CompartmentIdAwareTrait
@@ -56,8 +55,8 @@ class CreateVcnTask extends AbstractOCITask implements CompartmentIdAwareTrait,
         return createdVcnId.orNull
     }
 
-    @TaskAction
-    void executeTask() {
+    @Override
+    void doExecuteTask() {
         validateCompartmentId()
         validateDnsLabel(getCompartmentId())
         validateVcnName()
@@ -73,8 +72,6 @@ class CreateVcnTask extends AbstractOCITask implements CompartmentIdAwareTrait,
             isWaitForCompletion(),
             isVerbose())
         createdVcnId.set(vcn.id)
-
-        client.close()
     }
 
     static Vcn maybeCreateVcn(OCITask owner,

@@ -21,7 +21,6 @@ import com.oracle.bmc.core.VirtualNetworkClient
 import com.oracle.bmc.core.model.Vcn
 import com.oracle.bmc.core.requests.GetVcnRequest
 import groovy.transform.CompileStatic
-import org.gradle.api.tasks.TaskAction
 import org.kordamp.gradle.oci.tasks.AbstractOCITask
 import org.kordamp.gradle.oci.tasks.interfaces.OCITask
 import org.kordamp.gradle.oci.tasks.traits.VcnIdAwareTrait
@@ -38,8 +37,8 @@ import static org.kordamp.gradle.oci.tasks.printers.VcnPrinter.printVcn
 class GetVcnTask extends AbstractOCITask implements VcnIdAwareTrait {
     static final String TASK_DESCRIPTION = 'Displays information for an specific Vcn.'
 
-    @TaskAction
-    void executeTask() {
+    @Override
+    protected void doExecuteTask() {
         validateVcnId()
 
         VirtualNetworkClient client = createVirtualNetworkClient()
@@ -48,7 +47,6 @@ class GetVcnTask extends AbstractOCITask implements VcnIdAwareTrait {
             .vcnId(getVcnId())
             .build())
             .vcn
-        client.close()
 
         if (vcn) {
             println(vcn.displayName + ':')

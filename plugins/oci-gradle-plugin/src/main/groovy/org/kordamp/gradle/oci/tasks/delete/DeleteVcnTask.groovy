@@ -23,7 +23,6 @@ import com.oracle.bmc.core.requests.DeleteVcnRequest
 import com.oracle.bmc.core.requests.GetVcnRequest
 import com.oracle.bmc.core.requests.ListVcnsRequest
 import groovy.transform.CompileStatic
-import org.gradle.api.tasks.TaskAction
 import org.kordamp.gradle.oci.tasks.AbstractOCITask
 import org.kordamp.gradle.oci.tasks.interfaces.OCITask
 import org.kordamp.gradle.oci.tasks.traits.CompartmentIdAwareTrait
@@ -47,8 +46,8 @@ class DeleteVcnTask extends AbstractOCITask implements CompartmentIdAwareTrait,
     WaitForCompletionAwareTrait {
     static final String TASK_DESCRIPTION = 'Deletes a Vcn.'
 
-    @TaskAction
-    void executeTask() {
+    @Override
+    protected void doExecuteTask() {
         validateVcnId()
 
         if (isBlank(getVcnId()) && isBlank(getVcnName())) {
@@ -82,8 +81,6 @@ class DeleteVcnTask extends AbstractOCITask implements CompartmentIdAwareTrait,
                 deleteVcn(client, vcn)
             }
         }
-
-        client.close()
     }
 
     private void deleteVcn(VirtualNetworkClient client, Vcn vcn) {

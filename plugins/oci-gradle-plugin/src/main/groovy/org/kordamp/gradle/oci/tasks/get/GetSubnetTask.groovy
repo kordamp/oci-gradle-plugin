@@ -21,7 +21,6 @@ import com.oracle.bmc.core.VirtualNetworkClient
 import com.oracle.bmc.core.model.Subnet
 import com.oracle.bmc.core.requests.GetSubnetRequest
 import groovy.transform.CompileStatic
-import org.gradle.api.tasks.TaskAction
 import org.kordamp.gradle.oci.tasks.AbstractOCITask
 import org.kordamp.gradle.oci.tasks.interfaces.OCITask
 import org.kordamp.gradle.oci.tasks.traits.SubnetIdAwareTrait
@@ -38,8 +37,8 @@ import static org.kordamp.gradle.oci.tasks.printers.SubnetPrinter.printSubnet
 class GetSubnetTask extends AbstractOCITask implements SubnetIdAwareTrait {
     static final String TASK_DESCRIPTION = 'Displays information for an specific Subnet.'
 
-    @TaskAction
-    void executeTask() {
+    @Override
+    protected void doExecuteTask() {
         validateSubnetId()
 
         VirtualNetworkClient client = createVirtualNetworkClient()
@@ -48,7 +47,6 @@ class GetSubnetTask extends AbstractOCITask implements SubnetIdAwareTrait {
             .subnetId(getSubnetId())
             .build())
             .subnet
-        client.close()
 
         if (subnet) {
             println(subnet.displayName + ':')

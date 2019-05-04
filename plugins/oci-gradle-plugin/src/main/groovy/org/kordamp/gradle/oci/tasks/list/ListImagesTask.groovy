@@ -22,7 +22,6 @@ import com.oracle.bmc.core.model.Image
 import com.oracle.bmc.core.requests.ListImagesRequest
 import com.oracle.bmc.core.responses.ListImagesResponse
 import groovy.transform.CompileStatic
-import org.gradle.api.tasks.TaskAction
 import org.kordamp.gradle.AnsiConsole
 import org.kordamp.gradle.oci.tasks.AbstractOCITask
 import org.kordamp.gradle.oci.tasks.interfaces.OCITask
@@ -41,15 +40,14 @@ import static org.kordamp.gradle.oci.tasks.printers.ImagePrinter.printImage
 class ListImagesTask extends AbstractOCITask implements CompartmentIdAwareTrait, VerboseAwareTrait {
     static final String TASK_DESCRIPTION = 'Lists Images available on a Compartment.'
 
-    @TaskAction
-    void executeTask() {
+    @Override
+    protected void doExecuteTask() {
         validateCompartmentId()
 
         ComputeClient client = createComputeClient()
         ListImagesResponse response = client.listImages(ListImagesRequest.builder()
             .compartmentId(getCompartmentId())
             .build())
-        client.close()
 
         AnsiConsole console = new AnsiConsole(project)
         println('Total Images: ' + console.cyan(response.items.size().toString()))

@@ -23,7 +23,6 @@ import com.oracle.bmc.core.requests.DeleteInternetGatewayRequest
 import com.oracle.bmc.core.requests.GetInternetGatewayRequest
 import com.oracle.bmc.core.requests.ListInternetGatewaysRequest
 import groovy.transform.CompileStatic
-import org.gradle.api.tasks.TaskAction
 import org.kordamp.gradle.oci.tasks.AbstractOCITask
 import org.kordamp.gradle.oci.tasks.interfaces.OCITask
 import org.kordamp.gradle.oci.tasks.traits.CompartmentIdAwareTrait
@@ -49,8 +48,8 @@ class DeleteInternetGatewayTask extends AbstractOCITask implements CompartmentId
     WaitForCompletionAwareTrait {
     static final String TASK_DESCRIPTION = 'Deletes a InternetGateway.'
 
-    @TaskAction
-    void executeTask() {
+    @Override
+    protected void doExecuteTask() {
         validateInternetGatewayId()
 
         if (isBlank(getInternetGatewayId()) && isBlank(getInternetGatewayName())) {
@@ -86,8 +85,6 @@ class DeleteInternetGatewayTask extends AbstractOCITask implements CompartmentId
                 deleteInternetGateway(client, internetGateway)
             }
         }
-
-        client.close()
     }
 
     private void deleteInternetGateway(VirtualNetworkClient client, InternetGateway internetGateway) {

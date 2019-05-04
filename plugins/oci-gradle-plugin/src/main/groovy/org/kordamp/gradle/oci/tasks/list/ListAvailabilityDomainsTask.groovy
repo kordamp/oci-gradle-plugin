@@ -22,7 +22,6 @@ import com.oracle.bmc.identity.model.AvailabilityDomain
 import com.oracle.bmc.identity.requests.ListAvailabilityDomainsRequest
 import com.oracle.bmc.identity.responses.ListAvailabilityDomainsResponse
 import groovy.transform.CompileStatic
-import org.gradle.api.tasks.TaskAction
 import org.kordamp.gradle.AnsiConsole
 import org.kordamp.gradle.oci.tasks.AbstractOCITask
 import org.kordamp.gradle.oci.tasks.interfaces.OCITask
@@ -41,15 +40,14 @@ import static org.kordamp.gradle.oci.tasks.printers.AvailabilityDomainPrinter.pr
 class ListAvailabilityDomainsTask extends AbstractOCITask implements CompartmentIdAwareTrait, VerboseAwareTrait {
     static final String TASK_DESCRIPTION = 'Lists AvailabilityDomains available on a Compartment.'
 
-    @TaskAction
-    void executeTask() {
+    @Override
+    protected void doExecuteTask() {
         validateCompartmentId()
 
         IdentityClient client = createIdentityClient()
         ListAvailabilityDomainsResponse response = client.listAvailabilityDomains(ListAvailabilityDomainsRequest.builder()
             .compartmentId(getCompartmentId())
             .build())
-        client.close()
 
         AnsiConsole console = new AnsiConsole(project)
         println('Total AvailabilityDomains: ' + console.cyan(response.items.size().toString()))

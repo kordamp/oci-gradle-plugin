@@ -23,7 +23,6 @@ import com.oracle.bmc.core.requests.GetInstanceRequest
 import com.oracle.bmc.core.requests.ListInstancesRequest
 import com.oracle.bmc.core.requests.TerminateInstanceRequest
 import groovy.transform.CompileStatic
-import org.gradle.api.tasks.TaskAction
 import org.kordamp.gradle.oci.tasks.AbstractOCITask
 import org.kordamp.gradle.oci.tasks.interfaces.OCITask
 import org.kordamp.gradle.oci.tasks.traits.CompartmentIdAwareTrait
@@ -47,8 +46,8 @@ class TerminateInstanceTask extends AbstractOCITask implements CompartmentIdAwar
     WaitForCompletionAwareTrait {
     static final String TASK_DESCRIPTION = 'Terminates an Instance.'
 
-    @TaskAction
-    void executeTask() {
+    @Override
+    protected void doExecuteTask() {
         validateInstanceId()
 
         if (isBlank(getInstanceId()) && isBlank(getInstanceName())) {
@@ -82,8 +81,6 @@ class TerminateInstanceTask extends AbstractOCITask implements CompartmentIdAwar
                 terminateInstance(client, instance)
             }
         }
-
-        client.close()
     }
 
     private void terminateInstance(ComputeClient client, Instance instance) {

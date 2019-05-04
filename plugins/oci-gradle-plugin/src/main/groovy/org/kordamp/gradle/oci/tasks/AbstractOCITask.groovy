@@ -32,6 +32,7 @@ import groovy.transform.CompileStatic
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Optional
+import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.options.Option
 import org.kordamp.gradle.AnsiConsole
 import org.kordamp.gradle.oci.OCIConfigExtension
@@ -50,6 +51,7 @@ abstract class AbstractOCITask extends AbstractReportingTask implements OCITask 
 
     protected final OCIConfigExtension ociConfig
     protected final AnsiConsole console = new AnsiConsole(project)
+    protected final List<AutoCloseable> closeables = []
     private AuthenticationDetailsProvider authenticationDetailsProvider
 
     protected Property<String> profile = project.objects.property(String)
@@ -85,6 +87,18 @@ abstract class AbstractOCITask extends AbstractReportingTask implements OCITask 
     AnsiConsole getConsole() {
         console
     }
+
+    @TaskAction
+    void executeTask() {
+        System.setProperty('sun.net.http.allowRestrictedHeaders', 'true')
+
+        doExecuteTask()
+
+        closeables.each { c -> c.close() }
+        closeables.clear()
+    }
+
+    abstract protected void doExecuteTask()
 
     protected AuthenticationDetailsProvider resolveAuthenticationDetailsProvider() {
         if (authenticationDetailsProvider) {
@@ -139,6 +153,7 @@ abstract class AbstractOCITask extends AbstractReportingTask implements OCITask 
         if (region.present && isNotBlank(getRegion())) {
             client.setRegion(getRegion())
         }
+        closeables << client
         client
     }
 
@@ -147,6 +162,7 @@ abstract class AbstractOCITask extends AbstractReportingTask implements OCITask 
         if (region.present && isNotBlank(getRegion())) {
             client.setRegion(getRegion())
         }
+        closeables << client
         client
     }
 
@@ -155,6 +171,7 @@ abstract class AbstractOCITask extends AbstractReportingTask implements OCITask 
         if (region.present && isNotBlank(getRegion())) {
             client.setRegion(getRegion())
         }
+        closeables << client
         client
     }
 
@@ -163,6 +180,7 @@ abstract class AbstractOCITask extends AbstractReportingTask implements OCITask 
         if (region.present && isNotBlank(getRegion())) {
             client.setRegion(getRegion())
         }
+        closeables << client
         client
     }
 
@@ -171,6 +189,7 @@ abstract class AbstractOCITask extends AbstractReportingTask implements OCITask 
         if (region.present && isNotBlank(getRegion())) {
             client.setRegion(getRegion())
         }
+        closeables << client
         client
     }
 

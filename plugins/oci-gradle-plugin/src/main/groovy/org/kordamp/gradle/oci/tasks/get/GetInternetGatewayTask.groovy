@@ -21,7 +21,6 @@ import com.oracle.bmc.core.VirtualNetworkClient
 import com.oracle.bmc.core.model.InternetGateway
 import com.oracle.bmc.core.requests.GetInternetGatewayRequest
 import groovy.transform.CompileStatic
-import org.gradle.api.tasks.TaskAction
 import org.kordamp.gradle.oci.tasks.AbstractOCITask
 import org.kordamp.gradle.oci.tasks.interfaces.OCITask
 import org.kordamp.gradle.oci.tasks.traits.InternetGatewayIdAwareTrait
@@ -38,8 +37,8 @@ import static org.kordamp.gradle.oci.tasks.printers.InternetGatewayPrinter.print
 class GetInternetGatewayTask extends AbstractOCITask implements InternetGatewayIdAwareTrait {
     static final String TASK_DESCRIPTION = 'Displays information for an specific InternetGateway.'
 
-    @TaskAction
-    void executeTask() {
+    @Override
+    protected void doExecuteTask() {
         validateInternetGatewayId()
 
         VirtualNetworkClient client = createVirtualNetworkClient()
@@ -48,7 +47,6 @@ class GetInternetGatewayTask extends AbstractOCITask implements InternetGatewayI
             .igId(getInternetGatewayId())
             .build())
             .internetGateway
-        client.close()
 
         if (internetGateway) {
             println(internetGateway.displayName + ':')

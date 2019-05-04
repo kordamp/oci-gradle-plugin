@@ -25,7 +25,6 @@ import com.oracle.bmc.core.requests.ListInstancesRequest
 import groovy.transform.CompileStatic
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.options.Option
 import org.gradle.api.tasks.options.OptionValues
 import org.kordamp.gradle.oci.tasks.AbstractOCITask
@@ -86,8 +85,8 @@ class InstanceActionTask extends AbstractOCITask implements CompartmentIdAwareTr
         return new ArrayList<InstanceAction>(Arrays.asList(InstanceAction.values()))
     }
 
-    @TaskAction
-    void executeTask() {
+    @Override
+    protected void doExecuteTask() {
         validateInstanceId()
 
         if (isBlank(getInstanceId()) && isBlank(getInstanceName())) {
@@ -114,8 +113,6 @@ class InstanceActionTask extends AbstractOCITask implements CompartmentIdAwareTr
                 instanceAction(client, instance.id, getAction())
             }
         }
-
-        client.close()
     }
 
     private Instance instanceAction(ComputeClient client, String instanceId, InstanceAction action) {

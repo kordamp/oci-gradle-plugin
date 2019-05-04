@@ -22,7 +22,6 @@ import com.oracle.bmc.identity.model.Region
 import com.oracle.bmc.identity.requests.ListRegionsRequest
 import com.oracle.bmc.identity.responses.ListRegionsResponse
 import groovy.transform.CompileStatic
-import org.gradle.api.tasks.TaskAction
 import org.kordamp.gradle.AnsiConsole
 import org.kordamp.gradle.oci.tasks.AbstractOCITask
 import org.kordamp.gradle.oci.tasks.interfaces.OCITask
@@ -40,12 +39,11 @@ import static org.kordamp.gradle.oci.tasks.printers.RegionPrinter.printRegion
 class ListRegionsTask extends AbstractOCITask implements VerboseAwareTrait {
     static final String TASK_DESCRIPTION = 'Lists available Regions.'
 
-    @TaskAction
-    void executeTask() {
+    @Override
+    protected void doExecuteTask() {
         IdentityClient client = createIdentityClient()
         ListRegionsResponse response = client.listRegions(ListRegionsRequest.builder()
             .build())
-        client.close()
 
         AnsiConsole console = new AnsiConsole(project)
         println('Total Regions: ' + console.cyan(response.items.size().toString()))

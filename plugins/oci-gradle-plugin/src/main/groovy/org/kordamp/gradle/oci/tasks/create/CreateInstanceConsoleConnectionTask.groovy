@@ -24,7 +24,6 @@ import com.oracle.bmc.core.requests.CreateInstanceConsoleConnectionRequest
 import com.oracle.bmc.core.requests.GetInstanceConsoleConnectionRequest
 import groovy.transform.CompileStatic
 import org.gradle.api.provider.Property
-import org.gradle.api.tasks.TaskAction
 import org.kordamp.gradle.oci.tasks.AbstractOCITask
 import org.kordamp.gradle.oci.tasks.interfaces.OCITask
 import org.kordamp.gradle.oci.tasks.traits.CompartmentIdAwareTrait
@@ -55,8 +54,8 @@ class CreateInstanceConsoleConnectionTask extends AbstractOCITask implements Com
         return createdConnectionId.orNull
     }
 
-    @TaskAction
-    void executeTask() {
+    @Override
+    void doExecuteTask() {
         validateCompartmentId()
         validateInstanceId()
         validatePublicKeyFile()
@@ -70,8 +69,6 @@ class CreateInstanceConsoleConnectionTask extends AbstractOCITask implements Com
             isWaitForCompletion(),
             isVerbose())
         createdConnectionId.set(connection.id)
-
-        client.close()
     }
 
     static InstanceConsoleConnection createInstanceConsoleConnection(OCITask owner,

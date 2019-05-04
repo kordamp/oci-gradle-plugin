@@ -31,7 +31,6 @@ import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Optional
-import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.options.Option
 import org.gradle.api.tasks.options.OptionValues
 import org.kordamp.gradle.oci.tasks.AbstractOCITask
@@ -94,8 +93,8 @@ class AddIngressSecurityRuleTask extends AbstractOCITask implements SecurityList
         return ports.get()
     }
 
-    @TaskAction
-    void executeTask() {
+    @Override
+    protected void doExecuteTask() {
         validateSecurityListId()
 
         if (getPorts().empty) {
@@ -111,8 +110,6 @@ class AddIngressSecurityRuleTask extends AbstractOCITask implements SecurityList
             getPorts())
 
         SecurityListPrinter.printSecurityList(this, securityList, 0)
-
-        client.close()
     }
 
     static SecurityList addIngressSecurityRules(OCITask owner,

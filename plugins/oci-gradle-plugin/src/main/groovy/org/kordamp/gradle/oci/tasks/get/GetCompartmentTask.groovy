@@ -21,7 +21,6 @@ import com.oracle.bmc.identity.IdentityClient
 import com.oracle.bmc.identity.model.Compartment
 import com.oracle.bmc.identity.requests.GetCompartmentRequest
 import groovy.transform.CompileStatic
-import org.gradle.api.tasks.TaskAction
 import org.kordamp.gradle.oci.tasks.AbstractOCITask
 import org.kordamp.gradle.oci.tasks.interfaces.OCITask
 import org.kordamp.gradle.oci.tasks.traits.CompartmentIdAwareTrait
@@ -38,8 +37,8 @@ import static org.kordamp.gradle.oci.tasks.printers.CompartmentPrinter.printComp
 class GetCompartmentTask extends AbstractOCITask implements CompartmentIdAwareTrait {
     static final String TASK_DESCRIPTION = 'Displays information for an specific Compartment.'
 
-    @TaskAction
-    void executeTask() {
+    @Override
+    protected void doExecuteTask() {
         validateCompartmentId()
 
         IdentityClient client = createIdentityClient()
@@ -47,7 +46,6 @@ class GetCompartmentTask extends AbstractOCITask implements CompartmentIdAwareTr
             .compartmentId(compartmentId)
             .build())
             .compartment
-        client.close()
 
         println(compartment.name + ':')
         printCompartment(this, compartment, 0)

@@ -29,7 +29,6 @@ import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.options.Option
-import org.kordamp.gradle.AnsiConsole
 import org.kordamp.gradle.oci.tasks.AbstractOCITask
 import org.kordamp.gradle.oci.tasks.interfaces.OCITask
 import org.kordamp.jipsy.TypeProviderFor
@@ -72,7 +71,6 @@ class SearchResourcesTask extends AbstractOCITask {
         ListResourceTypesRequest request = ListResourceTypesRequest.builder().build()
         ListResourceTypesResponse response = client.listResourceTypes(request)
 
-        AnsiConsole console = new AnsiConsole(project)
         println('Total resources: ' + console.cyan(response.items.size().toString()))
         println(' ')
         for (ResourceType type : response.items) {
@@ -84,36 +82,35 @@ class SearchResourcesTask extends AbstractOCITask {
         GetResourceTypeRequest request = GetResourceTypeRequest.builder().name(typeName).build()
         GetResourceTypeResponse response = client.getResourceType(request)
 
-        AnsiConsole console = new AnsiConsole(project)
         println('Resource: ' + state(response.resourceType.name))
         println('fields:')
-        doPrint(console, response.resourceType.fields, 0)
+        doPrint(response.resourceType.fields, 0)
     }
 
     @Override
-    protected void doPrint(AnsiConsole console, Object value, int offset) {
+    protected void doPrint(Object value, int offset) {
         if (value instanceof QueryableFieldDescription) {
-            doPrintQueryableFieldDescription(console, (QueryableFieldDescription) value, offset)
+            doPrintQueryableFieldDescription((QueryableFieldDescription) value, offset)
         } else {
-            super.doPrint(console, value, offset)
+            super.doPrint(value, offset)
         }
     }
 
     @Override
-    protected void doPrintElement(AnsiConsole console, Object value, int offset) {
+    protected void doPrintElement(Object value, int offset) {
         if (value instanceof QueryableFieldDescription) {
-            doPrintQueryableFieldDescription(console, (QueryableFieldDescription) value, offset)
+            doPrintQueryableFieldDescription((QueryableFieldDescription) value, offset)
         } else {
-            super.doPrintElement(console, value, offset)
+            super.doPrintElement(value, offset)
         }
     }
 
-    private void doPrintQueryableFieldDescription(AnsiConsole console, QueryableFieldDescription desc, int offset) {
+    private void doPrintQueryableFieldDescription(QueryableFieldDescription desc, int offset) {
         println(('    ' * (offset + 1)) + desc.fieldName + ':')
-        doPrintMapEntry(console, 'type', desc.fieldType, offset + 2)
+        doPrintMapEntry('type', desc.fieldType, offset + 2)
         if (desc.objectProperties?.size()) {
             println(('    ' * (offset + 2)) + 'fields:')
-            doPrint(console, desc.objectProperties, offset + 2)
+            doPrint(desc.objectProperties, offset + 2)
         }
     }
 }

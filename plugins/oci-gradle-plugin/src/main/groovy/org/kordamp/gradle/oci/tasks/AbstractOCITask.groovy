@@ -50,7 +50,6 @@ abstract class AbstractOCITask extends AbstractReportingTask implements OCITask 
     protected static final String CONFIG_LOCATION = '~/.oci/config'
 
     protected final OCIConfigExtension ociConfig
-    protected final AnsiConsole console = new AnsiConsole(project)
     protected final List<AutoCloseable> closeables = []
     private AuthenticationDetailsProvider authenticationDetailsProvider
 
@@ -85,7 +84,7 @@ abstract class AbstractOCITask extends AbstractReportingTask implements OCITask 
 
     @Override
     AnsiConsole getConsole() {
-        console
+        this.@console
     }
 
     @TaskAction
@@ -194,26 +193,26 @@ abstract class AbstractOCITask extends AbstractReportingTask implements OCITask 
     }
 
     @Override
-    protected void doPrintMapEntry(AnsiConsole console, String key, value, int offset) {
+    protected void doPrintMapEntry(String key, value, int offset) {
         if (value instanceof CharSequence) {
             if (isNotBlank((String.valueOf(value)))) {
-                super.doPrintMapEntry(console, key, value, offset)
+                super.doPrintMapEntry(key, value, offset)
             }
         } else {
-            super.doPrintMapEntry(console, key, value, offset)
+            super.doPrintMapEntry(key, value, offset)
         }
     }
 
     @Override
     void printKeyValue(String key, Object value, int offset) {
-        doPrintMapEntry(console, key, value, offset)
+        doPrintMapEntry(key, value, offset)
     }
 
     @Override
     void printMap(String key, Map<String, ?> map, int offset) {
         if (!map.isEmpty()) {
             println(('    ' * offset) + key + ':')
-            doPrintMap(console, map, offset + 1)
+            doPrintMap(map, offset + 1)
         }
     }
 
@@ -221,7 +220,7 @@ abstract class AbstractOCITask extends AbstractReportingTask implements OCITask 
     void printCollection(String key, Collection<?> collection, int offset) {
         if (!collection.isEmpty()) {
             println(('    ' * offset) + key + ':')
-            doPrintCollection(console, collection, offset + 1)
+            doPrintCollection(collection, offset + 1)
         }
     }
 

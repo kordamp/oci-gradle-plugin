@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: Apache-2.0
  *
- * Copyright 2019 the original author or authors.
+ * Copyright 2019 Andres Almiray.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,88 +16,44 @@
  * limitations under the License.
  */
 
-plugins {
-    id 'com.github.johnrengelman.shadow' version '5.0.0'
-}
-
-repositories {
-    flatDir { dir project.file('lib') }
-}
-
-configurations {
-    uberjar
-}
-
 dependencies {
     compile     "org.kordamp.jipsy:jipsy-annotations:$jipsyVersion"
     compile     "org.kordamp.jipsy:jipsy-util:$jipsyVersion"
-    compileOnly "org.kordamp.gipsy:gipsy:$jipsyVersion"
+    compile "org.kordamp.gipsy:gipsy:$jipsyVersion"
 
-    compile 'org.kordamp.gradle:base-gradle-plugin:0.18.0'
+    compile 'org.kordamp.gradle:base-gradle-plugin:0.27.0'
 
-    uberjar "com.oracle:oci-java-sdk-full:$ociJavaSdkVersion"
+    compile(enforcedPlatform("com.oracle.oci.sdk:oci-java-sdk-bom:$ociJavaSdkVersion"))
 
-    compile 'net.minidev:accessors-smart:1.2'
-    compile 'org.codehaus.mojo:animal-sniffer-annotations:1.17'
-    compile 'org.glassfish.hk2.external:aopalliance-repackaged:2.5.0-b42'
-    compile 'org.ow2.asm:asm:5.0.4'
-    compile 'org.bouncycastle:bcpkix-jdk15on:1.60'
-    compile 'org.bouncycastle:bcprov-jdk15on:1.60'
-    compile 'org.checkerframework:checker-qual:2.5.2'
-    compile 'commons-codec:commons-codec:1.12'
-    compile 'commons-io:commons-io:2.6'
-    compile 'org.apache.commons:commons-lang3:3.8.1'
-    compile 'com.google.errorprone:error_prone_annotations:2.2.0'
-    compile 'com.google.guava:failureaccess:1.0.1'
-    compile 'com.google.guava:guava:27.1-jre'
-    compile 'org.glassfish.hk2:hk2-api:2.5.0-b42'
-    compile 'org.glassfish.hk2:hk2-locator:2.5.0-b42'
-    compile 'org.glassfish.hk2:hk2-utils:2.5.0-b42'
-    compile 'com.google.j2objc:j2objc-annotations:1.1'
-    compile 'com.fasterxml.jackson.core:jackson-annotations:2.9.8'
-    compile 'com.fasterxml.jackson.core:jackson-core:2.9.8'
-    compile 'com.fasterxml.jackson.core:jackson-databind:2.9.8'
-    compile 'com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.9.8'
-    compile 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.9.8'
-    compile 'com.fasterxml.jackson.module:jackson-module-jaxb-annotations:2.8.10'
-    compile 'org.javassist:javassist:3.22.0-CR2'
-    compile 'javax.annotation:javax.annotation-api:1.2'
-    compile 'javax.inject:javax.inject:1'
-    compile 'org.glassfish.hk2.external:javax.inject:2.5.0-b42'
-    compile 'javax.ws.rs:javax.ws.rs-api:2.1'
-    compile 'net.jcip:jcip-annotations:1.0'
-    compile 'org.glassfish.jersey.core:jersey-client:2.27'
-    compile 'org.glassfish.jersey.core:jersey-common:2.27'
-    compile 'org.glassfish.jersey.ext:jersey-entity-filtering:2.27'
-    compile 'org.glassfish.jersey.inject:jersey-hk2:2.27'
-    compile 'org.glassfish.jersey.media:jersey-media-json-jackson:2.27'
-    compile 'net.minidev:json-smart:2.3'
-    compile 'com.google.code.findbugs:jsr305:3.0.2'
-    compile 'com.nimbusds:nimbus-jose-jwt:6.5.1'
-    compile 'com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava'
-    compile 'org.glassfish.hk2:osgi-resource-locator:1.0.1'
-    compile 'org.slf4j:slf4j-api:1.7.26'
-    compile 'javax.validation:validation-api:1.1.0.Final'
-    compile 'javax.activation:activation:1.1.1'
+    compile 'com.oracle.oci.sdk:oci-java-sdk-common'
+    compile 'com.oracle.oci.sdk:oci-java-sdk-audit'
+    compile 'com.oracle.oci.sdk:oci-java-sdk-containerengine'
+    compile 'com.oracle.oci.sdk:oci-java-sdk-core'
+    compile 'com.oracle.oci.sdk:oci-java-sdk-database'
+    compile 'com.oracle.oci.sdk:oci-java-sdk-dns'
+    compile 'com.oracle.oci.sdk:oci-java-sdk-email'
+    compile 'com.oracle.oci.sdk:oci-java-sdk-filestorage'
+    compile 'com.oracle.oci.sdk:oci-java-sdk-identity'
+    compile 'com.oracle.oci.sdk:oci-java-sdk-loadbalancer'
+    compile 'com.oracle.oci.sdk:oci-java-sdk-objectstorage'
+    compile 'com.oracle.oci.sdk:oci-java-sdk-addons-resteasy-client-configurator'
+    compile 'com.oracle.oci.sdk:oci-java-sdk-resourcesearch'
+    compile 'com.oracle.oci.sdk:oci-java-sdk-addons-apache'
+    compile 'com.oracle.oci.sdk:oci-java-sdk-keymanagement'
+    compile 'com.oracle.oci.sdk:oci-java-sdk-announcementsservice'
+    compile 'com.oracle.oci.sdk:oci-java-sdk-healthchecks'
+    compile 'com.oracle.oci.sdk:oci-java-sdk-waas'
+    compile 'com.oracle.oci.sdk:oci-java-sdk-streaming'
+    compile 'com.oracle.oci.sdk:oci-java-sdk-resourcemanager'
+    compile 'com.oracle.oci.sdk:oci-java-sdk-monitoring'
+    compile 'com.oracle.oci.sdk:oci-java-sdk-ons'
+    compile 'com.oracle.oci.sdk:oci-java-sdk-autoscaling'
+    compile 'com.oracle.oci.sdk:oci-java-sdk-budget'
+    compile 'com.oracle.oci.sdk:oci-java-sdk-workrequests'
+    compile 'com.oracle.oci.sdk:oci-java-sdk-limits'
+    compile 'com.oracle.oci.sdk:oci-java-sdk-functions'
+    compile 'com.oracle.oci.sdk:oci-java-sdk-events'
+    compile 'com.oracle.oci.sdk:oci-java-sdk-dts'
+    compile 'com.oracle.oci.sdk:oci-java-sdk-oce'
+
 }
-
-sourceSets {
-    main {
-        compileClasspath += configurations.uberjar
-        runtimeClasspath += compileClasspath
-    }
-}
-
-idea {
-    module {
-        scopes.PROVIDED.plus += [configurations.uberjar]
-    }
-}
-
-shadowJar {
-    configurations = [project.configurations.uberjar]
-    baseName = project.name
-    classifier = ''
-}
-
-jar.finalizedBy shadowJar

@@ -44,9 +44,9 @@ class GetInstanceConsoleConnectionTask extends AbstractOCITask implements Instan
         ComputeClient client = createComputeClient()
 
         InstanceConsoleConnection connection = client.getInstanceConsoleConnection(GetInstanceConsoleConnectionRequest.builder()
-            .instanceConsoleConnectionId(getInstanceConsoleConnectionId())
-            .build())
-            .instanceConsoleConnection
+                .instanceConsoleConnectionId(getInstanceConsoleConnectionId())
+                .build())
+                .instanceConsoleConnection
 
         if (connection) {
             printInstanceConsoleConnection(this, connection, 0)

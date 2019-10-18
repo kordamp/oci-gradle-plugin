@@ -27,6 +27,7 @@ import org.kordamp.gradle.oci.tasks.interfaces.PathAware
 import org.kordamp.gradle.oci.tasks.interfaces.ProjectAware
 
 import static com.oracle.bmc.OCID.isValid
+import static org.kordamp.gradle.PropertyUtils.stringProperty
 import static org.kordamp.gradle.StringUtils.isNotBlank
 
 /**
@@ -45,7 +46,7 @@ trait OptionalSubnetIdAwareTrait implements PathAware, ProjectAware {
     }
 
     String getSubnetId() {
-        subnetId.orNull
+        stringProperty('OCI_SUBNET_ID', 'oci.subnet.id', this.@subnetId.orNull)
     }
 
     void validateSubnetId() {

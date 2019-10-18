@@ -22,7 +22,6 @@ import com.oracle.bmc.core.model.Instance
 import com.oracle.bmc.core.requests.ListInstancesRequest
 import com.oracle.bmc.core.responses.ListInstancesResponse
 import groovy.transform.CompileStatic
-import org.kordamp.gradle.AnsiConsole
 import org.kordamp.gradle.oci.tasks.AbstractOCITask
 import org.kordamp.gradle.oci.tasks.interfaces.OCITask
 import org.kordamp.gradle.oci.tasks.traits.AvailabilityDomainAwareTrait
@@ -47,11 +46,10 @@ class ListInstancesTask extends AbstractOCITask implements CompartmentIdAwareTra
 
         ComputeClient client = createComputeClient()
         ListInstancesResponse response = client.listInstances(ListInstancesRequest.builder()
-            .compartmentId(getCompartmentId())
-            .availabilityDomain(getAvailabilityDomain())
-            .build())
+                .compartmentId(getCompartmentId())
+                .availabilityDomain(getAvailabilityDomain())
+                .build())
 
-        AnsiConsole console = new AnsiConsole(project)
         println('Total Instances: ' + console.cyan(response.items.size().toString()))
         println(' ')
         for (Instance instance : response.items) {

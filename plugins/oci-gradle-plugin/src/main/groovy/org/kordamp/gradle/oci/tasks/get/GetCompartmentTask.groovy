@@ -43,9 +43,9 @@ class GetCompartmentTask extends AbstractOCITask implements CompartmentIdAwareTr
 
         IdentityClient client = createIdentityClient()
         Compartment compartment = client.getCompartment(GetCompartmentRequest.builder()
-            .compartmentId(compartmentId)
-            .build())
-            .compartment
+                .compartmentId(compartmentId)
+                .build())
+                .compartment
 
         println(compartment.name + ':')
         printCompartment(this, compartment, 0)

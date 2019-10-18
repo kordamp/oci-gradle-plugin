@@ -61,13 +61,13 @@ class OCIPlugin extends AbstractKordampPlugin {
                 String group = taskType.package.name.split('\\.')[-1]
 
                 project.tasks.register(taskName, taskType,
-                    new Action<Task>() {
-                        @Override
-                        void execute(Task t) {
-                            t.group = 'OCI ' + group.capitalize()
-                            t.description = taskType.TASK_DESCRIPTION
-                        }
-                    })
+                        new Action<Task>() {
+                            @Override
+                            void execute(Task t) {
+                                t.group = 'OCI ' + group.capitalize()
+                                t.description = taskType.TASK_DESCRIPTION
+                            }
+                        })
             }
         })
     }

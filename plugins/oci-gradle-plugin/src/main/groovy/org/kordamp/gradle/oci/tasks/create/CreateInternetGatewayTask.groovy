@@ -35,7 +35,7 @@ import org.gradle.api.provider.Property
 import org.kordamp.gradle.oci.tasks.AbstractOCITask
 import org.kordamp.gradle.oci.tasks.interfaces.OCITask
 import org.kordamp.gradle.oci.tasks.traits.CompartmentIdAwareTrait
-import org.kordamp.gradle.oci.tasks.traits.InternateGatewayNameAwareTrait
+import org.kordamp.gradle.oci.tasks.traits.InternetGatewayNameAwareTrait
 import org.kordamp.gradle.oci.tasks.traits.VcnIdAwareTrait
 import org.kordamp.gradle.oci.tasks.traits.VerboseAwareTrait
 import org.kordamp.gradle.oci.tasks.traits.WaitForCompletionAwareTrait
@@ -50,10 +50,10 @@ import static org.kordamp.gradle.oci.tasks.printers.InternetGatewayPrinter.print
 @CompileStatic
 @TypeProviderFor(OCITask)
 class CreateInternetGatewayTask extends AbstractOCITask implements CompartmentIdAwareTrait,
-    VcnIdAwareTrait,
-    InternateGatewayNameAwareTrait,
-    WaitForCompletionAwareTrait,
-    VerboseAwareTrait {
+        VcnIdAwareTrait,
+        InternetGatewayNameAwareTrait,
+        WaitForCompletionAwareTrait,
+        VerboseAwareTrait {
     static final String TASK_DESCRIPTION = 'Creates a InternetGateway.'
 
     private final Property<String> createdInternetGatewayId = project.objects.property(String)
@@ -71,12 +71,12 @@ class CreateInternetGatewayTask extends AbstractOCITask implements CompartmentId
         VirtualNetworkClient client = createVirtualNetworkClient()
 
         InternetGateway internetGateway = maybeCreateInternetGateway(this,
-            client,
-            getCompartmentId(),
-            getVcnId(),
-            getInternetGatewayName(),
-            isWaitForCompletion(),
-            isVerbose())
+                client,
+                getCompartmentId(),
+                getVcnId(),
+                getInternetGatewayName(),
+                isWaitForCompletion(),
+                isVerbose())
         createdInternetGatewayId.set(internetGateway.id)
     }
 
@@ -88,12 +88,12 @@ class CreateInternetGatewayTask extends AbstractOCITask implements CompartmentId
                                                       boolean waitForCompletion,
                                                       boolean verbose) {
         InternetGateway internetGateway = doMaybeCreateInternetGateway(owner,
-            client,
-            compartmentId,
-            vcnId,
-            internetGatewayName,
-            waitForCompletion,
-            verbose)
+                client,
+                compartmentId,
+                vcnId,
+                internetGatewayName,
+                waitForCompletion,
+                verbose)
 
         maybeAddInternetGatewayToVcn(owner, client, vcnId, internetGateway)
 
@@ -109,10 +109,10 @@ class CreateInternetGatewayTask extends AbstractOCITask implements CompartmentId
                                                         boolean verbose) {
         // 1. Check if it exists
         List<InternetGateway> internetGateways = client.listInternetGateways(ListInternetGatewaysRequest.builder()
-            .compartmentId(compartmentId)
-            .vcnId(vcnId)
-            .build())
-            .items
+                .compartmentId(compartmentId)
+                .vcnId(vcnId)
+                .build())
+                .items
 
         InternetGateway internetGateway = internetGateways.find { InternetGateway ig -> ig.displayName == internetGatewayName }
 
@@ -130,22 +130,22 @@ class CreateInternetGatewayTask extends AbstractOCITask implements CompartmentId
         }
 
         internetGateway = client.createInternetGateway(CreateInternetGatewayRequest.builder()
-            .createInternetGatewayDetails(CreateInternetGatewayDetails.builder()
+                .createInternetGatewayDetails(CreateInternetGatewayDetails.builder()
                 .compartmentId(compartmentId)
                 .vcnId(vcnId)
                 .displayName(internetGatewayName)
                 .isEnabled(true)
                 .build())
-            .build())
-            .internetGateway
+                .build())
+                .internetGateway
 
         if (waitForCompletion) {
             println("Waiting for InternetGateway to be ${owner.state('Available')}")
             client.waiters.forInternetGateway(GetInternetGatewayRequest.builder()
-                .igId(internetGateway.id)
-                .build(),
-                InternetGateway.LifecycleState.Available)
-                .execute()
+                    .igId(internetGateway.id)
+                    .build(),
+                    InternetGateway.LifecycleState.Available)
+                    .execute()
         }
 
         println("InternetGateway '${internetGatewayName}' has been provisioned. id = ${owner.console.yellow(internetGateway.id)}")
@@ -159,31 +159,31 @@ class CreateInternetGatewayTask extends AbstractOCITask implements CompartmentId
                                              InternetGateway internetGateway) {
         // 1. fetch the VCN
         Vcn vcn = client.getVcn(GetVcnRequest.builder()
-            .vcnId(vcnId)
-            .build())
-            .vcn
+                .vcnId(vcnId)
+                .build())
+                .vcn
 
         // 2. fetch RouteTable
         RouteTable routeTable = client.getRouteTable(GetRouteTableRequest.builder()
-            .rtId(vcn.defaultRouteTableId)
-            .build())
-            .routeTable
+                .rtId(vcn.defaultRouteTableId)
+                .build())
+                .routeTable
 
         // 3. is the IG already in the RT?
         if (!routeTable.routeRules.find { RouteRule rr -> rr.networkEntityId == internetGateway.id }) {
             List<RouteRule> routeRules = []
             routeRules << RouteRule.builder()
-                .destination('0.0.0.0/0')
-                .destinationType(RouteRule.DestinationType.CidrBlock)
-                .networkEntityId(internetGateway.id)
-                .build()
+                    .destination('0.0.0.0/0')
+                    .destinationType(RouteRule.DestinationType.CidrBlock)
+                    .networkEntityId(internetGateway.id)
+                    .build()
 
             println("Adding InternetGateway '${internetGateway.displayName}' to RouteTable. vcnId = ${owner.console.yellow(vcnId)}")
             client.updateRouteTable(UpdateRouteTableRequest.builder()
-                .updateRouteTableDetails(UpdateRouteTableDetails.builder()
+                    .updateRouteTableDetails(UpdateRouteTableDetails.builder()
                     .routeRules(routeRules).build())
-                .rtId(vcn.defaultRouteTableId)
-                .build())
+                    .rtId(vcn.defaultRouteTableId)
+                    .build())
         }
     }
 }

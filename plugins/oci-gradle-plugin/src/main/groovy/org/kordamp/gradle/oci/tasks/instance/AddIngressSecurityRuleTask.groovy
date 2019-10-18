@@ -39,6 +39,8 @@ import org.kordamp.gradle.oci.tasks.printers.SecurityListPrinter
 import org.kordamp.gradle.oci.tasks.traits.SecurityListIdAwareTrait
 import org.kordamp.jipsy.TypeProviderFor
 
+import static org.kordamp.gradle.PropertyUtils.stringProperty
+
 /**
  * @author Andres Almiray
  * @since 0.1.0
@@ -63,7 +65,7 @@ class AddIngressSecurityRuleTask extends AbstractOCITask implements SecurityList
     }
 
     PortType getPortType() {
-        return portType.getOrElse(PortType.TCP)
+        PortType.valueOf(stringProperty('OCI_PORT_TYPE', 'oci.port.type', (this.@portType.getOrElse(PortType.TCP)).name()).toUpperCase())
     }
 
     @OptionValues("portType")
@@ -104,10 +106,10 @@ class AddIngressSecurityRuleTask extends AbstractOCITask implements SecurityList
         VirtualNetworkClient client = createVirtualNetworkClient()
 
         SecurityList securityList = addIngressSecurityRules(this,
-            client,
-            getSecurityListId(),
-            getPortType(),
-            getPorts())
+                client,
+                getSecurityListId(),
+                getPortType(),
+                getPorts())
 
         SecurityListPrinter.printSecurityList(this, securityList, 0)
     }
@@ -118,34 +120,34 @@ class AddIngressSecurityRuleTask extends AbstractOCITask implements SecurityList
                                                 PortType portType,
                                                 List<Integer> ports) {
         SecurityList securityList = client.getSecurityList(GetSecurityListRequest.builder()
-            .securityListId(securityListId)
-            .build())
-            .securityList
+                .securityListId(securityListId)
+                .build())
+                .securityList
 
         List<IngressSecurityRule> rules = securityList.ingressSecurityRules
         for (Integer port : ports.sort(false)) {
             IngressSecurityRule.Builder builder = IngressSecurityRule.builder()
-                .source('0.0.0.0/0')
-                .sourceType(IngressSecurityRule.SourceType.CidrBlock)
-                .isStateless(false)
-                .protocol('6')
+                    .source('0.0.0.0/0')
+                    .sourceType(IngressSecurityRule.SourceType.CidrBlock)
+                    .isStateless(false)
+                    .protocol('6')
 
             switch (portType) {
                 case PortType.TCP:
                     builder = builder.tcpOptions(TcpOptions.builder()
-                        .sourcePortRange(PortRange.builder()
+                            .sourcePortRange(PortRange.builder()
                             .min(port)
                             .max(port)
                             .build())
-                        .build())
+                            .build())
                     break
                 case PortType.UDP:
                     builder = builder.udpOptions(UdpOptions.builder()
-                        .sourcePortRange(PortRange.builder()
+                            .sourcePortRange(PortRange.builder()
                             .min(port)
                             .max(port)
                             .build())
-                        .build())
+                            .build())
                     break
                 default:
                     throw new IllegalStateException("Invalid port type '$portType'")
@@ -155,11 +157,11 @@ class AddIngressSecurityRuleTask extends AbstractOCITask implements SecurityList
         }
 
         client.updateSecurityList(UpdateSecurityListRequest.builder()
-            .securityListId(securityListId)
-            .updateSecurityListDetails(UpdateSecurityListDetails.builder()
+                .securityListId(securityListId)
+                .updateSecurityListDetails(UpdateSecurityListDetails.builder()
                 .ingressSecurityRules(rules)
                 .build())
-            .build())
-            .securityList
+                .build())
+                .securityList
     }
 }

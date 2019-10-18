@@ -23,6 +23,8 @@ import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.options.Option
 import org.kordamp.gradle.oci.tasks.interfaces.ProjectAware
 
+import static org.kordamp.gradle.PropertyUtils.booleanProperty
+
 /**
  * @author Andres Almiray
  * @since 0.1.0
@@ -38,6 +40,6 @@ trait VerboseAwareTrait implements ProjectAware {
     }
 
     boolean isVerbose() {
-        verbose.getOrElse(false)
+        booleanProperty('OCI_VERBOSE', 'oci.verbose', this.@verbose.getOrElse(false))
     }
 }

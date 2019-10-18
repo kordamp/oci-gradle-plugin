@@ -28,6 +28,7 @@ import org.gradle.api.tasks.options.Option
 import org.kordamp.gradle.oci.tasks.interfaces.PathAware
 import org.kordamp.gradle.oci.tasks.interfaces.ProjectAware
 
+import static org.kordamp.gradle.PropertyUtils.stringProperty
 import static org.kordamp.gradle.StringUtils.isBlank
 
 /**
@@ -45,7 +46,7 @@ trait AvailabilityDomainAwareTrait implements PathAware, ProjectAware {
     }
 
     String getAvailabilityDomain() {
-        availabilityDomain.orNull
+        stringProperty('OCI_AVAILABILITY_DOMAIN', 'oci.availability.domain', this.@availabilityDomain.orNull)
     }
 
     void validateAvailabilityDomain() {
@@ -56,8 +57,8 @@ trait AvailabilityDomainAwareTrait implements PathAware, ProjectAware {
 
     AvailabilityDomain validateAvailabilityDomain(IdentityClient identityClient, String compartmentId) {
         ListAvailabilityDomainsResponse response = identityClient.listAvailabilityDomains(ListAvailabilityDomainsRequest.builder()
-            .compartmentId(compartmentId)
-            .build())
+                .compartmentId(compartmentId)
+                .build())
         response.items.find { AvailabilityDomain ad -> ad.name == getAvailabilityDomain() }
     }
 }

@@ -59,12 +59,12 @@ import static org.kordamp.gradle.oci.tasks.get.GetInstancePublicIpTask.getInstan
 @CompileStatic
 @TypeProviderFor(OCITask)
 class SetupInstanceTask extends AbstractOCITask implements CompartmentIdAwareTrait,
-    InstanceNameAwareTrait,
-    ImageAwareTrait,
-    ShapeAwareTrait,
-    PublicKeyFileAwareTrait,
-    UserDataFileAwareTrait,
-    VerboseAwareTrait {
+        InstanceNameAwareTrait,
+        ImageAwareTrait,
+        ShapeAwareTrait,
+        PublicKeyFileAwareTrait,
+        UserDataFileAwareTrait,
+        VerboseAwareTrait {
     static final String TASK_DESCRIPTION = 'Setups an Instance with Vcn, InternetGateway, Subnets, InstanceConsoleConnection, and Volume.'
 
     private final Property<String> createdInstanceId = project.objects.property(String)
@@ -112,47 +112,47 @@ class SetupInstanceTask extends AbstractOCITask implements CompartmentIdAwareTra
         BlockstorageClient blockstorageClient = createBlockstorageClient()
 
         Vcn vcn = maybeCreateVcn(this,
-            vcnClient,
-            getCompartmentId(),
-            vcnDisplayName,
-            dnsLabel,
-            networkCidrBlock,
-            true,
-            isVerbose())
+                vcnClient,
+                getCompartmentId(),
+                vcnDisplayName,
+                dnsLabel,
+                networkCidrBlock,
+                true,
+                isVerbose())
         props.put('vcn.id', vcn.id)
         props.put('vcn.name', vcn.displayName)
         props.put('vcn.security-list.id', vcn.defaultSecurityListId)
         props.put('vcn.route-table.id', vcn.defaultRouteTableId)
 
         InternetGateway internetGateway = maybeCreateInternetGateway(this,
-            vcnClient,
-            getCompartmentId(),
-            vcn.id,
-            internetGatewayDisplayName,
-            true,
-            isVerbose())
+                vcnClient,
+                getCompartmentId(),
+                vcn.id,
+                internetGatewayDisplayName,
+                true,
+                isVerbose())
         props.put('internet-gateway.id', internetGateway.id)
 
         Subnet subnet = null
         int subnetIndex = 0
         // create a Subnet per AvailabilityDomain
         List<AvailabilityDomain> availabilityDomains = identityClient.listAvailabilityDomains(ListAvailabilityDomainsRequest.builder()
-            .compartmentId(getCompartmentId())
-            .build()).items
+                .compartmentId(getCompartmentId())
+                .build()).items
         props.put('vcn.subnets', availabilityDomains.size().toString())
         for (AvailabilityDomain domain : availabilityDomains) {
             String subnetDnsLabel = 'sub' + HashUtil.sha1(vcn.id.bytes).asHexString()[0..8] + (subnetIndex.toString().padLeft(3, '0'))
 
             Subnet s = maybeCreateSubnet(this,
-                vcnClient,
-                getCompartmentId(),
-                vcn.id,
-                subnetDnsLabel,
-                domain.name,
-                'Subnet ' + domain.name,
-                "10.0.${subnetIndex}.0/24".toString(),
-                true,
-                isVerbose())
+                    vcnClient,
+                    getCompartmentId(),
+                    vcn.id,
+                    subnetDnsLabel,
+                    domain.name,
+                    'Subnet ' + domain.name,
+                    "10.0.${subnetIndex}.0/24".toString(),
+                    true,
+                    isVerbose())
             props.put("subnet.${subnetIndex}.id".toString(), s.id)
             props.put("subnet.${subnetIndex}.name".toString(), s.displayName)
 
@@ -162,27 +162,27 @@ class SetupInstanceTask extends AbstractOCITask implements CompartmentIdAwareTra
         }
 
         Instance instance = maybeCreateInstance(this,
-            computeClient,
-            vcnClient,
-            blockstorageClient,
-            getCompartmentId(),
-            getInstanceName(),
-            _image,
-            _shape,
-            subnet,
-            publicKeyFile,
-            userDataFile,
-            kmsKeyId,
-            true)
+                computeClient,
+                vcnClient,
+                blockstorageClient,
+                getCompartmentId(),
+                getInstanceName(),
+                _image,
+                _shape,
+                subnet,
+                publicKeyFile,
+                userDataFile,
+                kmsKeyId,
+                true)
         createdInstanceId.set(instance.id)
         props.put('instance.id', instance.id)
         props.put('instance.name', instance.displayName)
 
         Set<String> publicIps = getInstancePublicIp(this,
-            computeClient,
-            vcnClient,
-            getCompartmentId(),
-            instance.id)
+                computeClient,
+                vcnClient,
+                getCompartmentId(),
+                instance.id)
 
         props.put('instance.public-ips', publicIps.size().toString())
         int publicIpIndex = 0

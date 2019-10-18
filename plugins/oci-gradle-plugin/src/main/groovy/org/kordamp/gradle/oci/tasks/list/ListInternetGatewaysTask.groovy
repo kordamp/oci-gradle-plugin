@@ -22,7 +22,6 @@ import com.oracle.bmc.core.model.InternetGateway
 import com.oracle.bmc.core.requests.ListInternetGatewaysRequest
 import com.oracle.bmc.core.responses.ListInternetGatewaysResponse
 import groovy.transform.CompileStatic
-import org.kordamp.gradle.AnsiConsole
 import org.kordamp.gradle.oci.tasks.AbstractOCITask
 import org.kordamp.gradle.oci.tasks.interfaces.OCITask
 import org.kordamp.gradle.oci.tasks.traits.CompartmentIdAwareTrait
@@ -48,11 +47,10 @@ class ListInternetGatewaysTask extends AbstractOCITask implements CompartmentIdA
 
         VirtualNetworkClient client = createVirtualNetworkClient()
         ListInternetGatewaysResponse response = client.listInternetGateways(ListInternetGatewaysRequest.builder()
-            .compartmentId(getCompartmentId())
-            .vcnId(getVcnId())
-            .build())
+                .compartmentId(getCompartmentId())
+                .vcnId(getVcnId())
+                .build())
 
-        AnsiConsole console = new AnsiConsole(project)
         println('Total InternetGateways: ' + console.cyan(response.items.size().toString()))
         println(' ')
         for (InternetGateway internetGateway : response.items) {

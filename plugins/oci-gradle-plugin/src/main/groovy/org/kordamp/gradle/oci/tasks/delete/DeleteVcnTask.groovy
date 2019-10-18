@@ -41,9 +41,9 @@ import static org.kordamp.gradle.StringUtils.isNotBlank
 @CompileStatic
 @TypeProviderFor(OCITask)
 class DeleteVcnTask extends AbstractOCITask implements CompartmentIdAwareTrait,
-    OptionalVcnIdAwareTrait,
-    OptionalVcnNameAwareTrait,
-    WaitForCompletionAwareTrait {
+        OptionalVcnIdAwareTrait,
+        OptionalVcnNameAwareTrait,
+        WaitForCompletionAwareTrait {
     static final String TASK_DESCRIPTION = 'Deletes a Vcn.'
 
     @Override
@@ -61,9 +61,9 @@ class DeleteVcnTask extends AbstractOCITask implements CompartmentIdAwareTrait,
 
         if (isNotBlank(getVcnId())) {
             Vcn vcn = client.getVcn(GetVcnRequest.builder()
-                .vcnId(getVcnId())
-                .build())
-                .vcn
+                    .vcnId(getVcnId())
+                    .build())
+                    .vcn
 
             if (vcn) {
                 setVcnName(vcn.displayName)
@@ -73,10 +73,10 @@ class DeleteVcnTask extends AbstractOCITask implements CompartmentIdAwareTrait,
             validateCompartmentId()
 
             client.listVcns(ListVcnsRequest.builder()
-                .compartmentId(getCompartmentId())
-                .displayName(getVcnName())
-                .build())
-                .items.each { vcn ->
+                    .compartmentId(getCompartmentId())
+                    .displayName(getVcnName())
+                    .build())
+                    .items.each { vcn ->
                 setVcnId(vcn.id)
                 deleteVcn(client, vcn)
             }
@@ -86,15 +86,15 @@ class DeleteVcnTask extends AbstractOCITask implements CompartmentIdAwareTrait,
     private void deleteVcn(VirtualNetworkClient client, Vcn vcn) {
         println("Deleting Vcn '${vcn.displayName}' with id ${vcn.id}")
         client.deleteVcn(DeleteVcnRequest.builder()
-            .vcnId(vcn.id)
-            .build())
+                .vcnId(vcn.id)
+                .build())
 
         if (isWaitForCompletion()) {
             println("Waiting for Vcn to be ${state('Terminated')}")
             client.waiters
-                .forVcn(GetVcnRequest.builder().vcnId(vcn.id).build(),
+                    .forVcn(GetVcnRequest.builder().vcnId(vcn.id).build(),
                     Vcn.LifecycleState.Terminated)
-                .execute()
+                    .execute()
         }
     }
 }

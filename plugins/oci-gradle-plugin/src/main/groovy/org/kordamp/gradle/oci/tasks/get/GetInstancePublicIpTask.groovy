@@ -43,7 +43,7 @@ import org.kordamp.jipsy.TypeProviderFor
 @CompileStatic
 @TypeProviderFor(OCITask)
 class GetInstancePublicIpTask extends AbstractOCITask implements CompartmentIdAwareTrait,
-    InstanceIdAwareTrait {
+        InstanceIdAwareTrait {
     static final String TASK_DESCRIPTION = 'Displays public Ip addresses for a particular Instance.'
 
     @Override
@@ -55,10 +55,10 @@ class GetInstancePublicIpTask extends AbstractOCITask implements CompartmentIdAw
         VirtualNetworkClient vcnClient = createVirtualNetworkClient()
 
         Set<String> publicIps = getInstancePublicIp(this,
-            computeClient,
-            vcnClient,
-            getCompartmentId(),
-            getInstanceId())
+                computeClient,
+                vcnClient,
+                getCompartmentId(),
+                getInstanceId())
 
         for (String publicIp : publicIps) {
             println(publicIp)
@@ -71,7 +71,7 @@ class GetInstancePublicIpTask extends AbstractOCITask implements CompartmentIdAw
                                            String compartmentId,
                                            String instanceId) {
         Iterable<VnicAttachment> vnicAttachmentsIterable = computeClient.paginators
-            .listVnicAttachmentsRecordIterator(ListVnicAttachmentsRequest.builder()
+                .listVnicAttachmentsRecordIterator(ListVnicAttachmentsRequest.builder()
                 .compartmentId(compartmentId)
                 .instanceId(instanceId)
                 .build())
@@ -84,43 +84,43 @@ class GetInstancePublicIpTask extends AbstractOCITask implements CompartmentIdAw
         final Set<String> publicIps = new HashSet<>()
         for (String vnicId : vnicIds) {
             GetVnicResponse getVnicResponse = vcnClient.getVnic(GetVnicRequest.builder()
-                .vnicId(vnicId)
-                .build())
+                    .vnicId(vnicId)
+                    .build())
 
             if (getVnicResponse.vnic.publicIp != null) {
                 publicIps << getVnicResponse.vnic.publicIp
             }
 
             Iterable<PrivateIp> privateIpsIterable = vcnClient.paginators
-                .listPrivateIpsRecordIterator(ListPrivateIpsRequest.builder()
+                    .listPrivateIpsRecordIterator(ListPrivateIpsRequest.builder()
                     .vnicId(vnicId)
                     .build())
 
             for (PrivateIp privateIp : privateIpsIterable) {
                 try {
                     GetPublicIpByPrivateIpIdResponse getPublicIpResponse =
-                        vcnClient.getPublicIpByPrivateIpId(
-                            GetPublicIpByPrivateIpIdRequest.builder()
-                                .getPublicIpByPrivateIpIdDetails(
-                                    GetPublicIpByPrivateIpIdDetails.builder()
-                                        .privateIpId(privateIp.id)
-                                        .build())
-                                .build())
+                            vcnClient.getPublicIpByPrivateIpId(
+                                    GetPublicIpByPrivateIpIdRequest.builder()
+                                            .getPublicIpByPrivateIpIdDetails(
+                                            GetPublicIpByPrivateIpIdDetails.builder()
+                                                    .privateIpId(privateIp.id)
+                                                    .build())
+                                            .build())
                     publicIps << getPublicIpResponse.publicIp.ipAddress
                 } catch (BmcException e) {
                     // A 404 is expected if the private IP address does not have a public IP
                     if (e.statusCode != 404) {
                         println(
-                            String.format(
-                                "Exception when retrieving public IP for private IP %s (%s)",
-                                privateIp.id,
-                                privateIp.ipAddress))
+                                String.format(
+                                        "Exception when retrieving public IP for private IP %s (%s)",
+                                        privateIp.id,
+                                        privateIp.ipAddress))
                     } else {
                         println(
-                            String.format(
-                                "No public IP for private IP %s (%s)",
-                                privateIp.id,
-                                privateIp.ipAddress))
+                                String.format(
+                                        "No public IP for private IP %s (%s)",
+                                        privateIp.id,
+                                        privateIp.ipAddress))
                     }
                 }
             }

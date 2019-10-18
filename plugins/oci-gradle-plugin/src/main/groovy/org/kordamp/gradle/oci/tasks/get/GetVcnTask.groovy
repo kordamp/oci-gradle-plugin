@@ -44,9 +44,9 @@ class GetVcnTask extends AbstractOCITask implements VcnIdAwareTrait {
         VirtualNetworkClient client = createVirtualNetworkClient()
 
         Vcn vcn = client.getVcn(GetVcnRequest.builder()
-            .vcnId(getVcnId())
-            .build())
-            .vcn
+                .vcnId(getVcnId())
+                .build())
+                .vcn
 
         if (vcn) {
             println(vcn.displayName + ':')

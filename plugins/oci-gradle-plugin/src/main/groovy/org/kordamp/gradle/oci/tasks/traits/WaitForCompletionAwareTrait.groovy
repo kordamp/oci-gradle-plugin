@@ -24,6 +24,8 @@ import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.options.Option
 import org.kordamp.gradle.oci.tasks.interfaces.ProjectAware
 
+import static org.kordamp.gradle.PropertyUtils.booleanProperty
+
 /**
  * @author Andres Almiray
  * @since 0.1.0
@@ -40,6 +42,6 @@ trait WaitForCompletionAwareTrait implements ProjectAware {
     }
 
     boolean isWaitForCompletion() {
-        waitForCompletion.getOrElse(false)
+        booleanProperty('OCI_WAIT_FOR_COMPLETION', 'oci.wait.for.completion', this.@waitForCompletion.getOrElse(false))
     }
 }

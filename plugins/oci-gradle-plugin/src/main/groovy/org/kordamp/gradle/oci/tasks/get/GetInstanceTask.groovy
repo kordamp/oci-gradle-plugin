@@ -44,9 +44,9 @@ class GetInstanceTask extends AbstractOCITask implements InstanceIdAwareTrait {
         ComputeClient client = createComputeClient()
 
         Instance instance = client.getInstance(GetInstanceRequest.builder()
-            .instanceId(instanceId)
-            .build())
-            .instance
+                .instanceId(instanceId)
+                .build())
+                .instance
 
         if (instance) {
             println(instance.displayName + ':')

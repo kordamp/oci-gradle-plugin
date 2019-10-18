@@ -33,6 +33,7 @@ import org.kordamp.gradle.oci.tasks.AbstractOCITask
 import org.kordamp.gradle.oci.tasks.interfaces.OCITask
 import org.kordamp.jipsy.TypeProviderFor
 
+import static org.kordamp.gradle.PropertyUtils.stringProperty
 import static org.kordamp.gradle.StringUtils.isBlank
 
 /**
@@ -44,17 +45,17 @@ import static org.kordamp.gradle.StringUtils.isBlank
 class SearchResourcesTask extends AbstractOCITask {
     static final String TASK_DESCRIPTION = 'Lists information on resource types.'
 
-    private Property<String> type = project.objects.property(String)
+    private Property<String> resourceType = project.objects.property(String)
 
     @Optional
     @Input
-    @Option(option = 'type', description = 'The type to search (OPTIONAL).')
-    void setType(String type) {
-        this.type.set(type)
+    @Option(option = 'resource-type', description = 'The type to search (OPTIONAL).')
+    void setResourceType(String resourceType) {
+        this.resourceType.set(resourceType)
     }
 
     String getType() {
-        return type.orNull
+        stringProperty('OCI_RESOURCE_TYPE', 'oci.resource.type', this.@resourceType.orNull)
     }
 
     @Override
@@ -73,8 +74,8 @@ class SearchResourcesTask extends AbstractOCITask {
 
         println('Total resources: ' + console.cyan(response.items.size().toString()))
         println(' ')
-        for (ResourceType type : response.items) {
-            println('Resource: ' + state(type.name))
+        for (ResourceType resourceType : response.items) {
+            println('Resource: ' + state(resourceType.name))
         }
     }
 

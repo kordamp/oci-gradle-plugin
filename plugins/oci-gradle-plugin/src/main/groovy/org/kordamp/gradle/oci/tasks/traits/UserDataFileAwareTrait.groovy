@@ -25,6 +25,8 @@ import org.gradle.api.tasks.options.Option
 import org.kordamp.gradle.oci.tasks.interfaces.PathAware
 import org.kordamp.gradle.oci.tasks.interfaces.ProjectAware
 
+import static org.kordamp.gradle.PropertyUtils.fileProperty
+
 /**
  * @author Andres Almiray
  * @since 0.1.0
@@ -41,7 +43,7 @@ trait UserDataFileAwareTrait implements PathAware, ProjectAware {
     }
 
     File getUserDataFile() {
-        userDataFile.asFile.orNull
+        fileProperty('OCI_USER_DATA_FILE', 'oci.user.data.file', this.@userDataFile.asFile.orNull)
     }
 
     void validateUserDataFile() {

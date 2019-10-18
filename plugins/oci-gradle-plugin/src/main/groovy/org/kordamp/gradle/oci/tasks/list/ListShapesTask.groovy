@@ -22,7 +22,6 @@ import com.oracle.bmc.core.model.Shape
 import com.oracle.bmc.core.requests.ListShapesRequest
 import com.oracle.bmc.core.responses.ListShapesResponse
 import groovy.transform.CompileStatic
-import org.kordamp.gradle.AnsiConsole
 import org.kordamp.gradle.oci.tasks.AbstractOCITask
 import org.kordamp.gradle.oci.tasks.interfaces.OCITask
 import org.kordamp.gradle.oci.tasks.traits.CompartmentIdAwareTrait
@@ -44,7 +43,6 @@ class ListShapesTask extends AbstractOCITask implements CompartmentIdAwareTrait 
         ComputeClient client = createComputeClient()
         ListShapesResponse response = client.listShapes(ListShapesRequest.builder().compartmentId(compartmentId).build())
 
-        AnsiConsole console = new AnsiConsole(project)
         List<Shape> shapes = response.items.unique().sort { it.shape }
         println('Total Shapes: ' + console.cyan(shapes.size().toString()))
         println(' ')

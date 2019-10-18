@@ -22,7 +22,6 @@ import com.oracle.bmc.core.model.RouteTable
 import com.oracle.bmc.core.requests.ListRouteTablesRequest
 import com.oracle.bmc.core.responses.ListRouteTablesResponse
 import groovy.transform.CompileStatic
-import org.kordamp.gradle.AnsiConsole
 import org.kordamp.gradle.oci.tasks.AbstractOCITask
 import org.kordamp.gradle.oci.tasks.interfaces.OCITask
 import org.kordamp.gradle.oci.tasks.traits.CompartmentIdAwareTrait
@@ -39,8 +38,8 @@ import static org.kordamp.gradle.oci.tasks.printers.RouteTablePrinter.printRoute
 @CompileStatic
 @TypeProviderFor(OCITask)
 class ListRouteTablesTask extends AbstractOCITask implements CompartmentIdAwareTrait,
-    VcnIdAwareTrait,
-    VerboseAwareTrait {
+        VcnIdAwareTrait,
+        VerboseAwareTrait {
     static final String TASK_DESCRIPTION = 'Lists RouteTables available on a Vcn.'
 
     @Override
@@ -50,11 +49,10 @@ class ListRouteTablesTask extends AbstractOCITask implements CompartmentIdAwareT
 
         VirtualNetworkClient client = createVirtualNetworkClient()
         ListRouteTablesResponse response = client.listRouteTables(ListRouteTablesRequest.builder()
-            .compartmentId(getCompartmentId())
-            .vcnId(getVcnId())
-            .build())
+                .compartmentId(getCompartmentId())
+                .vcnId(getVcnId())
+                .build())
 
-        AnsiConsole console = new AnsiConsole(project)
         println('Total RouteTables: ' + console.cyan(response.items.size().toString()))
         println(' ')
         for (RouteTable routeTable : response.items) {

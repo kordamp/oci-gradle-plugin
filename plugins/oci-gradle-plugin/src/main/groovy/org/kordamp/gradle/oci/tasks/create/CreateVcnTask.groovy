@@ -43,10 +43,10 @@ import static org.kordamp.gradle.oci.tasks.printers.VcnPrinter.printVcn
 @CompileStatic
 @TypeProviderFor(OCITask)
 class CreateVcnTask extends AbstractOCITask implements CompartmentIdAwareTrait,
-    VcnNameAwareTrait,
-    DnsLabelAwareTrait,
-    WaitForCompletionAwareTrait,
-    VerboseAwareTrait {
+        VcnNameAwareTrait,
+        DnsLabelAwareTrait,
+        WaitForCompletionAwareTrait,
+        VerboseAwareTrait {
     static final String TASK_DESCRIPTION = 'Creates a Vcn.'
 
     private final Property<String> createdVcnId = project.objects.property(String)
@@ -64,13 +64,13 @@ class CreateVcnTask extends AbstractOCITask implements CompartmentIdAwareTrait,
         VirtualNetworkClient client = createVirtualNetworkClient()
 
         Vcn vcn = maybeCreateVcn(this,
-            client,
-            getCompartmentId(),
-            getVcnName(),
-            getDnsLabel(),
-            '10.0.0.0/16',
-            isWaitForCompletion(),
-            isVerbose())
+                client,
+                getCompartmentId(),
+                getVcnName(),
+                getDnsLabel(),
+                '10.0.0.0/16',
+                isWaitForCompletion(),
+                isVerbose())
         createdVcnId.set(vcn.id)
     }
 
@@ -84,10 +84,10 @@ class CreateVcnTask extends AbstractOCITask implements CompartmentIdAwareTrait,
                               boolean verbose) {
         // 1. Check if it exists
         List<Vcn> vcns = client.listVcns(ListVcnsRequest.builder()
-            .compartmentId(compartmentId)
-            .displayName(vcnName)
-            .build())
-            .items
+                .compartmentId(compartmentId)
+                .displayName(vcnName)
+                .build())
+                .items
 
         if (!vcns.empty) {
             Vcn vcn = vcns[0]
@@ -99,23 +99,23 @@ class CreateVcnTask extends AbstractOCITask implements CompartmentIdAwareTrait,
         // 2. Create
         println('Provisioning Vcn. This may take a while.')
         Vcn vcn = client.createVcn(CreateVcnRequest.builder()
-            .createVcnDetails(CreateVcnDetails.builder()
+                .createVcnDetails(CreateVcnDetails.builder()
                 .cidrBlock(cidrBlock)
                 .compartmentId(compartmentId)
                 .displayName(vcnName)
                 .dnsLabel(dnsLabel)
                 .build())
-            .build())
-            .vcn
+                .build())
+                .vcn
 
         if (waitForCompletion) {
             println("Waiting for Vcn to be ${owner.state('Available')}")
             client.waiters
-                .forVcn(GetVcnRequest.builder()
+                    .forVcn(GetVcnRequest.builder()
                     .vcnId(vcn.id)
                     .build(),
                     Vcn.LifecycleState.Available)
-                .execute()
+                    .execute()
         }
 
         println("Vcn '${vcnName}' has been provisioned. id = ${owner.console.yellow(vcn.id)}")

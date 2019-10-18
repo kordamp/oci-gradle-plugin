@@ -26,6 +26,7 @@ import org.kordamp.gradle.oci.tasks.interfaces.PathAware
 import org.kordamp.gradle.oci.tasks.interfaces.ProjectAware
 
 import static com.oracle.bmc.OCID.isValid
+import static org.kordamp.gradle.PropertyUtils.stringProperty
 import static org.kordamp.gradle.StringUtils.isBlank
 
 /**
@@ -43,7 +44,7 @@ trait InternetGatewayIdAwareTrait implements PathAware, ProjectAware {
     }
 
     String getInternetGatewayId() {
-        internetGatewayId.orNull
+        stringProperty('OCI_INTERNET_GATEWAY_ID', 'oci.internet.gateway.id', this.@internetGatewayId.orNull)
     }
 
     void validateInternetGatewayId() {

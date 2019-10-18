@@ -22,7 +22,6 @@ import com.oracle.bmc.core.model.Subnet
 import com.oracle.bmc.core.requests.ListSubnetsRequest
 import com.oracle.bmc.core.responses.ListSubnetsResponse
 import groovy.transform.CompileStatic
-import org.kordamp.gradle.AnsiConsole
 import org.kordamp.gradle.oci.tasks.AbstractOCITask
 import org.kordamp.gradle.oci.tasks.interfaces.OCITask
 import org.kordamp.gradle.oci.tasks.traits.CompartmentIdAwareTrait
@@ -48,11 +47,10 @@ class ListSubnetsTask extends AbstractOCITask implements CompartmentIdAwareTrait
 
         VirtualNetworkClient client = createVirtualNetworkClient()
         ListSubnetsResponse response = client.listSubnets(ListSubnetsRequest.builder()
-            .compartmentId(getCompartmentId())
-            .vcnId(getVcnId())
-            .build())
+                .compartmentId(getCompartmentId())
+                .vcnId(getVcnId())
+                .build())
 
-        AnsiConsole console = new AnsiConsole(project)
         println('Total Subnets: ' + console.cyan(response.items.size().toString()))
         println(' ')
         for (Subnet subnet : response.items) {

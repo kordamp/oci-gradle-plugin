@@ -22,7 +22,6 @@ import com.oracle.bmc.core.model.SecurityList
 import com.oracle.bmc.core.requests.ListSecurityListsRequest
 import com.oracle.bmc.core.responses.ListSecurityListsResponse
 import groovy.transform.CompileStatic
-import org.kordamp.gradle.AnsiConsole
 import org.kordamp.gradle.oci.tasks.AbstractOCITask
 import org.kordamp.gradle.oci.tasks.interfaces.OCITask
 import org.kordamp.gradle.oci.tasks.traits.CompartmentIdAwareTrait
@@ -39,8 +38,8 @@ import static org.kordamp.gradle.oci.tasks.printers.SecurityListPrinter.printSec
 @CompileStatic
 @TypeProviderFor(OCITask)
 class ListSecurityListsTask extends AbstractOCITask implements CompartmentIdAwareTrait,
-    VcnIdAwareTrait,
-    VerboseAwareTrait {
+        VcnIdAwareTrait,
+        VerboseAwareTrait {
     static final String TASK_DESCRIPTION = 'Lists SecurityLists available on a Vcn.'
 
     @Override
@@ -50,11 +49,10 @@ class ListSecurityListsTask extends AbstractOCITask implements CompartmentIdAwar
 
         VirtualNetworkClient client = createVirtualNetworkClient()
         ListSecurityListsResponse response = client.listSecurityLists(ListSecurityListsRequest.builder()
-            .compartmentId(getCompartmentId())
-            .vcnId(getVcnId())
-            .build())
+                .compartmentId(getCompartmentId())
+                .vcnId(getVcnId())
+                .build())
 
-        AnsiConsole console = new AnsiConsole(project)
         println('Total SecurityLists: ' + console.cyan(response.items.size().toString()))
         println(' ')
         for (SecurityList securityList : response.items) {

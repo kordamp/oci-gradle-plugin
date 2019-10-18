@@ -41,9 +41,9 @@ import static org.kordamp.gradle.StringUtils.isNotBlank
 @CompileStatic
 @TypeProviderFor(OCITask)
 class TerminateInstanceTask extends AbstractOCITask implements CompartmentIdAwareTrait,
-    OptionalInstanceIdAwareTrait,
-    OptionalInstanceNameAwareTrait,
-    WaitForCompletionAwareTrait {
+        OptionalInstanceIdAwareTrait,
+        OptionalInstanceNameAwareTrait,
+        WaitForCompletionAwareTrait {
     static final String TASK_DESCRIPTION = 'Terminates an Instance.'
 
     @Override
@@ -61,9 +61,9 @@ class TerminateInstanceTask extends AbstractOCITask implements CompartmentIdAwar
 
         if (isNotBlank(getInstanceId())) {
             Instance instance = client.getInstance(GetInstanceRequest.builder()
-                .instanceId(getInstanceId())
-                .build())
-                .instance
+                    .instanceId(getInstanceId())
+                    .build())
+                    .instance
 
             if (instance) {
                 setInstanceName(instance.displayName)
@@ -73,10 +73,10 @@ class TerminateInstanceTask extends AbstractOCITask implements CompartmentIdAwar
             validateCompartmentId()
 
             client.listInstances(ListInstancesRequest.builder()
-                .compartmentId(compartmentId)
-                .displayName(getInstanceName())
-                .build())
-                .items.each { instance ->
+                    .compartmentId(compartmentId)
+                    .displayName(getInstanceName())
+                    .build())
+                    .items.each { instance ->
                 setInstanceId(instance.id)
                 terminateInstance(client, instance)
             }
@@ -86,16 +86,16 @@ class TerminateInstanceTask extends AbstractOCITask implements CompartmentIdAwar
     private void terminateInstance(ComputeClient client, Instance instance) {
         println("Terminating Instance '${instance.displayName}' with id ${instance.id}")
         client.terminateInstance(TerminateInstanceRequest.builder()
-            .instanceId(instance.id)
-            .build())
+                .instanceId(instance.id)
+                .build())
 
         if (isWaitForCompletion()) {
             println("Waiting for Instance to be ${state('Terminated')}")
             client.waiters
-                .forInstance(GetInstanceRequest.builder()
+                    .forInstance(GetInstanceRequest.builder()
                     .instanceId(instance.id).build(),
                     Instance.LifecycleState.Terminated)
-                .execute()
+                    .execute()
         }
     }
 }

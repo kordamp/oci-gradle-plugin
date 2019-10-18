@@ -24,6 +24,7 @@ import org.gradle.api.tasks.options.Option
 import org.kordamp.gradle.oci.tasks.interfaces.PathAware
 import org.kordamp.gradle.oci.tasks.interfaces.ProjectAware
 
+import static org.kordamp.gradle.PropertyUtils.stringProperty
 import static org.kordamp.gradle.StringUtils.isBlank
 
 /**
@@ -41,7 +42,7 @@ trait VcnNameAwareTrait implements PathAware, ProjectAware {
     }
 
     String getVcnName() {
-        vcnName.orNull
+        stringProperty('OCI_VCN_NAME', 'oci.vcn.name', this.@vcnName.orNull)
     }
 
     void validateVcnName() {

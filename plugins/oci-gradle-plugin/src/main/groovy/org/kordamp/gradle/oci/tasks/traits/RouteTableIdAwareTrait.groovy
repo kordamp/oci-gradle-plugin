@@ -25,6 +25,7 @@ import org.gradle.api.tasks.options.Option
 import org.kordamp.gradle.oci.tasks.interfaces.PathAware
 import org.kordamp.gradle.oci.tasks.interfaces.ProjectAware
 
+import static org.kordamp.gradle.PropertyUtils.stringProperty
 import static org.kordamp.gradle.StringUtils.isBlank
 
 /**
@@ -36,13 +37,13 @@ trait RouteTableIdAwareTrait implements PathAware, ProjectAware {
     private final Property<String> routeTableId = project.objects.property(String)
 
     @Input
-    @Option(option = 'routeTable-id', description = 'The id of the RouteTable (REQUIRED).')
+    @Option(option = 'route-table-id', description = 'The id of the RouteTable (REQUIRED).')
     void setRouteTableId(String routeTableId) {
         this.routeTableId.set(routeTableId)
     }
 
     String getRouteTableId() {
-        routeTableId.orNull
+        stringProperty('OCI_ROUTE_TABLE_ID', 'oci.route.tale.id', this.@routeTableId.orNull)
     }
 
     void validateRouteTableId() {

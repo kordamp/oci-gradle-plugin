@@ -44,9 +44,9 @@ class GetInternetGatewayTask extends AbstractOCITask implements InternetGatewayI
         VirtualNetworkClient client = createVirtualNetworkClient()
 
         InternetGateway internetGateway = client.getInternetGateway(GetInternetGatewayRequest.builder()
-            .igId(getInternetGatewayId())
-            .build())
-            .internetGateway
+                .igId(getInternetGatewayId())
+                .build())
+                .internetGateway
 
         if (internetGateway) {
             println(internetGateway.displayName + ':')

@@ -68,13 +68,13 @@ import static org.kordamp.gradle.oci.tasks.printers.InstancePrinter.printInstanc
 @CompileStatic
 @TypeProviderFor(OCITask)
 class CreateInstanceTask extends AbstractOCITask implements CompartmentIdAwareTrait,
-    SubnetIdAwareTrait,
-    InstanceNameAwareTrait,
-    ImageAwareTrait,
-    ShapeAwareTrait,
-    PublicKeyFileAwareTrait,
-    UserDataFileAwareTrait,
-    VerboseAwareTrait {
+        SubnetIdAwareTrait,
+        InstanceNameAwareTrait,
+        ImageAwareTrait,
+        ShapeAwareTrait,
+        PublicKeyFileAwareTrait,
+        UserDataFileAwareTrait,
+        VerboseAwareTrait {
     static final String TASK_DESCRIPTION = 'Creates an Instance.'
 
     private final Property<String> createdInstanceId = project.objects.property(String)
@@ -104,23 +104,23 @@ class CreateInstanceTask extends AbstractOCITask implements CompartmentIdAwareTr
         BlockstorageClient blockstorageClient = createBlockstorageClient()
 
         Subnet subnet = vcnClient.getSubnet(GetSubnetRequest.builder()
-            .subnetId(getSubnetId())
-            .build())
-            .subnet
+                .subnetId(getSubnetId())
+                .build())
+                .subnet
 
         Instance instance = maybeCreateInstance(this,
-            computeClient,
-            vcnClient,
-            blockstorageClient,
-            getCompartmentId(),
-            getInstanceName(),
-            _image,
-            _shape,
-            subnet,
-            publicKeyFile,
-            userDataFile,
-            kmsKeyId,
-            isVerbose())
+                computeClient,
+                vcnClient,
+                blockstorageClient,
+                getCompartmentId(),
+                getInstanceName(),
+                _image,
+                _shape,
+                subnet,
+                publicKeyFile,
+                userDataFile,
+                kmsKeyId,
+                isVerbose())
         createdInstanceId.set(instance.id)
     }
 
@@ -138,34 +138,34 @@ class CreateInstanceTask extends AbstractOCITask implements CompartmentIdAwareTr
                                         String kmsKeyId,
                                         boolean verbose) {
         Instance instance = doMaybeCreateInstance(owner,
-            computeClient,
-            vcnClient,
-            compartmentId,
-            instanceName,
-            subnet.availabilityDomain,
-            image.id,
-            shape.shape,
-            subnet.id,
-            publicKeyFile,
-            userDataFile,
-            kmsKeyId,
-            verbose)
+                computeClient,
+                vcnClient,
+                compartmentId,
+                instanceName,
+                subnet.availabilityDomain,
+                image.id,
+                shape.shape,
+                subnet.id,
+                publicKeyFile,
+                userDataFile,
+                kmsKeyId,
+                verbose)
 
         createInstanceConsoleConnection(owner,
-            computeClient,
-            instance.id,
-            publicKeyFile,
-            true,
-            verbose)
+                computeClient,
+                instance.id,
+                publicKeyFile,
+                true,
+                verbose)
 
         maybeCreateBootVolume(owner,
-            blockstorageClient,
-            compartmentId,
-            subnet.availabilityDomain,
-            instance.imageId,
-            instance.displayName + '-boot-volume',
-            kmsKeyId,
-            verbose)
+                blockstorageClient,
+                compartmentId,
+                subnet.availabilityDomain,
+                instance.imageId,
+                instance.displayName + '-boot-volume',
+                kmsKeyId,
+                verbose)
 
         instance
     }
@@ -185,11 +185,11 @@ class CreateInstanceTask extends AbstractOCITask implements CompartmentIdAwareTr
                                                   boolean verbose) {
         // 1. Check if it exists
         List<Instance> instances = client.listInstances(ListInstancesRequest.builder()
-            .compartmentId(compartmentId)
-            .availabilityDomain(availabilityDomain)
-            .displayName(instanceName)
-            .build())
-            .items
+                .compartmentId(compartmentId)
+                .availabilityDomain(availabilityDomain)
+                .displayName(instanceName)
+                .build())
+                .items
 
         if (!instances.empty) {
             Instance instance = instances[0]
@@ -204,17 +204,17 @@ class CreateInstanceTask extends AbstractOCITask implements CompartmentIdAwareTr
         }
 
         InstanceSourceViaImageDetails details =
-            (Strings.isNullOrEmpty(kmsKeyId))
-                ? InstanceSourceViaImageDetails.builder()
+                (Strings.isNullOrEmpty(kmsKeyId))
+        ? InstanceSourceViaImageDetails.builder()
                 .imageId(imageId)
                 .build()
-                : InstanceSourceViaImageDetails.builder()
+        : InstanceSourceViaImageDetails.builder()
                 .imageId(imageId)
                 .kmsKeyId(kmsKeyId)
                 .build()
 
         Instance instance = client.launchInstance(LaunchInstanceRequest.builder()
-            .launchInstanceDetails(LaunchInstanceDetails.builder()
+                .launchInstanceDetails(LaunchInstanceDetails.builder()
                 .availabilityDomain(availabilityDomain)
                 .compartmentId(compartmentId)
                 .displayName(instanceName)
@@ -222,30 +222,30 @@ class CreateInstanceTask extends AbstractOCITask implements CompartmentIdAwareTr
                 .shape(shape)
                 .sourceDetails(details)
                 .createVnicDetails(CreateVnicDetails.builder()
-                    .subnetId(subnetId)
-                    .build())
-                .agentConfig(LaunchInstanceAgentConfigDetails.builder()
-                    .isMonitoringDisabled(false)
-                    .build())
+                .subnetId(subnetId)
                 .build())
-            .build())
-            .instance
+                .agentConfig(LaunchInstanceAgentConfigDetails.builder()
+                .isMonitoringDisabled(false)
+                .build())
+                .build())
+                .build())
+                .instance
 
         println("Waiting for Instance to be ${owner.state('Available')}")
         client.waiters.forInstance(GetInstanceRequest.builder()
-            .instanceId(instance.id)
-            .build(),
-            Instance.LifecycleState.Running)
-            .execute()
+                .instanceId(instance.id)
+                .build(),
+                Instance.LifecycleState.Running)
+                .execute()
 
         println("Instance '${instanceName}' has been provisioned. id = ${owner.console.yellow(instance.id)}")
         if (verbose) printInstance(owner, instance, 0)
 
         Set<String> publicIps = getInstancePublicIp(owner,
-            client,
-            vcnClient,
-            compartmentId,
-            instance.id)
+                client,
+                vcnClient,
+                compartmentId,
+                instance.id)
 
         owner.printCollection('Ip Addresses', publicIps, 0)
 
@@ -261,46 +261,46 @@ class CreateInstanceTask extends AbstractOCITask implements CompartmentIdAwareTr
                                                     String kmsKeyId,
                                                     boolean verbose) {
         List<BootVolume> bootVolumes = client.listBootVolumes(ListBootVolumesRequest.builder()
-            .availabilityDomain(availabilityDomain)
-            .compartmentId(compartmentId)
-            .build())
-            .items
+                .availabilityDomain(availabilityDomain)
+                .compartmentId(compartmentId)
+                .build())
+                .items
 
         String bootVolumeId = null
         for (BootVolume bootVolume : bootVolumes) {
             if (bootVolume.lifecycleState.equals(BootVolume.LifecycleState.Available)
-                && bootVolume.imageId != null
-                && bootVolume.imageId.equals(imageId)) {
+                    && bootVolume.imageId != null
+                    && bootVolume.imageId.equals(imageId)) {
                 bootVolumeId = bootVolume.id
                 break
             }
         }
 
         BootVolumeSourceDetails bootVolumeSourceDetails = BootVolumeSourceFromBootVolumeDetails.builder()
-            .id(bootVolumeId)
-            .build()
+                .id(bootVolumeId)
+                .build()
 
         CreateBootVolumeDetails.Builder details = CreateBootVolumeDetails.builder()
-            .availabilityDomain(availabilityDomain)
-            .compartmentId(compartmentId)
-            .displayName(displayName)
-            .sourceDetails(bootVolumeSourceDetails)
+                .availabilityDomain(availabilityDomain)
+                .compartmentId(compartmentId)
+                .displayName(displayName)
+                .sourceDetails(bootVolumeSourceDetails)
 
         if (isNotBlank(kmsKeyId)) {
             details = details.kmsKeyId(kmsKeyId)
         }
 
         BootVolume bootVolume = client.createBootVolume(CreateBootVolumeRequest.builder()
-            .createBootVolumeDetails(details.build())
-            .build())
-            .bootVolume
+                .createBootVolumeDetails(details.build())
+                .build())
+                .bootVolume
 
         println("Waiting for BootVolume to be ${owner.state('Available')}")
         client.waiters.forBootVolume(
-            GetBootVolumeRequest.builder().bootVolumeId(bootVolumeId).build(),
-            BootVolume.LifecycleState.Available)
-            .execute()
-            .bootVolume
+                GetBootVolumeRequest.builder().bootVolumeId(bootVolumeId).build(),
+                BootVolume.LifecycleState.Available)
+                .execute()
+                .bootVolume
 
         println("BootVolume '${bootVolume.displayName}' has been provisioned. id = ${owner.console.yellow(bootVolume.id)}")
         if (verbose) printBootVolume(owner, bootVolume, 0)

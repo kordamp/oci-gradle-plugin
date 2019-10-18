@@ -46,9 +46,9 @@ class OCIConfigExtension {
 
     boolean isEmpty() {
         !userId.present &&
-            !tenantId.present &&
-            !fingerprint.present &&
-            !region.present &&
-            !keyfile.present
+                !tenantId.present &&
+                !fingerprint.present &&
+                !region.present &&
+                !keyfile.present
     }
 }

@@ -22,7 +22,6 @@ import com.oracle.bmc.core.model.Image
 import com.oracle.bmc.core.requests.ListImagesRequest
 import com.oracle.bmc.core.responses.ListImagesResponse
 import groovy.transform.CompileStatic
-import org.kordamp.gradle.AnsiConsole
 import org.kordamp.gradle.oci.tasks.AbstractOCITask
 import org.kordamp.gradle.oci.tasks.interfaces.OCITask
 import org.kordamp.gradle.oci.tasks.traits.CompartmentIdAwareTrait
@@ -46,10 +45,9 @@ class ListImagesTask extends AbstractOCITask implements CompartmentIdAwareTrait,
 
         ComputeClient client = createComputeClient()
         ListImagesResponse response = client.listImages(ListImagesRequest.builder()
-            .compartmentId(getCompartmentId())
-            .build())
+                .compartmentId(getCompartmentId())
+                .build())
 
-        AnsiConsole console = new AnsiConsole(project)
         println('Total Images: ' + console.cyan(response.items.size().toString()))
         println(' ')
         for (Image image : response.items) {

@@ -44,9 +44,9 @@ class GetSecurityListTask extends AbstractOCITask implements SecurityListIdAware
         VirtualNetworkClient client = createVirtualNetworkClient()
 
         SecurityList securityList = client.getSecurityList(GetSecurityListRequest.builder()
-            .securityListId(getSecurityListId())
-            .build())
-            .securityList
+                .securityListId(getSecurityListId())
+                .build())
+                .securityList
 
         if (securityList) {
             println(securityList.displayName + ':')

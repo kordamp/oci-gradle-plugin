@@ -26,6 +26,7 @@ import org.kordamp.gradle.oci.tasks.interfaces.PathAware
 import org.kordamp.gradle.oci.tasks.interfaces.ProjectAware
 
 import static com.oracle.bmc.OCID.isValid
+import static org.kordamp.gradle.PropertyUtils.stringProperty
 import static org.kordamp.gradle.StringUtils.isBlank
 
 /**
@@ -34,16 +35,16 @@ import static org.kordamp.gradle.StringUtils.isBlank
  */
 @CompileStatic
 trait InstanceConsoleConnectionIdAwareTrait implements PathAware, ProjectAware {
-    private final Property<String> connectionId = project.objects.property(String)
+    private final Property<String> instanceConsoleConnectionId = project.objects.property(String)
 
     @Input
-    @Option(option = 'connection-id', description = 'The id of the InstanceConsoleConnection (REQUIRED).')
+    @Option(option = 'instance-console-connection-id', description = 'The id of the InstanceConsoleConnection (REQUIRED).')
     void setInstanceConsoleConnectionId(String connectionId) {
-        this.connectionId.set(connectionId)
+        this.instanceConsoleConnectionId.set(connectionId)
     }
 
     String getInstanceConsoleConnectionId() {
-        connectionId.orNull
+        stringProperty('OCI_INSTANCE_CONSOLE_CONNECTION_ID', 'oci.instance.console.connection.id', this.@instanceConsoleConnectionId.orNull)
     }
 
     void validateInstanceConsoleConnectionId() {

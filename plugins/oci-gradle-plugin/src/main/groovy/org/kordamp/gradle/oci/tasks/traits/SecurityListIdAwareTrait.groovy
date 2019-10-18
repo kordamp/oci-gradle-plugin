@@ -25,6 +25,7 @@ import org.kordamp.gradle.oci.tasks.interfaces.PathAware
 import org.kordamp.gradle.oci.tasks.interfaces.ProjectAware
 
 import static com.oracle.bmc.OCID.isValid
+import static org.kordamp.gradle.PropertyUtils.stringProperty
 import static org.kordamp.gradle.StringUtils.isBlank
 
 /**
@@ -42,7 +43,7 @@ trait SecurityListIdAwareTrait implements PathAware, ProjectAware {
     }
 
     String getSecurityListId() {
-        securityListId.orNull
+        stringProperty('OCI_SECURITY_LIST_ID', 'oci.security.list.id', this.@securityListId.orNull)
     }
 
     void validateSecurityListId() {

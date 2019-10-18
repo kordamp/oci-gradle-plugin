@@ -25,6 +25,8 @@ import org.gradle.api.tasks.options.Option
 import org.kordamp.gradle.oci.tasks.interfaces.PathAware
 import org.kordamp.gradle.oci.tasks.interfaces.ProjectAware
 
+import static org.kordamp.gradle.PropertyUtils.stringProperty
+
 /**
  * @author Andres Almiray
  * @since 0.1.0
@@ -41,6 +43,6 @@ trait OptionalSubnetNameAwareTrait implements PathAware, ProjectAware {
     }
 
     String getSubnetName() {
-        subnetName.orNull
+        stringProperty('OCI_SUBNET_NAME', 'oci.subnet.name', this.@subnetName.orNull)
     }
 }

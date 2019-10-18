@@ -24,6 +24,8 @@ import org.gradle.api.tasks.options.Option
 import org.kordamp.gradle.oci.tasks.interfaces.PathAware
 import org.kordamp.gradle.oci.tasks.interfaces.ProjectAware
 
+import static org.kordamp.gradle.PropertyUtils.fileProperty
+
 /**
  * @author Andres Almiray
  * @since 0.1.0
@@ -39,7 +41,7 @@ trait PublicKeyFileAwareTrait implements PathAware, ProjectAware {
     }
 
     File getPublicKeyFile() {
-        publicKeyFile.asFile.orNull
+        fileProperty('OCI_PUBLIC_KEY_FILE', 'oci.public.key.file', this.@publicKeyFile.asFile.orNull)
     }
 
     void validatePublicKeyFile() {

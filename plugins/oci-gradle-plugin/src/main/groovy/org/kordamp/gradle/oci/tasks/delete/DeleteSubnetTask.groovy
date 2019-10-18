@@ -42,10 +42,10 @@ import static org.kordamp.gradle.StringUtils.isNotBlank
 @CompileStatic
 @TypeProviderFor(OCITask)
 class DeleteSubnetTask extends AbstractOCITask implements CompartmentIdAwareTrait,
-    VcnIdAwareTrait,
-    OptionalSubnetIdAwareTrait,
-    OptionalSubnetNameAwareTrait,
-    WaitForCompletionAwareTrait {
+        VcnIdAwareTrait,
+        OptionalSubnetIdAwareTrait,
+        OptionalSubnetNameAwareTrait,
+        WaitForCompletionAwareTrait {
     static final String TASK_DESCRIPTION = 'Deletes a Subnet.'
 
     @Override
@@ -63,9 +63,9 @@ class DeleteSubnetTask extends AbstractOCITask implements CompartmentIdAwareTrai
 
         if (isNotBlank(getSubnetId())) {
             Subnet subnet = client.getSubnet(GetSubnetRequest.builder()
-                .subnetId(getSubnetId())
-                .build())
-                .subnet
+                    .subnetId(getSubnetId())
+                    .build())
+                    .subnet
 
             if (subnet) {
                 setSubnetName(subnet.displayName)
@@ -76,11 +76,11 @@ class DeleteSubnetTask extends AbstractOCITask implements CompartmentIdAwareTrai
             validateVcnId()
 
             client.listSubnets(ListSubnetsRequest.builder()
-                .compartmentId(getCompartmentId())
-                .vcnId(getVcnId())
-                .displayName(getSubnetName())
-                .build())
-                .items.each { subnet ->
+                    .compartmentId(getCompartmentId())
+                    .vcnId(getVcnId())
+                    .displayName(getSubnetName())
+                    .build())
+                    .items.each { subnet ->
                 setSubnetId(subnet.id)
                 deleteSubnet(client, subnet)
             }
@@ -91,15 +91,15 @@ class DeleteSubnetTask extends AbstractOCITask implements CompartmentIdAwareTrai
         println("Deleting Subnet '${subnet.displayName}' with id ${subnet.id}")
 
         client.deleteSubnet(DeleteSubnetRequest.builder()
-            .subnetId(subnet.id)
-            .build())
+                .subnetId(subnet.id)
+                .build())
 
         if (isWaitForCompletion()) {
             println("Waiting for Subnet to be ${state('Terminated')}")
             client.waiters
-                .forSubnet(GetSubnetRequest.builder().subnetId(subnet.id).build(),
+                    .forSubnet(GetSubnetRequest.builder().subnetId(subnet.id).build(),
                     Subnet.LifecycleState.Terminated)
-                .execute()
+                    .execute()
         }
     }
 }

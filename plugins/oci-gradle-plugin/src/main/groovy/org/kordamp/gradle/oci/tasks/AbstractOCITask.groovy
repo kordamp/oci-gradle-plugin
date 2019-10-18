@@ -39,6 +39,7 @@ import org.kordamp.gradle.oci.OCIConfigExtension
 import org.kordamp.gradle.oci.tasks.interfaces.OCITask
 import org.kordamp.gradle.plugin.base.tasks.AbstractReportingTask
 
+import static org.kordamp.gradle.PropertyUtils.stringProperty
 import static org.kordamp.gradle.StringUtils.isNotBlank
 
 /**
@@ -68,7 +69,7 @@ abstract class AbstractOCITask extends AbstractReportingTask implements OCITask 
     }
 
     String getProfile() {
-        profile.getOrElse('DEFAULT')
+        stringProperty('OCI_PROFILE', 'oci.profile', this.@profile.getOrElse('DEFAULT'))
     }
 
     @Optional
@@ -79,7 +80,7 @@ abstract class AbstractOCITask extends AbstractReportingTask implements OCITask 
     }
 
     String getRegion() {
-        region.orNull
+        stringProperty('OCI_REGION', 'oci.region', this.@region.orNull)
     }
 
     @Override
@@ -131,18 +132,18 @@ abstract class AbstractOCITask extends AbstractReportingTask implements OCITask 
         }
 
         authenticationDetailsProvider = SimpleAuthenticationDetailsProvider.builder()
-            .userId(ociConfig.userId.get())
-            .tenantId(ociConfig.tenantId.get())
-            .fingerprint(ociConfig.fingerprint.get())
-            .region(Region.fromRegionId(ociConfig.region.get()))
-            .privateKeySupplier(new Supplier<InputStream>() {
-                @Override
-                InputStream get() {
-                    new FileInputStream(ociConfig.keyfile.asFile.get())
-                }
-            })
-            .passPhrase(ociConfig.passphrase.present ? ociConfig.passphrase.get() : '')
-            .build()
+                .userId(ociConfig.userId.get())
+                .tenantId(ociConfig.tenantId.get())
+                .fingerprint(ociConfig.fingerprint.get())
+                .region(Region.fromRegionId(ociConfig.region.get()))
+                .privateKeySupplier(new Supplier<InputStream>() {
+            @Override
+            InputStream get() {
+                new FileInputStream(ociConfig.keyfile.asFile.get())
+            }
+        })
+                .passPhrase(ociConfig.passphrase.present ? ociConfig.passphrase.get() : '')
+                .build()
 
         authenticationDetailsProvider
     }
@@ -226,8 +227,8 @@ abstract class AbstractOCITask extends AbstractReportingTask implements OCITask 
 
     @Override
     String state(String state) {
-        if(isNotBlank(state)) {
-            switch(state) {
+        if (isNotBlank(state)) {
+            switch (state) {
                 case 'Creating':
                 case 'Provisioning':
                 case 'Restoring':

@@ -35,6 +35,7 @@ import org.kordamp.gradle.oci.tasks.traits.OptionalInstanceNameAwareTrait
 import org.kordamp.gradle.oci.tasks.traits.WaitForCompletionAwareTrait
 import org.kordamp.jipsy.TypeProviderFor
 
+import static org.kordamp.gradle.PropertyUtils.stringProperty
 import static org.kordamp.gradle.StringUtils.isBlank
 import static org.kordamp.gradle.StringUtils.isNotBlank
 
@@ -45,9 +46,9 @@ import static org.kordamp.gradle.StringUtils.isNotBlank
 @CompileStatic
 @TypeProviderFor(OCITask)
 class InstanceActionTask extends AbstractOCITask implements CompartmentIdAwareTrait,
-    OptionalInstanceIdAwareTrait,
-    OptionalInstanceNameAwareTrait,
-    WaitForCompletionAwareTrait {
+        OptionalInstanceIdAwareTrait,
+        OptionalInstanceNameAwareTrait,
+        WaitForCompletionAwareTrait {
     static final String TASK_DESCRIPTION = 'Performs a given action on an Instance.'
 
     private static enum InstanceAction {
@@ -77,7 +78,7 @@ class InstanceActionTask extends AbstractOCITask implements CompartmentIdAwareTr
     }
 
     InstanceAction getAction() {
-        return action.orNull
+        InstanceAction.valueOf(stringProperty('OCI_INSTANCE_ACTION', 'oci.instance.action', (this.@action.orNull ?: InstanceAction.STOP).name()).toUpperCase())
     }
 
     @OptionValues("action")
@@ -105,10 +106,10 @@ class InstanceActionTask extends AbstractOCITask implements CompartmentIdAwareTr
             validateCompartmentId()
 
             client.listInstances(ListInstancesRequest.builder()
-                .compartmentId(compartmentId)
-                .displayName(getInstanceName())
-                .build())
-                .items.each { instance ->
+                    .compartmentId(compartmentId)
+                    .displayName(getInstanceName())
+                    .build())
+                    .items.each { instance ->
                 setInstanceId(instance.id)
                 instanceAction(client, instance.id, getAction())
             }
@@ -118,18 +119,18 @@ class InstanceActionTask extends AbstractOCITask implements CompartmentIdAwareTr
     private Instance instanceAction(ComputeClient client, String instanceId, InstanceAction action) {
         println("Sending ${getAction().name()} to Instance with id ${console.yellow(instanceId)}")
         Instance instance = client.instanceAction(InstanceActionRequest.builder()
-            .instanceId(instanceId)
-            .action(action.name())
-            .build())
-            .instance
+                .instanceId(instanceId)
+                .action(action.name())
+                .build())
+                .instance
 
         if (isWaitForCompletion()) {
             println("Waiting for Instance to be ${state(action.state().name())}")
             client.waiters
-                .forInstance(GetInstanceRequest.builder()
+                    .forInstance(GetInstanceRequest.builder()
                     .instanceId(instance.id).build(),
                     action.state())
-                .execute()
+                    .execute()
         }
 
         instance

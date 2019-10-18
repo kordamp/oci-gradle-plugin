@@ -26,6 +26,7 @@ import org.gradle.internal.hash.HashUtil
 import org.kordamp.gradle.oci.tasks.interfaces.PathAware
 import org.kordamp.gradle.oci.tasks.interfaces.ProjectAware
 
+import static org.kordamp.gradle.PropertyUtils.stringProperty
 import static org.kordamp.gradle.StringUtils.isBlank
 
 /**
@@ -46,7 +47,7 @@ trait OptionalDnsLabelAwareTrait implements PathAware, ProjectAware {
     }
 
     String getDnsLabel() {
-        dnsLabel.orNull
+        stringProperty('OCI_DNS_LABEL', 'oci.dns.label', this.@dnsLabel.orNull)
     }
 
     void validateDnsLabel(String seed) {

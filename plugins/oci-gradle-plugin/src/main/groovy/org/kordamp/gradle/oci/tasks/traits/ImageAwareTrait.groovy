@@ -28,6 +28,7 @@ import org.gradle.api.tasks.options.Option
 import org.kordamp.gradle.oci.tasks.interfaces.PathAware
 import org.kordamp.gradle.oci.tasks.interfaces.ProjectAware
 
+import static org.kordamp.gradle.PropertyUtils.stringProperty
 import static org.kordamp.gradle.StringUtils.isBlank
 
 /**
@@ -45,7 +46,7 @@ trait ImageAwareTrait implements PathAware, ProjectAware {
     }
 
     String getImage() {
-        image.orNull
+        stringProperty('OCI_IMAGE', 'oci.image', this.@image.orNull)
     }
 
     void validateImage() {
@@ -56,8 +57,8 @@ trait ImageAwareTrait implements PathAware, ProjectAware {
 
     Image validateImage(ComputeClient client, String compartmentId) {
         ListImagesResponse response = client.listImages(ListImagesRequest.builder()
-            .compartmentId(compartmentId)
-            .build())
+                .compartmentId(compartmentId)
+                .build())
         Image image = response.items.find { Image img -> img.displayName == getImage() }
         if (!image) throw new IllegalStateException("Invalid image ${getImage()}")
         image

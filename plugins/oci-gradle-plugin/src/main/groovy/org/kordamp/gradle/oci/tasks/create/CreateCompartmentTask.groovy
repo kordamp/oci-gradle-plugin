@@ -43,10 +43,10 @@ import static org.kordamp.gradle.oci.tasks.printers.CompartmentPrinter.printComp
 @CompileStatic
 @TypeProviderFor(OCITask)
 class CreateCompartmentTask extends AbstractOCITask implements CompartmentIdAwareTrait,
-    CompartmentNameAwareTrait,
-    CompartmentDescriptionAwareTrait,
-    WaitForCompletionAwareTrait,
-    VerboseAwareTrait {
+        CompartmentNameAwareTrait,
+        CompartmentDescriptionAwareTrait,
+        WaitForCompletionAwareTrait,
+        VerboseAwareTrait {
     static final String TASK_DESCRIPTION = 'Creates a Compartment.'
 
     private final Property<String> createdCompartmentId = project.objects.property(String)
@@ -64,12 +64,12 @@ class CreateCompartmentTask extends AbstractOCITask implements CompartmentIdAwar
         IdentityClient client = createIdentityClient()
 
         Compartment compartment = maybeCreateCompartment(this,
-            client,
-            getCompartmentId(),
-            getCompartmentName(),
-            getCompartmentDescription(),
-            isWaitForCompletion(),
-            isVerbose())
+                client,
+                getCompartmentId(),
+                getCompartmentName(),
+                getCompartmentDescription(),
+                isWaitForCompletion(),
+                isVerbose())
         createdCompartmentId.set(compartment.id)
     }
 
@@ -82,8 +82,8 @@ class CreateCompartmentTask extends AbstractOCITask implements CompartmentIdAwar
                                               boolean verbose) {
         // 1. Check if it exists
         List<Compartment> compartments = client.listCompartments(ListCompartmentsRequest.builder()
-            .compartmentId(parentCompartmentId)
-            .build()).items
+                .compartmentId(parentCompartmentId)
+                .build()).items
         Compartment compartment = compartments.find { Compartment c -> c.name == compartmentName }
 
         if (compartment) {
@@ -94,22 +94,22 @@ class CreateCompartmentTask extends AbstractOCITask implements CompartmentIdAwar
         // 2. Create
         println('Provisioning Compartment. This may take a while.')
         compartment = client.createCompartment(CreateCompartmentRequest.builder()
-            .createCompartmentDetails(CreateCompartmentDetails.builder()
+                .createCompartmentDetails(CreateCompartmentDetails.builder()
                 .compartmentId(parentCompartmentId)
                 .name(compartmentName)
                 .description(compartmentDescription)
                 .build())
-            .build())
-            .compartment
+                .build())
+                .compartment
 
         if (waitForCompletion) {
             println("Waiting for Compartment to be ${owner.state('Active')}")
             client.waiters
-                .forCompartment(GetCompartmentRequest.builder()
+                    .forCompartment(GetCompartmentRequest.builder()
                     .compartmentId(compartment.id)
                     .build(),
                     Compartment.LifecycleState.Active)
-                .execute()
+                    .execute()
         }
 
         println("Compartment '${compartmentName}' has been provisioned. id = ${owner.console.yellow(compartment.id)}")

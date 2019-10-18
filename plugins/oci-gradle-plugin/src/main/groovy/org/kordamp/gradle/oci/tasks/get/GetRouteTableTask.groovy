@@ -44,9 +44,9 @@ class GetRouteTableTask extends AbstractOCITask implements RouteTableIdAwareTrai
         VirtualNetworkClient client = createVirtualNetworkClient()
 
         RouteTable routeTable = client.getRouteTable(GetRouteTableRequest.builder()
-            .rtId(getRouteTableId())
-            .build())
-            .routeTable
+                .rtId(getRouteTableId())
+                .build())
+                .routeTable
 
         if (routeTable) {
             println(routeTable.displayName + ':')

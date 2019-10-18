@@ -28,6 +28,7 @@ import org.gradle.api.tasks.options.Option
 import org.kordamp.gradle.oci.tasks.interfaces.PathAware
 import org.kordamp.gradle.oci.tasks.interfaces.ProjectAware
 
+import static org.kordamp.gradle.PropertyUtils.stringProperty
 import static org.kordamp.gradle.StringUtils.isBlank
 
 /**
@@ -45,7 +46,7 @@ trait ShapeAwareTrait implements PathAware, ProjectAware {
     }
 
     String getShape() {
-        shape.orNull
+        stringProperty('OCI_SHAPE', 'oci.shape', this.@shape.orNull)
     }
 
     void validateShape() {
@@ -56,8 +57,8 @@ trait ShapeAwareTrait implements PathAware, ProjectAware {
 
     Shape validateShape(ComputeClient client, String compartmentId) {
         ListShapesResponse response = client.listShapes(ListShapesRequest.builder()
-            .compartmentId(compartmentId)
-            .build())
+                .compartmentId(compartmentId)
+                .build())
         Shape shape = response.items.find { Shape sh -> sh.shape == getShape() }
         if (!shape) throw new IllegalStateException("Invalid shape ${getShape()}")
         shape

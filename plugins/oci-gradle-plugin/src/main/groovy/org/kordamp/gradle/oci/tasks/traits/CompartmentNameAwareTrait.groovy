@@ -24,6 +24,7 @@ import org.gradle.api.tasks.options.Option
 import org.kordamp.gradle.oci.tasks.interfaces.PathAware
 import org.kordamp.gradle.oci.tasks.interfaces.ProjectAware
 
+import static org.kordamp.gradle.PropertyUtils.stringProperty
 import static org.kordamp.gradle.StringUtils.isBlank
 
 /**
@@ -41,7 +42,7 @@ trait CompartmentNameAwareTrait implements PathAware, ProjectAware {
     }
 
     String getCompartmentName() {
-        compartmentName.orNull
+        stringProperty('OCI_COMPARTMENT_NAME', 'oci.compartment.name', this.@compartmentName.orNull)
     }
 
     void validateCompartmentName() {

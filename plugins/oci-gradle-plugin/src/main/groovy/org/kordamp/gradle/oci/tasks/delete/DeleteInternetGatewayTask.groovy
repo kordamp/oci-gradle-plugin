@@ -42,10 +42,10 @@ import static org.kordamp.gradle.StringUtils.isNotBlank
 @CompileStatic
 @TypeProviderFor(OCITask)
 class DeleteInternetGatewayTask extends AbstractOCITask implements CompartmentIdAwareTrait,
-    VcnIdAwareTrait,
-    OptionalInternetGatewayIdAwareTrait,
-    OptionalInternetGatewayNameAwareTrait,
-    WaitForCompletionAwareTrait {
+        VcnIdAwareTrait,
+        OptionalInternetGatewayIdAwareTrait,
+        OptionalInternetGatewayNameAwareTrait,
+        WaitForCompletionAwareTrait {
     static final String TASK_DESCRIPTION = 'Deletes a InternetGateway.'
 
     @Override
@@ -63,9 +63,9 @@ class DeleteInternetGatewayTask extends AbstractOCITask implements CompartmentId
 
         if (isNotBlank(getInternetGatewayId())) {
             InternetGateway internetGateway = client.getInternetGateway(GetInternetGatewayRequest.builder()
-                .igId(getInternetGatewayId())
-                .build())
-                .internetGateway
+                    .igId(getInternetGatewayId())
+                    .build())
+                    .internetGateway
 
             if (internetGateway) {
                 setInternetGatewayName(internetGateway.displayName)
@@ -76,11 +76,11 @@ class DeleteInternetGatewayTask extends AbstractOCITask implements CompartmentId
             validateVcnId()
 
             client.listInternetGateways(ListInternetGatewaysRequest.builder()
-                .compartmentId(getCompartmentId())
-                .vcnId(getVcnId())
-                .displayName(getInternetGatewayName())
-                .build())
-                .items.each { internetGateway ->
+                    .compartmentId(getCompartmentId())
+                    .vcnId(getVcnId())
+                    .displayName(getInternetGatewayName())
+                    .build())
+                    .items.each { internetGateway ->
                 setInternetGatewayId(internetGateway.id)
                 deleteInternetGateway(client, internetGateway)
             }
@@ -91,16 +91,16 @@ class DeleteInternetGatewayTask extends AbstractOCITask implements CompartmentId
         println("Deleting InternetGateway '${internetGateway.displayName}' with id ${internetGateway.id}")
 
         client.deleteInternetGateway(DeleteInternetGatewayRequest.builder()
-            .igId(internetGateway.id)
-            .build())
+                .igId(internetGateway.id)
+                .build())
 
         if (isWaitForCompletion()) {
             println("Waiting for InternetGateway to be ${state('Terminated')}")
             client.waiters
-                .forInternetGateway(GetInternetGatewayRequest.builder()
+                    .forInternetGateway(GetInternetGatewayRequest.builder()
                     .igId(internetGateway.id).build(),
                     InternetGateway.LifecycleState.Terminated)
-                .execute()
+                    .execute()
         }
 
         // TODO: remove from vcn routing table

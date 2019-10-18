@@ -17,7 +17,6 @@
  */
 package org.kordamp.gradle.oci.tasks.traits
 
-
 import groovy.transform.CompileStatic
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
@@ -26,6 +25,7 @@ import org.kordamp.gradle.oci.tasks.interfaces.PathAware
 import org.kordamp.gradle.oci.tasks.interfaces.ProjectAware
 
 import static com.oracle.bmc.OCID.isValid
+import static org.kordamp.gradle.PropertyUtils.stringProperty
 import static org.kordamp.gradle.StringUtils.isBlank
 
 /**
@@ -43,7 +43,7 @@ trait CompartmentIdAwareTrait implements PathAware, ProjectAware {
     }
 
     String getCompartmentId() {
-        compartmentId.orNull
+        stringProperty('OCI_COMPARTMENT_ID', 'oci.compartment.id', this.@compartmentId.orNull)
     }
 
     void validateCompartmentId() {

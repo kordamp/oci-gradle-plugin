@@ -42,10 +42,10 @@ import static org.kordamp.gradle.oci.tasks.printers.InstanceConsoleConnectionPri
 @CompileStatic
 @TypeProviderFor(OCITask)
 class CreateInstanceConsoleConnectionTask extends AbstractOCITask implements CompartmentIdAwareTrait,
-    InstanceIdAwareTrait,
-    PublicKeyFileAwareTrait,
-    WaitForCompletionAwareTrait,
-    VerboseAwareTrait {
+        InstanceIdAwareTrait,
+        PublicKeyFileAwareTrait,
+        WaitForCompletionAwareTrait,
+        VerboseAwareTrait {
     static final String TASK_DESCRIPTION = 'Creates an InstanceConsoleConnection.'
 
     private final Property<String> createdConnectionId = project.objects.property(String)
@@ -63,11 +63,11 @@ class CreateInstanceConsoleConnectionTask extends AbstractOCITask implements Com
         ComputeClient client = createComputeClient()
 
         InstanceConsoleConnection connection = createInstanceConsoleConnection(this,
-            client,
-            getInstanceId(),
-            getPublicKeyFile().text,
-            isWaitForCompletion(),
-            isVerbose())
+                client,
+                getInstanceId(),
+                getPublicKeyFile().text,
+                isWaitForCompletion(),
+                isVerbose())
         createdConnectionId.set(connection.id)
     }
 
@@ -79,22 +79,22 @@ class CreateInstanceConsoleConnectionTask extends AbstractOCITask implements Com
                                                                      boolean verbose) {
         println('Provisioning InstanceConsoleConnection. This may take a while.')
         CreateInstanceConsoleConnectionDetails details = CreateInstanceConsoleConnectionDetails.builder()
-            .publicKey(publicKeyFile)
-            .instanceId(instanceId)
-            .build()
+                .publicKey(publicKeyFile)
+                .instanceId(instanceId)
+                .build()
 
         InstanceConsoleConnection connection = client.createInstanceConsoleConnection(CreateInstanceConsoleConnectionRequest.builder()
-            .createInstanceConsoleConnectionDetails(details)
-            .build())
-            .instanceConsoleConnection
+                .createInstanceConsoleConnectionDetails(details)
+                .build())
+                .instanceConsoleConnection
 
         if (waitForCompletion) {
             println("Waiting for InstanceConsoleConnection to be ${owner.state('Active')}")
             client.waiters.forInstanceConsoleConnection(GetInstanceConsoleConnectionRequest.builder()
-                .instanceConsoleConnectionId(connection.id)
-                .build(),
-                InstanceConsoleConnection.LifecycleState.Active)
-                .execute()
+                    .instanceConsoleConnectionId(connection.id)
+                    .build(),
+                    InstanceConsoleConnection.LifecycleState.Active)
+                    .execute()
         }
 
         println("InstanceConsoleConnection has been provisioned. id = ${owner.console.yellow(connection.id)}")

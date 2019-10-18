@@ -106,77 +106,536 @@ listInstances {
 }
 ----
 
-=== Common Properties
-
-All tasks share the following properties
-
-[horizontal]
-profile:: The profile to use. Defaults to DEFAULT (OPTIONAL).
-region:: The region to use (OPTIONAL).
-
 == Tasks
 
 Invoke `gradle help --task <taskname>` to learn more about the properties that can be set for a particular task.
+All tasks share the following properties
 
+[options="header", cols="6*<,^"]
+|===
+| Property    | Type    | Option       | System      | Environment | Default | Required
+| profile     | String  | profile      | oci.profile | OCI_PROFILE | DEFAULT | icon:times[role="red"]
+| region      | String  | region       | oci.region  | OCI_REGION  |         | icon:times[role="red"]
+| showSecrets | boolean | show-secrets |             |             | false   | icon:times[role="red"]
+|===
+
+Where each column defines
+
+[horizontal]
+Property:: The name of the task property.
+Type:: The type of the property.
+Option:: The command line flag to set this property's value. Use `--` as prefix, i.e, `--profile=mine`.
+System:: The system property to set this property's value. Use `-D` as prefix, i.e, `-Doci.profile=mine`
+Environment:: The environment key to set this property's value. Set as key/value in command shell, i.e, `export OCI_PROFILE=mine`.
+Default:: Default value for this property (if any).
+Required:: Whether this property is required or not.
+
+System values are resolved in the following order
+
+Environment > System System > Option > Property
+
+[[_oci_create_]]
 === OCI Create
 
 [horizontal]
-createCompartment:: Creates a Compartment.
-createInstance:: Creates an Instance.
-createInstanceConsoleConnection:: Creates an InstanceConsoleConnection.
-createInternetGateway:: Creates a InternetGateway.
-createSubnet:: Creates a Subnet.
-createVcn:: Creates a Vcn.
+<<createCompartment>>:: Creates a Compartment.
+<<createInstanceConsoleConnection>>:: Creates an InstanceConsoleConnection.
+<<createInstance>>:: Creates an Instance.
+<<createInternetGateway>>:: Creates a InternetGateway.
+<<createSubnet>>:: Creates a Subnet.
+<<createVcn>>:: Creates a Vcn.
 
-==== OCI Delete
+[[createCompartment]]
+.createCompartment
+[options="header", cols="6*<,^"]
+|===
+| Property               | Type    | Option                  | System                      | Environment                 | Default | Required
+| compartmentDescription | String  | compartment-description | oci.compartment.description | OCI_COMPARTMENT_DESCRIPTION |         | icon:check[role="green"]
+| compartmentId          | String  | compartment-id          | oci.compartment.id          | OCI_COMPARTMENT_ID          |         | icon:check[role="green"]
+| compartmentName        | String  | compartment-name        | oci.compartment.name        | OCI_COMPARTMENT_NAME        |         | icon:check[role="green"]
+| verbose                | boolean | verbose                 | oci.verbose                 | OCI_VERBOSE                 | false   | icon:times[role="red"]
+| waitForCompletion      | boolean | wait-for-completion     | oci.wait.for.completion     | OCI_WAIT_FOR_COMPLETION     | false   | icon:times[role="red"]
+|===
+<<_oci_create_,icon:arrow-up[] top>>
+
+[[createInstanceConsoleConnection]]
+.createInstanceConsoleConnection
+[options="header", cols="6*<,^"]
+|===
+| Property          | Type    | Option              | System                  | Environment             | Default | Required
+| compartmentId     | String  | compartment-id      | oci.compartment.id      | OCI_COMPARTMENT_ID      |         | icon:check[role="green"]
+| instanceId        | String  | instance-id         | oci.instance.id         | OCI_INSTANCE_ID         |         | icon:check[role="green"]
+| publicKeyFile     | File    | public-key-file     | oci.public.key.file     | OCI_PUBLIC_KEY_FILE     |         | icon:check[role="green"]
+| verbose           | boolean | verbose             | oci.verbose             | OCI_VERBOSE             | false   | icon:times[role="red"]
+| waitForCompletion | boolean | wait-for-completion | oci.wait.for.completion | OCI_WAIT_FOR_COMPLETION | false   | icon:times[role="red"]
+|===
+<<_oci_create_,icon:arrow-up[] top>>
+
+[[createInstance]]
+.createInstance
+[options="header", cols="6*<,^"]
+|===
+| Property          | Type    | Option              | System                  | Environment             | Default | Required
+| compartmentId     | String  | compartment-id      | oci.compartment.id      | OCI_COMPARTMENT_ID      |         | icon:check[role="green"]
+| image             | String  | image               | oci.image               | OCI_IMAGE               |         | icon:check[role="green"]
+| instanceName      | String  | instance-name       | oci.instance.name       | OCI_INSTANCE_NAME       |         | icon:check[role="green"]
+| publicKeyFile     | File    | public-key-file     | oci.public.key.file     | OCI_PUBLIC_KEY_FILE     |         | icon:check[role="green"]
+| shape             | String  | shape               | oci.shape               | OCI_SHAPE               |         | icon:check[role="green"]
+| subnetId          | String  | subnet-id           | oci.subnet.id           | OCI_SUBNET_ID           |         | icon:check[role="green"]
+| userDataFile      | File    | user-data-file      | oci.user.data.file      | OCI_USER_DATA_FILE      |         | icon:check[role="green"]
+| verbose           | boolean | verbose             | oci.verbose             | OCI_VERBOSE             | false   | icon:times[role="red"]
+| waitForCompletion | boolean | wait-for-completion | oci.wait.for.completion | OCI_WAIT_FOR_COMPLETION | false   | icon:times[role="red"]
+|===
+<<_oci_create_,icon:arrow-up[] top>>
+
+[[createInternetGateway]]
+.createInternetGateway
+[options="header", cols="6*<,^"]
+|===
+| Property            | Type    | Option                | System                    | Environment               | Default | Required
+| internetGatewayName | String  | internet-gateway-name | oci.internet.gateway.name | OCI_INTERNET_GATEWAY_NAME |         | icon:check[role="green"]
+| verbose             | boolean | verbose               | oci.verbose               | OCI_VERBOSE               | false   | icon:times[role="red"]
+| waitForCompletion   | boolean | wait-for-completion   | oci.wait.for.completion   | OCI_WAIT_FOR_COMPLETION   | false   | icon:times[role="red"]
+|===
+<<_oci_create_,icon:arrow-up[] top>>
+
+[[createSubnet]]
+.createSubnet
+[options="header", cols="6*<,^"]
+|===
+| Property           | Type    | Option              | System                  | Environment             | Default | Required
+| availabilityDomain | String  | availability-domain | oci.availability.domain | OCI_AVAILABILITY_DOMAIN |         | icon:check[role="green"]
+| compartmentId      | String  | compartment-id      | oci.compartment.id      | OCI_COMPARTMENT_ID      |         | icon:check[role="green"]
+| dnsLabel           | String  | dns-label           | oci.dns.label           | OCI_DNS_LABEL           |         | icon:check[role="green"]
+| subnetName         | String  | subnet-name         | oci.subnet.name         | OCI_SUBNET_NAME         |         | icon:check[role="green"]
+| vcnId              | String  | vcn-id              | oci.vcn.id              | OCI_VCN_ID              |         | icon:check[role="green"]
+| verbose            | boolean | verbose             | oci.verbose             | OCI_VERBOSE             | false   | icon:times[role="red"]
+| waitForCompletion  | boolean | wait-for-completion | oci.wait.for.completion | OCI_WAIT_FOR_COMPLETION | false   | icon:times[role="red"]
+|===
+<<_oci_create_,icon:arrow-up[] top>>
+
+[[createVcn]]
+.createVcn
+[options="header", cols="6*<,^"]
+|===
+| Property           | Type    | Option              | System                  | Environment             | Default | Required
+| compartmentId      | String  | compartment-id      | oci.compartment.id      | OCI_COMPARTMENT_ID      |         | icon:check[role="green"]
+| dnsLabel           | String  | dns-label           | oci.dns.label           | OCI_DNS_LABEL           |         | icon:check[role="green"]
+| vcnName            | String  | vcn-name            | oci.vcn.name            | OCI_VCN_NAME            |         | icon:check[role="green"]
+| verbose            | boolean | verbose             | oci.verbose             | OCI_VERBOSE             | false   | icon:times[role="red"]
+| waitForCompletion  | boolean | wait-for-completion | oci.wait.for.completion | OCI_WAIT_FOR_COMPLETION | false   | icon:times[role="red"]
+|===
+<<_oci_create_,icon:arrow-up[] top>>
+
+[[_oci_delete_]]
+=== OCI Delete
 
 [horizontal]
-deleteCompartment:: Deletes a Compartment.
-deleteInstanceConsoleConnection:: Deletes an InstanceConsoleConnection.
-deleteInternetGateway:: Deletes a InternetGateway.
-deleteSubnet:: Deletes a Subnet.
-deleteVcn:: Deletes a Vcn.
+<<deleteCompartment>>:: Deletes a Compartment.
+<<deleteInstanceConsoleConnection>>:: Deletes an InstanceConsoleConnection.
+<<deleteInternetGateway>>:: Deletes a InternetGateway.
+<<deleteSubnet>>:: Deletes a Subnet.
+<<deleteVcn>>:: Deletes a Vcn.
 
+[[deleteCompartment]]
+.deleteCompartment
+[options="header", cols="6*<,^"]
+|===
+| Property          | Type    | Option              | System                  | Environment             | Default | Required
+| compartmentId     | String  | compartment-id      | oci.compartment.id      | OCI_COMPARTMENT_ID      |         | icon:check[role="green"]
+| waitForCompletion | boolean | wait-for-completion | oci.wait.for.completion | OCI_WAIT_FOR_COMPLETION | false   | icon:times[role="red"]
+|===
+<<_oci_delete_,icon:arrow-up[] top>>
+
+[[deleteInstanceConsoleConnection]]
+.deleteInstanceConsoleConnection
+[options="header", cols="6*<,^"]
+|===
+| Property                    | Type    | Option                         | System                             | Environment                        | Default | Required
+| instanceConsoleConnectionId | String  | instance-console-connection-id | oci.instance.console.connection.id | OCI_INSTANCE_CONSOLE_CONNECTION_ID |         | icon:check[role="green"]
+| waitForCompletion           | boolean | wait-for-completion            | oci.wait.for.completion            | OCI_WAIT_FOR_COMPLETION            | false   | icon:times[role="red"]
+|===
+<<_oci_delete_,icon:arrow-up[] top>>
+
+[[deleteInternetGateway]]
+.deleteInternetGateway
+[options="header", cols="6*<,^"]
+|===
+| Property            | Type    | Option                | System                    | Environment               | Default | Required
+| compartmentId       | String  | compartment-id        | oci.compartment.id        | OCI_COMPARTMENT_ID        |         | icon:check[role="green"]
+| internetGatewayId   | String  | internet-gateway-id   | oci.internet.gateway.id   | OCI_INTERNET_GATEWAY_ID   |         | icon:check[role="green"]*
+| internetGatewayName | String  | internet-gateway-name | oci.internet.gateway.name | OCI_INTERNET_GATEWAY_NAME |         | icon:check[role="green"]*
+| vcnId               | String  | vcn-id                | oci.vcn.id                | OCI_VCN_ID                |         | icon:check[role="green"]
+| waitForCompletion   | boolean | wait-for-completion   | oci.wait.for.completion   | OCI_WAIT_FOR_COMPLETION   | false   | icon:times[role="red"]
+|===
+
+NOTE: Either `internetGatewayId` or `internetGatewayName` must be specified.
+
+<<_oci_delete_,icon:arrow-up[] top>>
+
+[[deleteSubnet]]
+.deleteSubnet
+[options="header", cols="6*<,^"]
+|===
+| Property          | Type    | Option              | System                  | Environment             | Default | Required
+| compartmentId     | String  | compartment-id      | oci.compartment.id      | OCI_COMPARTMENT_ID      |         | icon:check[role="green"]
+| subnetId          | String  | subnet-id           | oci.subnet.id           | OCI_SUBNET_ID           |         | icon:check[role="green"]*
+| subnetName        | String  | subnet-name         | oci.subnet.name         | OCI_SUBNET_NAME         |         | icon:check[role="green"]*
+| vcnId             | String  | vcn-id              | oci.vcn.id              | OCI_VCN_ID              |         | icon:check[role="green"]
+| waitForCompletion | boolean | wait-for-completion | oci.wait.for.completion | OCI_WAIT_FOR_COMPLETION | false   | icon:times[role="red"]
+|===
+
+NOTE: Either `subneId` or `subnetName` must be specified.
+
+<<_oci_delete_,icon:arrow-up[] top>>
+
+[[deleteVcn]]
+.deleteVcn
+[options="header", cols="6*<,^"]
+|===
+| Property          | Type    | Option              | System                  | Environment             | Default | Required
+| compartmentId     | String  | compartment-id      | oci.compartment.id      | OCI_COMPARTMENT_ID      |         | icon:check[role="green"]
+| vcnId             | String  | vcn-id              | oci.vcn.id              | OCI_VCN_ID              |         | icon:check[role="green"]*
+| vcnName           | String  | vcn-name            | oci.vcn.name            | OCI_VCNNAME             |         | icon:check[roles=]*
+| waitForCompletion | boolean | wait-for-completion | oci.wait.for.completion | OCI_WAIT_FOR_COMPLETION | false   | icon:times[role="red"]
+|===
+
+NOTE: Either `vcnId` or `vcnName` must be specified.
+
+<<_oci_delete_,icon:arrow-up[] top>>
+
+[[_oci_get_]]
 === OCI Get
 
 [horizontal]
-getCompartment:: Displays information for an specific Compartment.
-getInstance:: Displays information for an specific Instance.
-getInstanceConsoleConnection:: Displays information for an specific InstanceConsoleConnection.
-getInstancePublicIp:: Displays public Ip addresses for a particular Instance.
-getInternetGateway:: Displays information for an specific InternetGateway.
-getRouteTable:: Displays information for an specific RouteTable.
-getSecurityList:: Displays information for an specific SecurityList.
-getSubnet:: Displays information for an specific Subnet.
-getVcn:: Displays information for an specific Vcn.
+<<getCompartment>>:: Displays information for an specific Compartment.
+<<getInstanceConsoleConnection>>:: Displays information for an specific InstanceConsoleConnection.
+<<getInstancePublicIp>>:: Displays public Ip addresses for a particular Instance.
+<<getInstance>>:: Displays information for an specific Instance.
+<<getInternetGateway>>:: Displays information for an specific InternetGateway.
+<<getRouteTable>>:: Displays information for an specific RouteTable.
+<<getSecurityList>>:: Displays information for an specific SecurityList.
+<<getSubnet>>:: Displays information for an specific Subnet.
+<<getVcn>>:: Displays information for an specific Vcn.
 
+[[getCompartment]]
+.getCompartment
+[options="header", cols="6*<,^"]
+|===
+| Property      | Type   | Option         | System             | Environment        | Default | Required
+| compartmentId | String | compartment-id | oci.compartment.id | OCI_COMPARTMENT_ID |         | icon:check[role="green"]
+|===
+<<_oci_get_,icon:arrow-up[] top>>
+
+[[getInstanceConsoleConnection]]
+.getInstanceConsoleConnection
+[options="header", cols="6*<,^"]
+|===
+| Property                    | Type   | Option                         | System                             | Environment                        | Default | Required
+| instanceConsoleConnectionId | String | instance-console-connection-id | oci.instance.console.connection.id | OCI_INSTANCE_CONSOLE_CONNECTION_ID |         | icon:check[role="green"]
+|===
+<<_oci_get_,icon:arrow-up[] top>>
+
+[[getInstancePublicIp]]
+.getInstancePublicIp
+[options="header", cols="6*<,^"]
+|===
+| Property      | Type   | Option         | System             | Environment        | Default | Required
+| compartmentId | String | compartment-id | oci.compartment.id | OCI_COMPARTMENT_ID |         | icon:check[role="green"]
+| instanceId    | String | instance-id    | oci.instance.id    | OCI_INSTANCE_ID    |         | icon:check[role="green"]
+|===
+<<_oci_get_,icon:arrow-up[] top>>
+
+[[getInstance]]
+.getInstance
+[options="header", cols="6*<,^"]
+|===
+| Property   | Type   | Option      | System          | Environment     | Default | Required
+| instanceId | String | instance-id | oci.instance.id | OCI_INSTANCE_ID |         | icon:check[role="green"]
+|===
+<<_oci_get_,icon:arrow-up[] top>>
+
+[[getInternetGateway]]
+.getInternetGateway
+[options="header", cols="6*<,^"]
+|===
+| Property          | Type   | Option              | System                  | Environment             | Default | Required
+| internetGatewayId | String | internet-gateway-id | oci.internet.gateway.id | OCI_INTERNET_GATEWAY_ID |         | icon:check[role="green"]
+|===
+<<_oci_get_,icon:arrow-up[] top>>
+
+[[getRouteTable]]
+.getRouteTable
+[options="header", cols="6*<,^"]
+|===
+| Property     | Type   | Option         | System             | Environment        | Default | Required
+| routeTableId | String | route-table-id | oci.route.table.id | OCI_ROUTE_TABLE_ID |         | icon:check[role="green"]
+|===
+<<_oci_get_,icon:arrow-up[] top>>
+
+[[getSecurityList]]
+.getSecurityList
+[options="header", cols="6*<,^"]
+|===
+| Property       | Type   | Option           | System               | Environment          | Default | Required
+| securityListId | String | security-list-id | oci.security.list.id | OCI_SECURITY_LIST_ID |         | icon:check[role="green"]
+|===
+<<_oci_get_,icon:arrow-up[] top>>
+
+[[getSubnet]]
+.getSubnet
+[options="header", cols="6*<,^"]
+|===
+| Property | Type   | Option    | System        | Environment   | Default | Required
+| subnetId | String | subnet-id | oci.subnet.id | OCI_SUBNET_ID |         | icon:check[role="green"]
+|===
+<<_oci_get_,icon:arrow-up[] top>>
+
+[[getVcn]]
+.getVcn
+[options="header", cols="6*<,^"]
+|===
+| Property| Type   | Option | System     | Environment | Default | Required
+| vcnId   | String | vcn-id | oci.vcn.id | OCI_VCN_ID  |         | icon:check[role="green"]
+|===
+<<_oci_get_,icon:arrow-up[] top>>
+
+[[_oci_instance_]]
 === OCI Instance
 
 [horizontal]
-addIngressSecurityRule:: Adds IngressSecurityRules to a SecurityList.
-instanceAction:: Performs a given action on an Instance.
-setupInstance:: Setups an Instance with Vcn, InternetGateway, Subnets, InstanceConsoleConnection, and Volume.
-terminateInstance:: Terminates an Instance.
+<<addIngressSecurityRule>>:: Adds IngressSecurityRules to a SecurityList.
+<<instanceAction>>:: Performs a given action on an Instance.
+<<setupInstance>>:: Setups an Instance with Vcn, InternetGateway, Subnets, InstanceConsoleConnection, and Volume.
+<<terminateInstance>>:: Terminates an Instance.
 
+[[addIngressSecurityRule]]
+.addIngressSecurityRule
+[options="header", cols="6*<,^"]
+|===
+| Property       | Type   | Option           | System               | Environment          | Default | Required
+| port           | int    | port             | oci.port             | OCI_PORT             |         | icon:check[role="green"]
+| portType       | String | port-type        | oci.port.typ         | OCI_PORT_TYPE        | TCP     | icon:times[role="red"]
+| securityListId | String | security-list-id | oci.security.list.id | OCI_SECURITY_LIST_ID |         | icon:check[role="green"]
+|===
+
+NOTE: Multiple entries for `--port` may be defined.
+
+NOTE: Valid values for `portType` are: `TCP`, `UDP`.
+
+<<_oci_instance_,icon:arrow-up[] top>>
+
+[[instanceAction]]
+.instanceAction
+[options="header", cols="6*<,^"]
+|===
+| Property          | Type    | Option              | System                  | Environment             | Default | Required
+| action            | String  | action              | oci.action              | OCI_ACTION              | STOP    | icon:check[role="green"]
+| compartmentId     | String  | compartment-id      | oci.compartment.id      | OCI_COMPARTMENT_ID      |         | icon:check[role="green"]
+| instanceId        | String  | instance-id         | oci.instance.id         | OCI_INSTANCE_ID         |         | icon:check[role="green"]*
+| instanceName      | String  | instance-name       | oci.instance.name       | OCI_INSTANCE_NAME       |         | icon:check[role="green"]*
+| waitForCompletion | boolean | wait-for-completion | oci.wait.for.completion | OCI_WAIT_FOR_COMPLETION | false   | icon:times[role="red"]
+|===
+
+NOTE: Either `instanceId` or `instanceName` must be specified.
+
+NOTE: Valid values for `action` are: `RESET`, `SOFTRESET`, `SOFTSTOP`, `START`, `STOP`.
+
+<<_oci_instance_,icon:arrow-up[] top>>
+
+[[setupInstance]]
+.setupInstance
+[options="header", cols="6*<,^"]
+|===
+| Property          | Type    | Option              | System                  | Environment             | Default | Required
+| compartmentId     | String  | compartment-id      | oci.compartment.id      | OCI_COMPARTMENT_ID      |         | icon:check[role="green"]
+| image             | String  | image               | oci.image               | OCI_IMAGE               |         | icon:check[role="green"]
+| instanceName      | String  | instance-name       | oci.instance.name       | OCI_INSTANCE_NAME       |         | icon:check[role="green"]
+| publicKeyFile     | File    | public-key-file     | oci.public.key.file     | OCI_PUBLIC_KEY_FILE     |         | icon:check[role="green"]
+| shape             | String  | shape               | oci.shape               | OCI_SHAPE               |         | icon:check[role="green"]
+| userDataFile      | File    | user-data-file      | oci.user.data.file      | OCI_USER_DATA_FILE      |         | icon:check[role="green"]
+| verbose           | boolean | verbose             | oci.verbose             | OCI_VERBOSE             | false   | icon:times[role="red"]
+| waitForCompletion | boolean | wait-for-completion | oci.wait.for.completion | OCI_WAIT_FOR_COMPLETION | false   | icon:times[role="red"]
+|===
+<<_oci_instance_,icon:arrow-up[] top>>
+
+[[terminateInstance]]
+.terminateInstance
+[options="header", cols="6*<,^"]
+|===
+| Property          | Type    | Option              | System                  | Environment             | Default | Required
+| compartmentId     | String  | compartment-id      | oci.compartment.id      | OCI_COMPARTMENT_ID      |         | icon:check[role="green"]
+| instanceId        | String  | instance-id         | oci.instance.id         | OCI_INSTANCE_ID         |         | icon:check[role="green"]*
+| instanceName      | String  | instance-name       | oci.instance.name       | OCI_INSTANCE_NAME       |         | icon:check[role="green"]*
+| waitForCompletion | boolean | wait-for-completion | oci.wait.for.completion | OCI_WAIT_FOR_COMPLETION | false   | icon:times[role="red"]
+|===
+
+NOTE: Either `instanceId` or `instanceName` must be specified.
+
+<<_oci_instance_,icon:arrow-up[] top>>
+
+[[_oci_list_]]
 === OCI List
 
 [horizontal]
-listAvailabilityDomains:: Lists AvailabilityDomains available on a Compartment.
-listCompartments:: Lists available Compartments.
-listImages:: Lists Images available on a Compartment.
-listInstanceConsoleConnections:: Lists available InstanceConsoleConnection on an Instance.
-listInstances:: Lists available Instances.
-listInternetGateways:: Lists InternetGateways available on a Vcn.
-listRegions:: Lists available Regions.
-listRouteTables:: Lists RouteTables available on a Vcn.
-listSecurityLists:: Lists SecurityLists available on a Vcn.
-listShapes:: Lists Shapes available on a Compartment.
-listSubnets:: Lists Subnets available on a Vcn.
-listUsers:: Lists available Users.
-listVcns:: Lists Vcns available on a Compartment.
+<<listAvailabilityDomains>>:: Lists AvailabilityDomains available on a Compartment.
+<<listCompartments>>:: Lists available Compartments.
+<<listImages>>:: Lists Images available on a Compartment.
+<<listInstanceConsoleConnections>>:: Lists available InstanceConsoleConnection on an Instance.
+<<listInstances>>:: Lists available Instances.
+<<listInternetGateways>>:: Lists InternetGateways available on a Vcn.
+<<listRegions>>:: Lists available Regions.
+<<listRouteTables>>:: Lists RouteTables available on a Vcn.
+<<listSecurityLists>>:: Lists SecurityLists available on a Vcn.
+<<listShapes>>:: Lists Shapes available on a Compartment.
+<<listSubnets>>:: Lists Subnets available on a Vcn.
+<<listUsers>>:: Lists available Users.
+<<listVcns>>:: Lists Vcns available on a Compartment.
 
+[[listAvailabilityDomains]]
+.listAvailabilityDomains
+[options="header", cols="6*<,^"]
+|===
+| Property      | Type    | Option         | System             | Environment        | Default | Required
+| compartmentId | String  | compartment-id | oci.compartment.id | OCI_COMPARTMENT_ID |         | icon:check[role="green"]
+| verbose       | boolean | verbose        | oci.verbose        | OCI_VERBOSE        | false   | icon:times[role="red"]
+|===
+<<_oci_list_,icon:arrow-up[] top>>
+
+[[listCompartments]]
+.listCompartments
+[options="header", cols="6*<,^"]
+|===
+| Property      | Type    | Option         | System             | Environment        | Default | Required
+| compartmentId | String  | compartment-id | oci.compartment.id | OCI_COMPARTMENT_ID |         | icon:check[role="green"]
+| verbose       | boolean | verbose        | oci.verbose        | OCI_VERBOSE        | false   | icon:times[role="red"]
+|===
+<<_oci_list_,icon:arrow-up[] top>>
+
+[[listImages]]
+.listImages
+[options="header", cols="6*<,^"]
+|===
+| Property      | Type    | Option         | System             | Environment        | Default | Required
+| compartmentId | String  | compartment-id | oci.compartment.id | OCI_COMPARTMENT_ID |         | icon:check[role="green"]
+| verbose       | boolean | verbose        | oci.verbose        | OCI_VERBOSE        | false   | icon:times[role="red"]
+|===
+<<_oci_list_,icon:arrow-up[] top>>
+
+[[listInstanceConsoleConnections]]
+.listInstanceConsoleConnections
+[options="header", cols="6*<,^"]
+|===
+| Property      | Type   | Option         | System             | Environment        | Default | Required
+| compartmentId | String | compartment-id | oci.compartment.id | OCI_COMPARTMENT_ID |         | icon:check[role="green"]
+| instanceId    | String | instance-id    | oci.instance.id    | OCI_INSTANCE_ID    |         | icon:check[role="green"]
+|===
+<<_oci_list_,icon:arrow-up[] top>>
+
+[[listInstances]]
+.listInstances
+[options="header", cols="6*<,^"]
+|===
+| Property           | Type    | Option              | System                  | Environment             | Default | Required
+| availabilityDomain | String  | availability-domain | oci.availability.domain | OCI_AVAILABILITY_DOMAIN |         | icon:check[role="green"]
+| compartmentId      | String  | compartment-id      | oci.compartment.id      | OCI_COMPARTMENT_ID      |         | icon:check[role="green"]
+| verbose            | boolean | verbose             | oci.verbose             | OCI_VERBOSE             | false   | icon:times[role="red"]
+|===
+<<_oci_list_,icon:arrow-up[] top>>
+
+[[listInternetGateways]]
+.listInternetGateways
+[options="header", cols="6*<,^"]
+|===
+| Property      | Type    | Option         | System             | Environment        | Default | Required
+| compartmentId | String  | compartment-id | oci.compartment.id | OCI_COMPARTMENT_ID |         | icon:check[role="green"]
+| vcnId         | String  | vcn-id         | oci.vcn.id         | OCI_VCN_ID         |         | icon:check[role="green"]
+| verbose       | boolean | verbose        | oci.verbose        | OCI_VERBOSE        | false   | icon:times[role="red"]
+|===
+<<_oci_list_,icon:arrow-up[] top>>
+
+[[listRegions]]
+.listRegions
+[options="header", cols="6*<,^"]
+|===
+| Property| Type    | Option  | System      | Environment | Default | Required
+| verbose | boolean | verbose | oci.verbose | OCI_VERBOSE | false   | icon:times[role="red"]
+|===
+<<_oci_list_,icon:arrow-up[] top>>
+
+[[listRouteTables]]
+.listRouteTables
+[options="header", cols="6*<,^"]
+|===
+| Property      | Type    | Option         | System             | Environment        | Default | Required
+| compartmentId | String  | compartment-id | oci.compartment.id | OCI_COMPARTMENT_ID |         | icon:check[role="green"]
+| vcnId         | String  | vcn-id         | oci.vcn.id         | OCI_VCN_ID         |         | icon:check[role="green"]
+| verbose       | boolean | verbose        | oci.verbose        | OCI_VERBOSE        | false   | icon:times[role="red"]
+|===
+<<_oci_list_,icon:arrow-up[] top>>
+
+[[listSecurityLists]]
+.listSecurityLists
+[options="header", cols="6*<,^"]
+|===
+| Property      | Type    | Option         | System             | Environment        | Default | Required
+| compartmentId | String  | compartment-id | oci.compartment.id | OCI_COMPARTMENT_ID |         | icon:check[role="green"]
+| vcnId         | String  | vcn-id         | oci.vcn.id         | OCI_VCN_ID         |         | icon:check[role="green"]
+| verbose       | boolean | verbose        | oci.verbose        | OCI_VERBOSE        | false   | icon:times[role="red"]
+|===
+<<_oci_list_,icon:arrow-up[] top>>
+
+[[listShapes]]
+.listShapes
+[options="header", cols="6*<,^"]
+|===
+| Property      | Type   | Option         | System             | Environment        | Default | Required
+| compartmentId | String | compartment-id | oci.compartment.id | OCI_COMPARTMENT_ID |         | icon:check[role="green"]
+|===
+<<_oci_list_,icon:arrow-up[] top>>
+
+[[listSubnets]]
+.listSubnets
+[options="header", cols="6*<,^"]
+|===
+| Property      | Type    | Option         | System             | Environment        | Default | Required
+| compartmentId | String  | compartment-id | oci.compartment.id | OCI_COMPARTMENT_ID |         | icon:check[role="green"]
+| vcnId         | String  | vcn-id         | oci.vcn.id         | OCI_VCN_ID         |         | icon:check[role="green"]
+| verbose       | boolean | verbose        | oci.verbose        | OCI_VERBOSE        | false   | icon:times[role="red"]
+|===
+<<_oci_list_,icon:arrow-up[] top>>
+
+[[listUsers]]
+.listUsers
+[options="header", cols="6*<,^"]
+|===
+| Property      | Type    | Option         | System             | Environment        | Default | Required
+| compartmentId | String  | compartment-id | oci.compartment.id | OCI_COMPARTMENT_ID |         | icon:check[role="green"]
+| verbose       | boolean | verbose        | oci.verbose        | OCI_VERBOSE        | false   | icon:times[role="red"]
+|===
+<<_oci_list_,icon:arrow-up[] top>>
+
+[[listVcns]]
+.listVcns
+[options="header", cols="6*<,^"]
+|===
+| Property      | Type    | Option         | System             | Environment        | Default | Required
+| compartmentId | String  | compartment-id | oci.compartment.id | OCI_COMPARTMENT_ID |         | icon:check[role="green"]
+| verbose       | boolean | verbose        | oci.verbose        | OCI_VERBOSE        | false   | icon:times[role="red"]
+|===
+<<_oci_list_,icon:arrow-up[] top>>
+
+[[_oci_query_]]
 === OCI Query
 
 [horizontal]
-searchResources:: Lists information on resource types.
+<<searchResources>>:: Lists information on resource types.
 
+[[searchResources]]
+.searchResources
+[options="header", cols="6*<,^"]
+|===
+| Property     | Type   | Option        | System            | Environment       | Default | Required
+| resourceType | String | resource-type | oci.resource.type | OCI_RESOURCE_TYPE |         | icon:times[role="red"]
+|===
+<<_oci_query_,icon:arrow-up[] top>>

@@ -22,7 +22,6 @@ import com.oracle.bmc.core.model.Vcn
 import com.oracle.bmc.core.requests.ListVcnsRequest
 import com.oracle.bmc.core.responses.ListVcnsResponse
 import groovy.transform.CompileStatic
-import org.kordamp.gradle.AnsiConsole
 import org.kordamp.gradle.oci.tasks.AbstractOCITask
 import org.kordamp.gradle.oci.tasks.interfaces.OCITask
 import org.kordamp.gradle.oci.tasks.traits.CompartmentIdAwareTrait
@@ -46,10 +45,9 @@ class ListVcnsTask extends AbstractOCITask implements CompartmentIdAwareTrait, V
 
         VirtualNetworkClient client = createVirtualNetworkClient()
         ListVcnsResponse response = client.listVcns(ListVcnsRequest.builder()
-            .compartmentId(getCompartmentId())
-            .build())
+                .compartmentId(getCompartmentId())
+                .build())
 
-        AnsiConsole console = new AnsiConsole(project)
         println('Total Vcns: ' + console.cyan(response.items.size().toString()))
         println(' ')
         for (Vcn vcn : response.items) {

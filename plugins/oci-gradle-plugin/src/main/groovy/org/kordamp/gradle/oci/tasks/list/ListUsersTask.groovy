@@ -22,7 +22,6 @@ import com.oracle.bmc.identity.model.User
 import com.oracle.bmc.identity.requests.ListUsersRequest
 import com.oracle.bmc.identity.responses.ListUsersResponse
 import groovy.transform.CompileStatic
-import org.kordamp.gradle.AnsiConsole
 import org.kordamp.gradle.oci.tasks.AbstractOCITask
 import org.kordamp.gradle.oci.tasks.interfaces.OCITask
 import org.kordamp.gradle.oci.tasks.traits.CompartmentIdAwareTrait
@@ -46,10 +45,9 @@ class ListUsersTask extends AbstractOCITask implements CompartmentIdAwareTrait, 
 
         IdentityClient client = createIdentityClient()
         ListUsersResponse response = client.listUsers(ListUsersRequest.builder()
-            .compartmentId(getCompartmentId())
-            .build())
+                .compartmentId(getCompartmentId())
+                .build())
 
-        AnsiConsole console = new AnsiConsole(project)
         println('Total Users: ' + console.cyan(response.items.size().toString()))
         println(' ')
         for (User user : response.items) {

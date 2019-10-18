@@ -39,7 +39,6 @@ plugins {
 }
 ----
 
-
 Refer to the link:http://aalmiray.github.io/{project-name}[guide, window="_blank"] for further information on configuration
 and usage.
 

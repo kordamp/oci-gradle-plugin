@@ -24,6 +24,8 @@ import org.gradle.api.tasks.options.Option
 import org.kordamp.gradle.oci.tasks.interfaces.PathAware
 import org.kordamp.gradle.oci.tasks.interfaces.ProjectAware
 
+import static org.kordamp.gradle.PropertyUtils.stringProperty
+
 /**
  * @author Andres Almiray
  * @since 0.1.0
@@ -39,6 +41,6 @@ trait InstanceNameAwareTrait implements PathAware, ProjectAware {
     }
 
     String getInstanceName() {
-        instanceName.orNull
+        stringProperty('OCI_INSTANCE_NAME', 'oci.instance.name', this.@instanceName.orNull)
     }
 }

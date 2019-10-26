@@ -92,7 +92,7 @@ $(addBlockSwitches);
 <h1>OCI Java SDK Gradle Plugin</h1>
 <div class="details">
 <span id="author" class="author">Andres Almiray</span><br>
-<span id="revnumber">version 0.1.0</span>
+<span id="revnumber">version 0.2.0</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -109,20 +109,16 @@ $(addBlockSwitches);
 <ul class="sectlevel3">
 <li><a href="#_standard_config_file">2.2.1. Standard Config File</a></li>
 <li><a href="#_ociconfig_extension_block">2.2.2. OciConfig Extension Block</a></li>
-<li><a href="#_common_properties">2.2.3. Common Properties</a></li>
 </ul>
 </li>
 <li><a href="#_tasks">2.3. Tasks</a>
 <ul class="sectlevel3">
-<li><a href="#_oci_create">2.3.1. OCI Create</a>
-<ul class="sectlevel4">
-<li><a href="#_oci_delete">OCI Delete</a></li>
-</ul>
-</li>
-<li><a href="#_oci_get">2.3.2. OCI Get</a></li>
-<li><a href="#_oci_instance">2.3.3. OCI Instance</a></li>
-<li><a href="#_oci_list">2.3.4. OCI List</a></li>
-<li><a href="#_oci_query">2.3.5. OCI Query</a></li>
+<li><a href="#_oci_create_">2.3.1. OCI Create</a></li>
+<li><a href="#_oci_delete_">2.3.2. OCI Delete</a></li>
+<li><a href="#_oci_get_">2.3.3. OCI Get</a></li>
+<li><a href="#_oci_instance_">2.3.4. OCI Instance</a></li>
+<li><a href="#_oci_list_">2.3.5. OCI List</a></li>
+<li><a href="#_oci_query_">2.3.6. OCI Query</a></li>
 </ul>
 </li>
 </ul>
@@ -139,7 +135,32 @@ $(addBlockSwitches);
 <p>A Gradle plugin for the <a href="http://github.com/oracle/oci-java-sdk">Oracle Cloud Infrastructure Java SDK</a>.</p>
 </div>
 <div class="paragraph">
-<p>Currently supported OCI Java SDK version is <strong><code>1.5.2</code></strong>.</p>
+<p>Currently supported OCI Java SDK version is <strong><code>1.9.1</code></strong>.</p>
+</div>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+For the time being, this plugin provides the minimum capabilities to setup instances. In the future this plugin
+may provide access to all services exposed by the OCI Java SDK.
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+This plugin is not endorsed by Oracle nor does the company provide any support for it.
+</td>
+</tr>
+</table>
 </div>
 </div>
 </div>
@@ -160,7 +181,7 @@ $(addBlockSwitches);
         gradlePluginPortal()
     }
     dependencies {
-        classpath 'org.kordamp.gradle:oci-gradle-plugin:0.1.0'
+        classpath 'org.kordamp.gradle:oci-gradle-plugin:0.2.0'
     }
 }
 apply plugin: 'org.kordamp.gradle.oci'</code></pre>
@@ -172,7 +193,7 @@ apply plugin: 'org.kordamp.gradle.oci'</code></pre>
 <div class="listingblock">
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">plugins {
-    id 'org.kordamp.gradle.oci' version '0.1.0'
+    id 'org.kordamp.gradle.oci' version '0.2.0'
 }</code></pre>
 </div>
 </div>
@@ -269,45 +290,140 @@ found on the config file</p>
 </div>
 </div>
 </div>
-<div class="sect3">
-<h4 id="_common_properties"><a class="anchor" href="#_common_properties"></a>2.2.3. Common Properties</h4>
-<div class="paragraph">
-<p>All tasks share the following properties</p>
-</div>
-<div class="hdlist">
-<table>
-<tr>
-<td class="hdlist1">
-profile
-</td>
-<td class="hdlist2">
-<p>The profile to use. Defaults to DEFAULT (OPTIONAL).</p>
-</td>
-</tr>
-<tr>
-<td class="hdlist1">
-region
-</td>
-<td class="hdlist2">
-<p>The region to use (OPTIONAL).</p>
-</td>
-</tr>
-</table>
-</div>
-</div>
 </div>
 <div class="sect2">
 <h3 id="_tasks"><a class="anchor" href="#_tasks"></a>2.3. Tasks</h3>
 <div class="paragraph">
-<p>Invoke <code>gradle help --task &lt;taskname&gt;</code> to learn more about the properties that can be set for a particular task.</p>
+<p>Invoke <code>gradle help --task &lt;taskname&gt;</code> to learn more about the properties that can be set for a particular task.
+All tasks share the following properties</p>
 </div>
-<div class="sect3">
-<h4 id="_oci_create"><a class="anchor" href="#_oci_create"></a>2.3.1. OCI Create</h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2858%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Property</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Option</th>
+<th class="tableblock halign-left valign-top">System</th>
+<th class="tableblock halign-left valign-top">Environment</th>
+<th class="tableblock halign-left valign-top">Default</th>
+<th class="tableblock halign-center valign-top">Required</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">profile</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">String</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">profile</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">oci.profile</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OCI_PROFILE</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">DEFAULT</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><span class="icon red"><i class="fa fa-times"></i></span></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">region</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">String</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">region</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">oci.region</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OCI_REGION</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><span class="icon red"><i class="fa fa-times"></i></span></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">showSecrets</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">show-secrets</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><span class="icon red"><i class="fa fa-times"></i></span></p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>Where each column defines</p>
+</div>
 <div class="hdlist">
 <table>
 <tr>
 <td class="hdlist1">
-createCompartment
+Property
+</td>
+<td class="hdlist2">
+<p>The name of the task property.</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Type
+</td>
+<td class="hdlist2">
+<p>The type of the property.</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Option
+</td>
+<td class="hdlist2">
+<p>The command line flag to set this property&#8217;s value. Use <code>--</code> as prefix, i.e, <code>--profile=mine</code>.</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+System
+</td>
+<td class="hdlist2">
+<p>The system property to set this property&#8217;s value. Use <code>-D</code> as prefix, i.e, <code>-Doci.profile=mine</code></p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Environment
+</td>
+<td class="hdlist2">
+<p>The environment key to set this property&#8217;s value. Set as key/value in command shell, i.e, <code>export OCI_PROFILE=mine</code>.</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Default
+</td>
+<td class="hdlist2">
+<p>Default value for this property (if any).</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Required
+</td>
+<td class="hdlist2">
+<p>Whether this property is required or not.</p>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>System values are resolved in the following order</p>
+</div>
+<div class="paragraph">
+<p>Environment &gt; System System &gt; Option &gt; Property</p>
+</div>
+<div class="sect3">
+<h4 id="_oci_create_"><a class="anchor" href="#_oci_create_"></a>2.3.1. OCI Create</h4>
+<div class="hdlist">
+<table>
+<tr>
+<td class="hdlist1">
+<a href="#createCompartment">createCompartment</a>
 </td>
 <td class="hdlist2">
 <p>Creates a Compartment.</p>
@@ -315,15 +431,7 @@ createCompartment
 </tr>
 <tr>
 <td class="hdlist1">
-createInstance
-</td>
-<td class="hdlist2">
-<p>Creates an Instance.</p>
-</td>
-</tr>
-<tr>
-<td class="hdlist1">
-createInstanceConsoleConnection
+<a href="#createInstanceConsoleConnection">createInstanceConsoleConnection</a>
 </td>
 <td class="hdlist2">
 <p>Creates an InstanceConsoleConnection.</p>
@@ -331,7 +439,15 @@ createInstanceConsoleConnection
 </tr>
 <tr>
 <td class="hdlist1">
-createInternetGateway
+<a href="#createInstance">createInstance</a>
+</td>
+<td class="hdlist2">
+<p>Creates an Instance.</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<a href="#createInternetGateway">createInternetGateway</a>
 </td>
 <td class="hdlist2">
 <p>Creates a InternetGateway.</p>
@@ -339,7 +455,7 @@ createInternetGateway
 </tr>
 <tr>
 <td class="hdlist1">
-createSubnet
+<a href="#createSubnet">createSubnet</a>
 </td>
 <td class="hdlist2">
 <p>Creates a Subnet.</p>
@@ -347,7 +463,7 @@ createSubnet
 </tr>
 <tr>
 <td class="hdlist1">
-createVcn
+<a href="#createVcn">createVcn</a>
 </td>
 <td class="hdlist2">
 <p>Creates a Vcn.</p>
@@ -355,13 +471,488 @@ createVcn
 </tr>
 </table>
 </div>
-<div class="sect4">
-<h5 id="_oci_delete"><a class="anchor" href="#_oci_delete"></a>OCI Delete</h5>
+<table id="createCompartment" class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 1. createCompartment</caption>
+<colgroup>
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2858%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Property</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Option</th>
+<th class="tableblock halign-left valign-top">System</th>
+<th class="tableblock halign-left valign-top">Environment</th>
+<th class="tableblock halign-left valign-top">Default</th>
+<th class="tableblock halign-center valign-top">Required</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">compartmentDescription</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">String</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">compartment-description</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">oci.compartment.description</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OCI_COMPARTMENT_DESCRIPTION</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><span class="icon green"><i class="fa fa-check"></i></span></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">compartmentId</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">String</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">compartment-id</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">oci.compartment.id</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OCI_COMPARTMENT_ID</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><span class="icon green"><i class="fa fa-check"></i></span></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">compartmentName</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">String</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">compartment-name</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">oci.compartment.name</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OCI_COMPARTMENT_NAME</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><span class="icon green"><i class="fa fa-check"></i></span></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">verbose</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">verbose</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">oci.verbose</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OCI_VERBOSE</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><span class="icon red"><i class="fa fa-times"></i></span></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">waitForCompletion</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">wait-for-completion</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">oci.wait.for.completion</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OCI_WAIT_FOR_COMPLETION</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><span class="icon red"><i class="fa fa-times"></i></span></p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><a href="#_oci_create_"><span class="icon"><i class="fa fa-arrow-up"></i></span> top</a></p>
+</div>
+<table id="createInstanceConsoleConnection" class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 2. createInstanceConsoleConnection</caption>
+<colgroup>
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2858%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Property</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Option</th>
+<th class="tableblock halign-left valign-top">System</th>
+<th class="tableblock halign-left valign-top">Environment</th>
+<th class="tableblock halign-left valign-top">Default</th>
+<th class="tableblock halign-center valign-top">Required</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">compartmentId</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">String</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">compartment-id</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">oci.compartment.id</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OCI_COMPARTMENT_ID</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><span class="icon green"><i class="fa fa-check"></i></span></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">instanceId</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">String</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">instance-id</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">oci.instance.id</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OCI_INSTANCE_ID</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><span class="icon green"><i class="fa fa-check"></i></span></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">publicKeyFile</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">File</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">public-key-file</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">oci.public.key.file</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OCI_PUBLIC_KEY_FILE</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><span class="icon green"><i class="fa fa-check"></i></span></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">verbose</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">verbose</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">oci.verbose</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OCI_VERBOSE</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><span class="icon red"><i class="fa fa-times"></i></span></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">waitForCompletion</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">wait-for-completion</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">oci.wait.for.completion</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OCI_WAIT_FOR_COMPLETION</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><span class="icon red"><i class="fa fa-times"></i></span></p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><a href="#_oci_create_"><span class="icon"><i class="fa fa-arrow-up"></i></span> top</a></p>
+</div>
+<table id="createInstance" class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 3. createInstance</caption>
+<colgroup>
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2858%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Property</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Option</th>
+<th class="tableblock halign-left valign-top">System</th>
+<th class="tableblock halign-left valign-top">Environment</th>
+<th class="tableblock halign-left valign-top">Default</th>
+<th class="tableblock halign-center valign-top">Required</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">compartmentId</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">String</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">compartment-id</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">oci.compartment.id</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OCI_COMPARTMENT_ID</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><span class="icon green"><i class="fa fa-check"></i></span></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">image</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">String</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">image</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">oci.image</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OCI_IMAGE</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><span class="icon green"><i class="fa fa-check"></i></span></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">instanceName</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">String</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">instance-name</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">oci.instance.name</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OCI_INSTANCE_NAME</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><span class="icon green"><i class="fa fa-check"></i></span></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">publicKeyFile</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">File</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">public-key-file</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">oci.public.key.file</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OCI_PUBLIC_KEY_FILE</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><span class="icon green"><i class="fa fa-check"></i></span></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">shape</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">String</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">shape</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">oci.shape</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OCI_SHAPE</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><span class="icon green"><i class="fa fa-check"></i></span></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">subnetId</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">String</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">subnet-id</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">oci.subnet.id</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OCI_SUBNET_ID</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><span class="icon green"><i class="fa fa-check"></i></span></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">userDataFile</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">File</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">user-data-file</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">oci.user.data.file</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OCI_USER_DATA_FILE</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><span class="icon green"><i class="fa fa-check"></i></span></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">verbose</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">verbose</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">oci.verbose</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OCI_VERBOSE</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><span class="icon red"><i class="fa fa-times"></i></span></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">waitForCompletion</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">wait-for-completion</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">oci.wait.for.completion</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OCI_WAIT_FOR_COMPLETION</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><span class="icon red"><i class="fa fa-times"></i></span></p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><a href="#_oci_create_"><span class="icon"><i class="fa fa-arrow-up"></i></span> top</a></p>
+</div>
+<table id="createInternetGateway" class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 4. createInternetGateway</caption>
+<colgroup>
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2858%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Property</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Option</th>
+<th class="tableblock halign-left valign-top">System</th>
+<th class="tableblock halign-left valign-top">Environment</th>
+<th class="tableblock halign-left valign-top">Default</th>
+<th class="tableblock halign-center valign-top">Required</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">internetGatewayName</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">String</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">internet-gateway-name</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">oci.internet.gateway.name</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OCI_INTERNET_GATEWAY_NAME</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><span class="icon green"><i class="fa fa-check"></i></span></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">verbose</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">verbose</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">oci.verbose</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OCI_VERBOSE</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><span class="icon red"><i class="fa fa-times"></i></span></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">waitForCompletion</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">wait-for-completion</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">oci.wait.for.completion</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OCI_WAIT_FOR_COMPLETION</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><span class="icon red"><i class="fa fa-times"></i></span></p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><a href="#_oci_create_"><span class="icon"><i class="fa fa-arrow-up"></i></span> top</a></p>
+</div>
+<table id="createSubnet" class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 5. createSubnet</caption>
+<colgroup>
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2858%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Property</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Option</th>
+<th class="tableblock halign-left valign-top">System</th>
+<th class="tableblock halign-left valign-top">Environment</th>
+<th class="tableblock halign-left valign-top">Default</th>
+<th class="tableblock halign-center valign-top">Required</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">availabilityDomain</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">String</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">availability-domain</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">oci.availability.domain</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OCI_AVAILABILITY_DOMAIN</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><span class="icon green"><i class="fa fa-check"></i></span></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">compartmentId</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">String</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">compartment-id</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">oci.compartment.id</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OCI_COMPARTMENT_ID</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><span class="icon green"><i class="fa fa-check"></i></span></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">dnsLabel</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">String</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">dns-label</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">oci.dns.label</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OCI_DNS_LABEL</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><span class="icon green"><i class="fa fa-check"></i></span></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">subnetName</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">String</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">subnet-name</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">oci.subnet.name</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OCI_SUBNET_NAME</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><span class="icon green"><i class="fa fa-check"></i></span></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">vcnId</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">String</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">vcn-id</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">oci.vcn.id</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OCI_VCN_ID</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><span class="icon green"><i class="fa fa-check"></i></span></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">verbose</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">verbose</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">oci.verbose</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OCI_VERBOSE</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><span class="icon red"><i class="fa fa-times"></i></span></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">waitForCompletion</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">wait-for-completion</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">oci.wait.for.completion</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OCI_WAIT_FOR_COMPLETION</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><span class="icon red"><i class="fa fa-times"></i></span></p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><a href="#_oci_create_"><span class="icon"><i class="fa fa-arrow-up"></i></span> top</a></p>
+</div>
+<table id="createVcn" class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 6. createVcn</caption>
+<colgroup>
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2858%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Property</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Option</th>
+<th class="tableblock halign-left valign-top">System</th>
+<th class="tableblock halign-left valign-top">Environment</th>
+<th class="tableblock halign-left valign-top">Default</th>
+<th class="tableblock halign-center valign-top">Required</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">compartmentId</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">String</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">compartment-id</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">oci.compartment.id</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OCI_COMPARTMENT_ID</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><span class="icon green"><i class="fa fa-check"></i></span></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">dnsLabel</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">String</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">dns-label</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">oci.dns.label</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OCI_DNS_LABEL</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><span class="icon green"><i class="fa fa-check"></i></span></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">vcnName</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">String</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">vcn-name</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">oci.vcn.name</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OCI_VCN_NAME</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><span class="icon green"><i class="fa fa-check"></i></span></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">verbose</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">verbose</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">oci.verbose</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OCI_VERBOSE</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><span class="icon red"><i class="fa fa-times"></i></span></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">waitForCompletion</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">wait-for-completion</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">oci.wait.for.completion</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OCI_WAIT_FOR_COMPLETION</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><span class="icon red"><i class="fa fa-times"></i></span></p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><a href="#_oci_create_"><span class="icon"><i class="fa fa-arrow-up"></i></span> top</a></p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_oci_delete_"><a class="anchor" href="#_oci_delete_"></a>2.3.2. OCI Delete</h4>
 <div class="hdlist">
 <table>
 <tr>
 <td class="hdlist1">
-deleteCompartment
+<a href="#deleteCompartment">deleteCompartment</a>
 </td>
 <td class="hdlist2">
 <p>Deletes a Compartment.</p>
@@ -369,7 +960,7 @@ deleteCompartment
 </tr>
 <tr>
 <td class="hdlist1">
-deleteInstanceConsoleConnection
+<a href="#deleteInstanceConsoleConnection">deleteInstanceConsoleConnection</a>
 </td>
 <td class="hdlist2">
 <p>Deletes an InstanceConsoleConnection.</p>
@@ -377,7 +968,7 @@ deleteInstanceConsoleConnection
 </tr>
 <tr>
 <td class="hdlist1">
-deleteInternetGateway
+<a href="#deleteInternetGateway">deleteInternetGateway</a>
 </td>
 <td class="hdlist2">
 <p>Deletes a InternetGateway.</p>
@@ -385,7 +976,7 @@ deleteInternetGateway
 </tr>
 <tr>
 <td class="hdlist1">
-deleteSubnet
+<a href="#deleteSubnet">deleteSubnet</a>
 </td>
 <td class="hdlist2">
 <p>Deletes a Subnet.</p>
@@ -393,7 +984,7 @@ deleteSubnet
 </tr>
 <tr>
 <td class="hdlist1">
-deleteVcn
+<a href="#deleteVcn">deleteVcn</a>
 </td>
 <td class="hdlist2">
 <p>Deletes a Vcn.</p>
@@ -401,15 +992,352 @@ deleteVcn
 </tr>
 </table>
 </div>
+<table id="deleteCompartment" class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 7. deleteCompartment</caption>
+<colgroup>
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2858%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Property</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Option</th>
+<th class="tableblock halign-left valign-top">System</th>
+<th class="tableblock halign-left valign-top">Environment</th>
+<th class="tableblock halign-left valign-top">Default</th>
+<th class="tableblock halign-center valign-top">Required</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">compartmentId</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">String</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">compartment-id</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">oci.compartment.id</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OCI_COMPARTMENT_ID</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><span class="icon green"><i class="fa fa-check"></i></span></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">waitForCompletion</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">wait-for-completion</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">oci.wait.for.completion</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OCI_WAIT_FOR_COMPLETION</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><span class="icon red"><i class="fa fa-times"></i></span></p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><a href="#_oci_delete_"><span class="icon"><i class="fa fa-arrow-up"></i></span> top</a></p>
+</div>
+<table id="deleteInstanceConsoleConnection" class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 8. deleteInstanceConsoleConnection</caption>
+<colgroup>
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2858%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Property</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Option</th>
+<th class="tableblock halign-left valign-top">System</th>
+<th class="tableblock halign-left valign-top">Environment</th>
+<th class="tableblock halign-left valign-top">Default</th>
+<th class="tableblock halign-center valign-top">Required</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">instanceConsoleConnectionId</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">String</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">instance-console-connection-id</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">oci.instance.console.connection.id</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OCI_INSTANCE_CONSOLE_CONNECTION_ID</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><span class="icon green"><i class="fa fa-check"></i></span></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">waitForCompletion</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">wait-for-completion</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">oci.wait.for.completion</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OCI_WAIT_FOR_COMPLETION</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><span class="icon red"><i class="fa fa-times"></i></span></p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><a href="#_oci_delete_"><span class="icon"><i class="fa fa-arrow-up"></i></span> top</a></p>
+</div>
+<table id="deleteInternetGateway" class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 9. deleteInternetGateway</caption>
+<colgroup>
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2858%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Property</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Option</th>
+<th class="tableblock halign-left valign-top">System</th>
+<th class="tableblock halign-left valign-top">Environment</th>
+<th class="tableblock halign-left valign-top">Default</th>
+<th class="tableblock halign-center valign-top">Required</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">compartmentId</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">String</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">compartment-id</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">oci.compartment.id</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OCI_COMPARTMENT_ID</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><span class="icon green"><i class="fa fa-check"></i></span></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">internetGatewayId</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">String</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">internet-gateway-id</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">oci.internet.gateway.id</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OCI_INTERNET_GATEWAY_ID</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><span class="icon green"><i class="fa fa-check"></i></span>*</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">internetGatewayName</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">String</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">internet-gateway-name</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">oci.internet.gateway.name</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OCI_INTERNET_GATEWAY_NAME</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><span class="icon green"><i class="fa fa-check"></i></span>*</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">vcnId</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">String</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">vcn-id</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">oci.vcn.id</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OCI_VCN_ID</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><span class="icon green"><i class="fa fa-check"></i></span></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">waitForCompletion</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">wait-for-completion</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">oci.wait.for.completion</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OCI_WAIT_FOR_COMPLETION</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><span class="icon red"><i class="fa fa-times"></i></span></p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Either <code>internetGatewayId</code> or <code>internetGatewayName</code> must be specified.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p><a href="#_oci_delete_"><span class="icon"><i class="fa fa-arrow-up"></i></span> top</a></p>
+</div>
+<table id="deleteSubnet" class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 10. deleteSubnet</caption>
+<colgroup>
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2858%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Property</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Option</th>
+<th class="tableblock halign-left valign-top">System</th>
+<th class="tableblock halign-left valign-top">Environment</th>
+<th class="tableblock halign-left valign-top">Default</th>
+<th class="tableblock halign-center valign-top">Required</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">compartmentId</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">String</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">compartment-id</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">oci.compartment.id</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OCI_COMPARTMENT_ID</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><span class="icon green"><i class="fa fa-check"></i></span></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">subnetId</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">String</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">subnet-id</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">oci.subnet.id</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OCI_SUBNET_ID</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><span class="icon green"><i class="fa fa-check"></i></span>*</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">subnetName</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">String</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">subnet-name</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">oci.subnet.name</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OCI_SUBNET_NAME</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><span class="icon green"><i class="fa fa-check"></i></span>*</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">vcnId</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">String</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">vcn-id</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">oci.vcn.id</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OCI_VCN_ID</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><span class="icon green"><i class="fa fa-check"></i></span></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">waitForCompletion</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">wait-for-completion</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">oci.wait.for.completion</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OCI_WAIT_FOR_COMPLETION</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><span class="icon red"><i class="fa fa-times"></i></span></p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Either <code>subneId</code> or <code>subnetName</code> must be specified.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p><a href="#_oci_delete_"><span class="icon"><i class="fa fa-arrow-up"></i></span> top</a></p>
+</div>
+<table id="deleteVcn" class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 11. deleteVcn</caption>
+<colgroup>
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2858%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Property</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Option</th>
+<th class="tableblock halign-left valign-top">System</th>
+<th class="tableblock halign-left valign-top">Environment</th>
+<th class="tableblock halign-left valign-top">Default</th>
+<th class="tableblock halign-center valign-top">Required</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">compartmentId</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">String</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">compartment-id</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">oci.compartment.id</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OCI_COMPARTMENT_ID</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><span class="icon green"><i class="fa fa-check"></i></span></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">vcnId</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">String</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">vcn-id</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">oci.vcn.id</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OCI_VCN_ID</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><span class="icon green"><i class="fa fa-check"></i></span>*</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">vcnName</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">String</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">vcn-name</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">oci.vcn.name</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OCI_VCNNAME</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><span class="icon"><i class="fa fa-check"></i></span>*</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">waitForCompletion</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">wait-for-completion</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">oci.wait.for.completion</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OCI_WAIT_FOR_COMPLETION</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><span class="icon red"><i class="fa fa-times"></i></span></p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Either <code>vcnId</code> or <code>vcnName</code> must be specified.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p><a href="#_oci_delete_"><span class="icon"><i class="fa fa-arrow-up"></i></span> top</a></p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_oci_get"><a class="anchor" href="#_oci_get"></a>2.3.2. OCI Get</h4>
+<h4 id="_oci_get_"><a class="anchor" href="#_oci_get_"></a>2.3.3. OCI Get</h4>
 <div class="hdlist">
 <table>
 <tr>
 <td class="hdlist1">
-getCompartment
+<a href="#getCompartment">getCompartment</a>
 </td>
 <td class="hdlist2">
 <p>Displays information for an specific Compartment.</p>
@@ -417,15 +1345,7 @@ getCompartment
 </tr>
 <tr>
 <td class="hdlist1">
-getInstance
-</td>
-<td class="hdlist2">
-<p>Displays information for an specific Instance.</p>
-</td>
-</tr>
-<tr>
-<td class="hdlist1">
-getInstanceConsoleConnection
+<a href="#getInstanceConsoleConnection">getInstanceConsoleConnection</a>
 </td>
 <td class="hdlist2">
 <p>Displays information for an specific InstanceConsoleConnection.</p>
@@ -433,7 +1353,7 @@ getInstanceConsoleConnection
 </tr>
 <tr>
 <td class="hdlist1">
-getInstancePublicIp
+<a href="#getInstancePublicIp">getInstancePublicIp</a>
 </td>
 <td class="hdlist2">
 <p>Displays public Ip addresses for a particular Instance.</p>
@@ -441,7 +1361,15 @@ getInstancePublicIp
 </tr>
 <tr>
 <td class="hdlist1">
-getInternetGateway
+<a href="#getInstance">getInstance</a>
+</td>
+<td class="hdlist2">
+<p>Displays information for an specific Instance.</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<a href="#getInternetGateway">getInternetGateway</a>
 </td>
 <td class="hdlist2">
 <p>Displays information for an specific InternetGateway.</p>
@@ -449,7 +1377,7 @@ getInternetGateway
 </tr>
 <tr>
 <td class="hdlist1">
-getRouteTable
+<a href="#getRouteTable">getRouteTable</a>
 </td>
 <td class="hdlist2">
 <p>Displays information for an specific RouteTable.</p>
@@ -457,7 +1385,7 @@ getRouteTable
 </tr>
 <tr>
 <td class="hdlist1">
-getSecurityList
+<a href="#getSecurityList">getSecurityList</a>
 </td>
 <td class="hdlist2">
 <p>Displays information for an specific SecurityList.</p>
@@ -465,7 +1393,7 @@ getSecurityList
 </tr>
 <tr>
 <td class="hdlist1">
-getSubnet
+<a href="#getSubnet">getSubnet</a>
 </td>
 <td class="hdlist2">
 <p>Displays information for an specific Subnet.</p>
@@ -473,7 +1401,7 @@ getSubnet
 </tr>
 <tr>
 <td class="hdlist1">
-getVcn
+<a href="#getVcn">getVcn</a>
 </td>
 <td class="hdlist2">
 <p>Displays information for an specific Vcn.</p>
@@ -481,14 +1409,356 @@ getVcn
 </tr>
 </table>
 </div>
+<table id="getCompartment" class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 12. getCompartment</caption>
+<colgroup>
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2858%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Property</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Option</th>
+<th class="tableblock halign-left valign-top">System</th>
+<th class="tableblock halign-left valign-top">Environment</th>
+<th class="tableblock halign-left valign-top">Default</th>
+<th class="tableblock halign-center valign-top">Required</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">compartmentId</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">String</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">compartment-id</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">oci.compartment.id</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OCI_COMPARTMENT_ID</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><span class="icon green"><i class="fa fa-check"></i></span></p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><a href="#_oci_get_"><span class="icon"><i class="fa fa-arrow-up"></i></span> top</a></p>
+</div>
+<table id="getInstanceConsoleConnection" class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 13. getInstanceConsoleConnection</caption>
+<colgroup>
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2858%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Property</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Option</th>
+<th class="tableblock halign-left valign-top">System</th>
+<th class="tableblock halign-left valign-top">Environment</th>
+<th class="tableblock halign-left valign-top">Default</th>
+<th class="tableblock halign-center valign-top">Required</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">instanceConsoleConnectionId</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">String</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">instance-console-connection-id</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">oci.instance.console.connection.id</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OCI_INSTANCE_CONSOLE_CONNECTION_ID</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><span class="icon green"><i class="fa fa-check"></i></span></p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><a href="#_oci_get_"><span class="icon"><i class="fa fa-arrow-up"></i></span> top</a></p>
+</div>
+<table id="getInstancePublicIp" class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 14. getInstancePublicIp</caption>
+<colgroup>
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2858%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Property</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Option</th>
+<th class="tableblock halign-left valign-top">System</th>
+<th class="tableblock halign-left valign-top">Environment</th>
+<th class="tableblock halign-left valign-top">Default</th>
+<th class="tableblock halign-center valign-top">Required</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">compartmentId</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">String</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">compartment-id</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">oci.compartment.id</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OCI_COMPARTMENT_ID</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><span class="icon green"><i class="fa fa-check"></i></span></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">instanceId</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">String</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">instance-id</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">oci.instance.id</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OCI_INSTANCE_ID</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><span class="icon green"><i class="fa fa-check"></i></span></p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><a href="#_oci_get_"><span class="icon"><i class="fa fa-arrow-up"></i></span> top</a></p>
+</div>
+<table id="getInstance" class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 15. getInstance</caption>
+<colgroup>
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2858%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Property</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Option</th>
+<th class="tableblock halign-left valign-top">System</th>
+<th class="tableblock halign-left valign-top">Environment</th>
+<th class="tableblock halign-left valign-top">Default</th>
+<th class="tableblock halign-center valign-top">Required</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">instanceId</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">String</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">instance-id</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">oci.instance.id</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OCI_INSTANCE_ID</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><span class="icon green"><i class="fa fa-check"></i></span></p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><a href="#_oci_get_"><span class="icon"><i class="fa fa-arrow-up"></i></span> top</a></p>
+</div>
+<table id="getInternetGateway" class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 16. getInternetGateway</caption>
+<colgroup>
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2858%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Property</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Option</th>
+<th class="tableblock halign-left valign-top">System</th>
+<th class="tableblock halign-left valign-top">Environment</th>
+<th class="tableblock halign-left valign-top">Default</th>
+<th class="tableblock halign-center valign-top">Required</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">internetGatewayId</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">String</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">internet-gateway-id</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">oci.internet.gateway.id</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OCI_INTERNET_GATEWAY_ID</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><span class="icon green"><i class="fa fa-check"></i></span></p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><a href="#_oci_get_"><span class="icon"><i class="fa fa-arrow-up"></i></span> top</a></p>
+</div>
+<table id="getRouteTable" class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 17. getRouteTable</caption>
+<colgroup>
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2858%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Property</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Option</th>
+<th class="tableblock halign-left valign-top">System</th>
+<th class="tableblock halign-left valign-top">Environment</th>
+<th class="tableblock halign-left valign-top">Default</th>
+<th class="tableblock halign-center valign-top">Required</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">routeTableId</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">String</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">route-table-id</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">oci.route.table.id</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OCI_ROUTE_TABLE_ID</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><span class="icon green"><i class="fa fa-check"></i></span></p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><a href="#_oci_get_"><span class="icon"><i class="fa fa-arrow-up"></i></span> top</a></p>
+</div>
+<table id="getSecurityList" class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 18. getSecurityList</caption>
+<colgroup>
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2858%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Property</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Option</th>
+<th class="tableblock halign-left valign-top">System</th>
+<th class="tableblock halign-left valign-top">Environment</th>
+<th class="tableblock halign-left valign-top">Default</th>
+<th class="tableblock halign-center valign-top">Required</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">securityListId</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">String</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">security-list-id</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">oci.security.list.id</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OCI_SECURITY_LIST_ID</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><span class="icon green"><i class="fa fa-check"></i></span></p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><a href="#_oci_get_"><span class="icon"><i class="fa fa-arrow-up"></i></span> top</a></p>
+</div>
+<table id="getSubnet" class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 19. getSubnet</caption>
+<colgroup>
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2858%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Property</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Option</th>
+<th class="tableblock halign-left valign-top">System</th>
+<th class="tableblock halign-left valign-top">Environment</th>
+<th class="tableblock halign-left valign-top">Default</th>
+<th class="tableblock halign-center valign-top">Required</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">subnetId</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">String</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">subnet-id</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">oci.subnet.id</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OCI_SUBNET_ID</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><span class="icon green"><i class="fa fa-check"></i></span></p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><a href="#_oci_get_"><span class="icon"><i class="fa fa-arrow-up"></i></span> top</a></p>
+</div>
+<table id="getVcn" class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 20. getVcn</caption>
+<colgroup>
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2858%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Property</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Option</th>
+<th class="tableblock halign-left valign-top">System</th>
+<th class="tableblock halign-left valign-top">Environment</th>
+<th class="tableblock halign-left valign-top">Default</th>
+<th class="tableblock halign-center valign-top">Required</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">vcnId</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">String</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">vcn-id</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">oci.vcn.id</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OCI_VCN_ID</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><span class="icon green"><i class="fa fa-check"></i></span></p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><a href="#_oci_get_"><span class="icon"><i class="fa fa-arrow-up"></i></span> top</a></p>
+</div>
 </div>
 <div class="sect3">
-<h4 id="_oci_instance"><a class="anchor" href="#_oci_instance"></a>2.3.3. OCI Instance</h4>
+<h4 id="_oci_instance_"><a class="anchor" href="#_oci_instance_"></a>2.3.4. OCI Instance</h4>
 <div class="hdlist">
 <table>
 <tr>
 <td class="hdlist1">
-addIngressSecurityRule
+<a href="#addIngressSecurityRule">addIngressSecurityRule</a>
 </td>
 <td class="hdlist2">
 <p>Adds IngressSecurityRules to a SecurityList.</p>
@@ -496,7 +1766,7 @@ addIngressSecurityRule
 </tr>
 <tr>
 <td class="hdlist1">
-instanceAction
+<a href="#instanceAction">instanceAction</a>
 </td>
 <td class="hdlist2">
 <p>Performs a given action on an Instance.</p>
@@ -504,7 +1774,7 @@ instanceAction
 </tr>
 <tr>
 <td class="hdlist1">
-setupInstance
+<a href="#setupInstance">setupInstance</a>
 </td>
 <td class="hdlist2">
 <p>Setups an Instance with Vcn, InternetGateway, Subnets, InstanceConsoleConnection, and Volume.</p>
@@ -512,7 +1782,7 @@ setupInstance
 </tr>
 <tr>
 <td class="hdlist1">
-terminateInstance
+<a href="#terminateInstance">terminateInstance</a>
 </td>
 <td class="hdlist2">
 <p>Terminates an Instance.</p>
@@ -520,14 +1790,366 @@ terminateInstance
 </tr>
 </table>
 </div>
+<table id="addIngressSecurityRule" class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 21. addIngressSecurityRule</caption>
+<colgroup>
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2858%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Property</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Option</th>
+<th class="tableblock halign-left valign-top">System</th>
+<th class="tableblock halign-left valign-top">Environment</th>
+<th class="tableblock halign-left valign-top">Default</th>
+<th class="tableblock halign-center valign-top">Required</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">port</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">int</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">port</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">oci.port</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OCI_PORT</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><span class="icon green"><i class="fa fa-check"></i></span></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">portType</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">String</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">port-type</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">oci.port.typ</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OCI_PORT_TYPE</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">TCP</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><span class="icon red"><i class="fa fa-times"></i></span></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">securityListId</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">String</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">security-list-id</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">oci.security.list.id</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OCI_SECURITY_LIST_ID</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><span class="icon green"><i class="fa fa-check"></i></span></p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Multiple entries for <code>--port</code> may be defined.
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Valid values for <code>portType</code> are: <code>TCP</code>, <code>UDP</code>.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p><a href="#_oci_instance_"><span class="icon"><i class="fa fa-arrow-up"></i></span> top</a></p>
+</div>
+<table id="instanceAction" class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 22. instanceAction</caption>
+<colgroup>
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2858%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Property</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Option</th>
+<th class="tableblock halign-left valign-top">System</th>
+<th class="tableblock halign-left valign-top">Environment</th>
+<th class="tableblock halign-left valign-top">Default</th>
+<th class="tableblock halign-center valign-top">Required</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">action</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">String</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">action</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">oci.action</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OCI_ACTION</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">STOP</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><span class="icon green"><i class="fa fa-check"></i></span></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">compartmentId</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">String</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">compartment-id</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">oci.compartment.id</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OCI_COMPARTMENT_ID</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><span class="icon green"><i class="fa fa-check"></i></span></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">instanceId</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">String</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">instance-id</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">oci.instance.id</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OCI_INSTANCE_ID</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><span class="icon green"><i class="fa fa-check"></i></span>*</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">instanceName</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">String</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">instance-name</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">oci.instance.name</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OCI_INSTANCE_NAME</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><span class="icon green"><i class="fa fa-check"></i></span>*</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">waitForCompletion</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">wait-for-completion</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">oci.wait.for.completion</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OCI_WAIT_FOR_COMPLETION</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><span class="icon red"><i class="fa fa-times"></i></span></p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Either <code>instanceId</code> or <code>instanceName</code> must be specified.
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Valid values for <code>action</code> are: <code>RESET</code>, <code>SOFTRESET</code>, <code>SOFTSTOP</code>, <code>START</code>, <code>STOP</code>.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p><a href="#_oci_instance_"><span class="icon"><i class="fa fa-arrow-up"></i></span> top</a></p>
+</div>
+<table id="setupInstance" class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 23. setupInstance</caption>
+<colgroup>
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2858%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Property</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Option</th>
+<th class="tableblock halign-left valign-top">System</th>
+<th class="tableblock halign-left valign-top">Environment</th>
+<th class="tableblock halign-left valign-top">Default</th>
+<th class="tableblock halign-center valign-top">Required</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">compartmentId</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">String</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">compartment-id</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">oci.compartment.id</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OCI_COMPARTMENT_ID</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><span class="icon green"><i class="fa fa-check"></i></span></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">image</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">String</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">image</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">oci.image</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OCI_IMAGE</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><span class="icon green"><i class="fa fa-check"></i></span></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">instanceName</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">String</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">instance-name</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">oci.instance.name</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OCI_INSTANCE_NAME</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><span class="icon green"><i class="fa fa-check"></i></span></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">publicKeyFile</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">File</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">public-key-file</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">oci.public.key.file</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OCI_PUBLIC_KEY_FILE</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><span class="icon green"><i class="fa fa-check"></i></span></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">shape</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">String</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">shape</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">oci.shape</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OCI_SHAPE</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><span class="icon green"><i class="fa fa-check"></i></span></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">userDataFile</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">File</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">user-data-file</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">oci.user.data.file</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OCI_USER_DATA_FILE</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><span class="icon green"><i class="fa fa-check"></i></span></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">verbose</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">verbose</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">oci.verbose</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OCI_VERBOSE</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><span class="icon red"><i class="fa fa-times"></i></span></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">waitForCompletion</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">wait-for-completion</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">oci.wait.for.completion</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OCI_WAIT_FOR_COMPLETION</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><span class="icon red"><i class="fa fa-times"></i></span></p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><a href="#_oci_instance_"><span class="icon"><i class="fa fa-arrow-up"></i></span> top</a></p>
+</div>
+<table id="terminateInstance" class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 24. terminateInstance</caption>
+<colgroup>
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2858%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Property</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Option</th>
+<th class="tableblock halign-left valign-top">System</th>
+<th class="tableblock halign-left valign-top">Environment</th>
+<th class="tableblock halign-left valign-top">Default</th>
+<th class="tableblock halign-center valign-top">Required</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">compartmentId</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">String</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">compartment-id</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">oci.compartment.id</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OCI_COMPARTMENT_ID</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><span class="icon green"><i class="fa fa-check"></i></span></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">instanceId</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">String</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">instance-id</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">oci.instance.id</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OCI_INSTANCE_ID</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><span class="icon green"><i class="fa fa-check"></i></span>*</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">instanceName</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">String</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">instance-name</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">oci.instance.name</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OCI_INSTANCE_NAME</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><span class="icon green"><i class="fa fa-check"></i></span>*</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">waitForCompletion</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">wait-for-completion</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">oci.wait.for.completion</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OCI_WAIT_FOR_COMPLETION</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><span class="icon red"><i class="fa fa-times"></i></span></p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Either <code>instanceId</code> or <code>instanceName</code> must be specified.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p><a href="#_oci_instance_"><span class="icon"><i class="fa fa-arrow-up"></i></span> top</a></p>
+</div>
 </div>
 <div class="sect3">
-<h4 id="_oci_list"><a class="anchor" href="#_oci_list"></a>2.3.4. OCI List</h4>
+<h4 id="_oci_list_"><a class="anchor" href="#_oci_list_"></a>2.3.5. OCI List</h4>
 <div class="hdlist">
 <table>
 <tr>
 <td class="hdlist1">
-listAvailabilityDomains
+<a href="#listAvailabilityDomains">listAvailabilityDomains</a>
 </td>
 <td class="hdlist2">
 <p>Lists AvailabilityDomains available on a Compartment.</p>
@@ -535,7 +2157,7 @@ listAvailabilityDomains
 </tr>
 <tr>
 <td class="hdlist1">
-listCompartments
+<a href="#listCompartments">listCompartments</a>
 </td>
 <td class="hdlist2">
 <p>Lists available Compartments.</p>
@@ -543,7 +2165,7 @@ listCompartments
 </tr>
 <tr>
 <td class="hdlist1">
-listImages
+<a href="#listImages">listImages</a>
 </td>
 <td class="hdlist2">
 <p>Lists Images available on a Compartment.</p>
@@ -551,7 +2173,7 @@ listImages
 </tr>
 <tr>
 <td class="hdlist1">
-listInstanceConsoleConnections
+<a href="#listInstanceConsoleConnections">listInstanceConsoleConnections</a>
 </td>
 <td class="hdlist2">
 <p>Lists available InstanceConsoleConnection on an Instance.</p>
@@ -559,7 +2181,7 @@ listInstanceConsoleConnections
 </tr>
 <tr>
 <td class="hdlist1">
-listInstances
+<a href="#listInstances">listInstances</a>
 </td>
 <td class="hdlist2">
 <p>Lists available Instances.</p>
@@ -567,7 +2189,7 @@ listInstances
 </tr>
 <tr>
 <td class="hdlist1">
-listInternetGateways
+<a href="#listInternetGateways">listInternetGateways</a>
 </td>
 <td class="hdlist2">
 <p>Lists InternetGateways available on a Vcn.</p>
@@ -575,7 +2197,7 @@ listInternetGateways
 </tr>
 <tr>
 <td class="hdlist1">
-listRegions
+<a href="#listRegions">listRegions</a>
 </td>
 <td class="hdlist2">
 <p>Lists available Regions.</p>
@@ -583,7 +2205,7 @@ listRegions
 </tr>
 <tr>
 <td class="hdlist1">
-listRouteTables
+<a href="#listRouteTables">listRouteTables</a>
 </td>
 <td class="hdlist2">
 <p>Lists RouteTables available on a Vcn.</p>
@@ -591,7 +2213,7 @@ listRouteTables
 </tr>
 <tr>
 <td class="hdlist1">
-listSecurityLists
+<a href="#listSecurityLists">listSecurityLists</a>
 </td>
 <td class="hdlist2">
 <p>Lists SecurityLists available on a Vcn.</p>
@@ -599,7 +2221,7 @@ listSecurityLists
 </tr>
 <tr>
 <td class="hdlist1">
-listShapes
+<a href="#listShapes">listShapes</a>
 </td>
 <td class="hdlist2">
 <p>Lists Shapes available on a Compartment.</p>
@@ -607,7 +2229,7 @@ listShapes
 </tr>
 <tr>
 <td class="hdlist1">
-listSubnets
+<a href="#listSubnets">listSubnets</a>
 </td>
 <td class="hdlist2">
 <p>Lists Subnets available on a Vcn.</p>
@@ -615,7 +2237,7 @@ listSubnets
 </tr>
 <tr>
 <td class="hdlist1">
-listUsers
+<a href="#listUsers">listUsers</a>
 </td>
 <td class="hdlist2">
 <p>Lists available Users.</p>
@@ -623,7 +2245,7 @@ listUsers
 </tr>
 <tr>
 <td class="hdlist1">
-listVcns
+<a href="#listVcns">listVcns</a>
 </td>
 <td class="hdlist2">
 <p>Lists Vcns available on a Compartment.</p>
@@ -631,20 +2253,682 @@ listVcns
 </tr>
 </table>
 </div>
+<table id="listAvailabilityDomains" class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 25. listAvailabilityDomains</caption>
+<colgroup>
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2858%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Property</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Option</th>
+<th class="tableblock halign-left valign-top">System</th>
+<th class="tableblock halign-left valign-top">Environment</th>
+<th class="tableblock halign-left valign-top">Default</th>
+<th class="tableblock halign-center valign-top">Required</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">compartmentId</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">String</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">compartment-id</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">oci.compartment.id</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OCI_COMPARTMENT_ID</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><span class="icon green"><i class="fa fa-check"></i></span></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">verbose</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">verbose</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">oci.verbose</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OCI_VERBOSE</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><span class="icon red"><i class="fa fa-times"></i></span></p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><a href="#_oci_list_"><span class="icon"><i class="fa fa-arrow-up"></i></span> top</a></p>
+</div>
+<table id="listCompartments" class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 26. listCompartments</caption>
+<colgroup>
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2858%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Property</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Option</th>
+<th class="tableblock halign-left valign-top">System</th>
+<th class="tableblock halign-left valign-top">Environment</th>
+<th class="tableblock halign-left valign-top">Default</th>
+<th class="tableblock halign-center valign-top">Required</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">compartmentId</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">String</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">compartment-id</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">oci.compartment.id</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OCI_COMPARTMENT_ID</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><span class="icon green"><i class="fa fa-check"></i></span></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">verbose</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">verbose</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">oci.verbose</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OCI_VERBOSE</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><span class="icon red"><i class="fa fa-times"></i></span></p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><a href="#_oci_list_"><span class="icon"><i class="fa fa-arrow-up"></i></span> top</a></p>
+</div>
+<table id="listImages" class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 27. listImages</caption>
+<colgroup>
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2858%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Property</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Option</th>
+<th class="tableblock halign-left valign-top">System</th>
+<th class="tableblock halign-left valign-top">Environment</th>
+<th class="tableblock halign-left valign-top">Default</th>
+<th class="tableblock halign-center valign-top">Required</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">compartmentId</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">String</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">compartment-id</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">oci.compartment.id</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OCI_COMPARTMENT_ID</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><span class="icon green"><i class="fa fa-check"></i></span></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">verbose</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">verbose</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">oci.verbose</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OCI_VERBOSE</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><span class="icon red"><i class="fa fa-times"></i></span></p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><a href="#_oci_list_"><span class="icon"><i class="fa fa-arrow-up"></i></span> top</a></p>
+</div>
+<table id="listInstanceConsoleConnections" class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 28. listInstanceConsoleConnections</caption>
+<colgroup>
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2858%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Property</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Option</th>
+<th class="tableblock halign-left valign-top">System</th>
+<th class="tableblock halign-left valign-top">Environment</th>
+<th class="tableblock halign-left valign-top">Default</th>
+<th class="tableblock halign-center valign-top">Required</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">compartmentId</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">String</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">compartment-id</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">oci.compartment.id</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OCI_COMPARTMENT_ID</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><span class="icon green"><i class="fa fa-check"></i></span></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">instanceId</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">String</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">instance-id</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">oci.instance.id</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OCI_INSTANCE_ID</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><span class="icon green"><i class="fa fa-check"></i></span></p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><a href="#_oci_list_"><span class="icon"><i class="fa fa-arrow-up"></i></span> top</a></p>
+</div>
+<table id="listInstances" class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 29. listInstances</caption>
+<colgroup>
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2858%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Property</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Option</th>
+<th class="tableblock halign-left valign-top">System</th>
+<th class="tableblock halign-left valign-top">Environment</th>
+<th class="tableblock halign-left valign-top">Default</th>
+<th class="tableblock halign-center valign-top">Required</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">availabilityDomain</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">String</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">availability-domain</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">oci.availability.domain</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OCI_AVAILABILITY_DOMAIN</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><span class="icon green"><i class="fa fa-check"></i></span></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">compartmentId</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">String</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">compartment-id</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">oci.compartment.id</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OCI_COMPARTMENT_ID</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><span class="icon green"><i class="fa fa-check"></i></span></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">verbose</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">verbose</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">oci.verbose</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OCI_VERBOSE</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><span class="icon red"><i class="fa fa-times"></i></span></p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><a href="#_oci_list_"><span class="icon"><i class="fa fa-arrow-up"></i></span> top</a></p>
+</div>
+<table id="listInternetGateways" class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 30. listInternetGateways</caption>
+<colgroup>
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2858%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Property</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Option</th>
+<th class="tableblock halign-left valign-top">System</th>
+<th class="tableblock halign-left valign-top">Environment</th>
+<th class="tableblock halign-left valign-top">Default</th>
+<th class="tableblock halign-center valign-top">Required</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">compartmentId</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">String</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">compartment-id</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">oci.compartment.id</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OCI_COMPARTMENT_ID</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><span class="icon green"><i class="fa fa-check"></i></span></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">vcnId</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">String</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">vcn-id</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">oci.vcn.id</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OCI_VCN_ID</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><span class="icon green"><i class="fa fa-check"></i></span></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">verbose</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">verbose</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">oci.verbose</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OCI_VERBOSE</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><span class="icon red"><i class="fa fa-times"></i></span></p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><a href="#_oci_list_"><span class="icon"><i class="fa fa-arrow-up"></i></span> top</a></p>
+</div>
+<table id="listRegions" class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 31. listRegions</caption>
+<colgroup>
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2858%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Property</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Option</th>
+<th class="tableblock halign-left valign-top">System</th>
+<th class="tableblock halign-left valign-top">Environment</th>
+<th class="tableblock halign-left valign-top">Default</th>
+<th class="tableblock halign-center valign-top">Required</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">verbose</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">verbose</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">oci.verbose</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OCI_VERBOSE</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><span class="icon red"><i class="fa fa-times"></i></span></p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><a href="#_oci_list_"><span class="icon"><i class="fa fa-arrow-up"></i></span> top</a></p>
+</div>
+<table id="listRouteTables" class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 32. listRouteTables</caption>
+<colgroup>
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2858%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Property</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Option</th>
+<th class="tableblock halign-left valign-top">System</th>
+<th class="tableblock halign-left valign-top">Environment</th>
+<th class="tableblock halign-left valign-top">Default</th>
+<th class="tableblock halign-center valign-top">Required</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">compartmentId</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">String</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">compartment-id</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">oci.compartment.id</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OCI_COMPARTMENT_ID</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><span class="icon green"><i class="fa fa-check"></i></span></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">vcnId</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">String</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">vcn-id</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">oci.vcn.id</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OCI_VCN_ID</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><span class="icon green"><i class="fa fa-check"></i></span></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">verbose</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">verbose</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">oci.verbose</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OCI_VERBOSE</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><span class="icon red"><i class="fa fa-times"></i></span></p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><a href="#_oci_list_"><span class="icon"><i class="fa fa-arrow-up"></i></span> top</a></p>
+</div>
+<table id="listSecurityLists" class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 33. listSecurityLists</caption>
+<colgroup>
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2858%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Property</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Option</th>
+<th class="tableblock halign-left valign-top">System</th>
+<th class="tableblock halign-left valign-top">Environment</th>
+<th class="tableblock halign-left valign-top">Default</th>
+<th class="tableblock halign-center valign-top">Required</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">compartmentId</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">String</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">compartment-id</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">oci.compartment.id</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OCI_COMPARTMENT_ID</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><span class="icon green"><i class="fa fa-check"></i></span></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">vcnId</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">String</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">vcn-id</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">oci.vcn.id</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OCI_VCN_ID</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><span class="icon green"><i class="fa fa-check"></i></span></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">verbose</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">verbose</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">oci.verbose</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OCI_VERBOSE</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><span class="icon red"><i class="fa fa-times"></i></span></p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><a href="#_oci_list_"><span class="icon"><i class="fa fa-arrow-up"></i></span> top</a></p>
+</div>
+<table id="listShapes" class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 34. listShapes</caption>
+<colgroup>
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2858%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Property</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Option</th>
+<th class="tableblock halign-left valign-top">System</th>
+<th class="tableblock halign-left valign-top">Environment</th>
+<th class="tableblock halign-left valign-top">Default</th>
+<th class="tableblock halign-center valign-top">Required</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">compartmentId</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">String</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">compartment-id</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">oci.compartment.id</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OCI_COMPARTMENT_ID</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><span class="icon green"><i class="fa fa-check"></i></span></p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><a href="#_oci_list_"><span class="icon"><i class="fa fa-arrow-up"></i></span> top</a></p>
+</div>
+<table id="listSubnets" class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 35. listSubnets</caption>
+<colgroup>
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2858%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Property</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Option</th>
+<th class="tableblock halign-left valign-top">System</th>
+<th class="tableblock halign-left valign-top">Environment</th>
+<th class="tableblock halign-left valign-top">Default</th>
+<th class="tableblock halign-center valign-top">Required</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">compartmentId</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">String</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">compartment-id</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">oci.compartment.id</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OCI_COMPARTMENT_ID</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><span class="icon green"><i class="fa fa-check"></i></span></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">vcnId</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">String</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">vcn-id</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">oci.vcn.id</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OCI_VCN_ID</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><span class="icon green"><i class="fa fa-check"></i></span></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">verbose</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">verbose</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">oci.verbose</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OCI_VERBOSE</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><span class="icon red"><i class="fa fa-times"></i></span></p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><a href="#_oci_list_"><span class="icon"><i class="fa fa-arrow-up"></i></span> top</a></p>
+</div>
+<table id="listUsers" class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 36. listUsers</caption>
+<colgroup>
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2858%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Property</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Option</th>
+<th class="tableblock halign-left valign-top">System</th>
+<th class="tableblock halign-left valign-top">Environment</th>
+<th class="tableblock halign-left valign-top">Default</th>
+<th class="tableblock halign-center valign-top">Required</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">compartmentId</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">String</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">compartment-id</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">oci.compartment.id</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OCI_COMPARTMENT_ID</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><span class="icon green"><i class="fa fa-check"></i></span></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">verbose</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">verbose</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">oci.verbose</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OCI_VERBOSE</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><span class="icon red"><i class="fa fa-times"></i></span></p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><a href="#_oci_list_"><span class="icon"><i class="fa fa-arrow-up"></i></span> top</a></p>
+</div>
+<table id="listVcns" class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 37. listVcns</caption>
+<colgroup>
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2858%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Property</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Option</th>
+<th class="tableblock halign-left valign-top">System</th>
+<th class="tableblock halign-left valign-top">Environment</th>
+<th class="tableblock halign-left valign-top">Default</th>
+<th class="tableblock halign-center valign-top">Required</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">compartmentId</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">String</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">compartment-id</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">oci.compartment.id</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OCI_COMPARTMENT_ID</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><span class="icon green"><i class="fa fa-check"></i></span></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">verbose</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">verbose</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">oci.verbose</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OCI_VERBOSE</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><span class="icon red"><i class="fa fa-times"></i></span></p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><a href="#_oci_list_"><span class="icon"><i class="fa fa-arrow-up"></i></span> top</a></p>
+</div>
 </div>
 <div class="sect3">
-<h4 id="_oci_query"><a class="anchor" href="#_oci_query"></a>2.3.5. OCI Query</h4>
+<h4 id="_oci_query_"><a class="anchor" href="#_oci_query_"></a>2.3.6. OCI Query</h4>
 <div class="hdlist">
 <table>
 <tr>
 <td class="hdlist1">
-searchResources
+<a href="#searchResources">searchResources</a>
 </td>
 <td class="hdlist2">
 <p>Lists information on resource types.</p>
 </td>
 </tr>
 </table>
+</div>
+<table id="searchResources" class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 38. searchResources</caption>
+<colgroup>
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2858%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Property</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Option</th>
+<th class="tableblock halign-left valign-top">System</th>
+<th class="tableblock halign-left valign-top">Environment</th>
+<th class="tableblock halign-left valign-top">Default</th>
+<th class="tableblock halign-center valign-top">Required</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">resourceType</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">String</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">resource-type</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">oci.resource.type</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OCI_RESOURCE_TYPE</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><span class="icon red"><i class="fa fa-times"></i></span></p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><a href="#_oci_query_"><span class="icon"><i class="fa fa-arrow-up"></i></span> top</a></p>
 </div>
 </div>
 </div>
@@ -664,8 +2948,8 @@ searchResources
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 0.1.0<br>
-Last updated 2019-05-04 12:52:53 +0200
+Version 0.2.0<br>
+Last updated 2019-09-13 17:33:43 +0200
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.min.css">

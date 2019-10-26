@@ -17,11 +17,11 @@
  */
 
 dependencies {
-    compile     "org.kordamp.jipsy:jipsy-annotations:$jipsyVersion"
-    compile     "org.kordamp.jipsy:jipsy-util:$jipsyVersion"
+    compile "org.kordamp.jipsy:jipsy-annotations:$jipsyVersion"
+    compile "org.kordamp.jipsy:jipsy-util:$jipsyVersion"
     compile "org.kordamp.gipsy:gipsy:$jipsyVersion"
 
-    compile 'org.kordamp.gradle:base-gradle-plugin:0.27.0'
+    compile 'org.kordamp.gradle:base-gradle-plugin:0.29.0'
 
     compile(enforcedPlatform("com.oracle.oci.sdk:oci-java-sdk-bom:$ociJavaSdkVersion"))
 

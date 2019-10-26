@@ -17,41 +17,38 @@
  */
 
 dependencies {
-    compile "org.kordamp.jipsy:jipsy-annotations:$jipsyVersion"
-    compile "org.kordamp.jipsy:jipsy-util:$jipsyVersion"
-    compile "org.kordamp.gipsy:gipsy:$jipsyVersion"
+    compile     "org.kordamp.jipsy:jipsy-util:$jipsyVersion"
+    compileOnly "org.kordamp.jipsy:jipsy-annotations:$jipsyVersion"
+    compileOnly "org.kordamp.gipsy:gipsy:$jipsyVersion"
 
     compile 'org.kordamp.gradle:base-gradle-plugin:0.29.0'
 
-    compile(enforcedPlatform("com.oracle.oci.sdk:oci-java-sdk-bom:$ociJavaSdkVersion"))
-
-    compile 'com.oracle.oci.sdk:oci-java-sdk-common'
-    compile 'com.oracle.oci.sdk:oci-java-sdk-audit'
-    compile 'com.oracle.oci.sdk:oci-java-sdk-containerengine'
-    compile 'com.oracle.oci.sdk:oci-java-sdk-core'
-    compile 'com.oracle.oci.sdk:oci-java-sdk-database'
-    compile 'com.oracle.oci.sdk:oci-java-sdk-dns'
-    compile 'com.oracle.oci.sdk:oci-java-sdk-email'
-    compile 'com.oracle.oci.sdk:oci-java-sdk-filestorage'
-    compile 'com.oracle.oci.sdk:oci-java-sdk-identity'
-    compile 'com.oracle.oci.sdk:oci-java-sdk-loadbalancer'
-    compile 'com.oracle.oci.sdk:oci-java-sdk-objectstorage'
-    compile 'com.oracle.oci.sdk:oci-java-sdk-resourcesearch'
-    compile 'com.oracle.oci.sdk:oci-java-sdk-keymanagement'
-    compile 'com.oracle.oci.sdk:oci-java-sdk-announcementsservice'
-    compile 'com.oracle.oci.sdk:oci-java-sdk-healthchecks'
-    compile 'com.oracle.oci.sdk:oci-java-sdk-waas'
-    compile 'com.oracle.oci.sdk:oci-java-sdk-streaming'
-    compile 'com.oracle.oci.sdk:oci-java-sdk-resourcemanager'
-    compile 'com.oracle.oci.sdk:oci-java-sdk-monitoring'
-    compile 'com.oracle.oci.sdk:oci-java-sdk-ons'
-    compile 'com.oracle.oci.sdk:oci-java-sdk-autoscaling'
-    compile 'com.oracle.oci.sdk:oci-java-sdk-budget'
-    compile 'com.oracle.oci.sdk:oci-java-sdk-workrequests'
-    compile 'com.oracle.oci.sdk:oci-java-sdk-limits'
-    compile 'com.oracle.oci.sdk:oci-java-sdk-functions'
-    compile 'com.oracle.oci.sdk:oci-java-sdk-events'
-    compile 'com.oracle.oci.sdk:oci-java-sdk-dts'
-    compile 'com.oracle.oci.sdk:oci-java-sdk-oce'
-
+    compile "com.oracle.oci.sdk:oci-java-sdk-common:$ociJavaSdkVersion"
+    compile "com.oracle.oci.sdk:oci-java-sdk-audit:$ociJavaSdkVersion"
+    compile "com.oracle.oci.sdk:oci-java-sdk-containerengine:$ociJavaSdkVersion"
+    compile "com.oracle.oci.sdk:oci-java-sdk-core:$ociJavaSdkVersion"
+    compile "com.oracle.oci.sdk:oci-java-sdk-database:$ociJavaSdkVersion"
+    compile "com.oracle.oci.sdk:oci-java-sdk-dns:$ociJavaSdkVersion"
+    compile "com.oracle.oci.sdk:oci-java-sdk-email:$ociJavaSdkVersion"
+    compile "com.oracle.oci.sdk:oci-java-sdk-filestorage:$ociJavaSdkVersion"
+    compile "com.oracle.oci.sdk:oci-java-sdk-identity:$ociJavaSdkVersion"
+    compile "com.oracle.oci.sdk:oci-java-sdk-loadbalancer:$ociJavaSdkVersion"
+    compile "com.oracle.oci.sdk:oci-java-sdk-objectstorage:$ociJavaSdkVersion"
+    compile "com.oracle.oci.sdk:oci-java-sdk-resourcesearch:$ociJavaSdkVersion"
+    compile "com.oracle.oci.sdk:oci-java-sdk-keymanagement:$ociJavaSdkVersion"
+    compile "com.oracle.oci.sdk:oci-java-sdk-announcementsservice:$ociJavaSdkVersion"
+    compile "com.oracle.oci.sdk:oci-java-sdk-healthchecks:$ociJavaSdkVersion"
+    compile "com.oracle.oci.sdk:oci-java-sdk-waas:$ociJavaSdkVersion"
+    compile "com.oracle.oci.sdk:oci-java-sdk-streaming:$ociJavaSdkVersion"
+    compile "com.oracle.oci.sdk:oci-java-sdk-resourcemanager:$ociJavaSdkVersion"
+    compile "com.oracle.oci.sdk:oci-java-sdk-monitoring:$ociJavaSdkVersion"
+    compile "com.oracle.oci.sdk:oci-java-sdk-ons:$ociJavaSdkVersion"
+    compile "com.oracle.oci.sdk:oci-java-sdk-autoscaling:$ociJavaSdkVersion"
+    compile "com.oracle.oci.sdk:oci-java-sdk-budget:$ociJavaSdkVersion"
+    compile "com.oracle.oci.sdk:oci-java-sdk-workrequests:$ociJavaSdkVersion"
+    compile "com.oracle.oci.sdk:oci-java-sdk-limits:$ociJavaSdkVersion"
+    compile "com.oracle.oci.sdk:oci-java-sdk-functions:$ociJavaSdkVersion"
+    compile "com.oracle.oci.sdk:oci-java-sdk-events:$ociJavaSdkVersion"
+    compile "com.oracle.oci.sdk:oci-java-sdk-dts:$ociJavaSdkVersion"
+    compile "com.oracle.oci.sdk:oci-java-sdk-oce:$ociJavaSdkVersion"
 }

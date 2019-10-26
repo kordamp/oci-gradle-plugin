@@ -18,6 +18,7 @@
 package org.kordamp.gradle.oci.tasks.traits
 
 import groovy.transform.CompileStatic
+import org.gradle.api.file.RegularFile
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.options.Option
@@ -34,14 +35,14 @@ import static org.kordamp.gradle.PropertyUtils.fileProperty
 trait PublicKeyFileAwareTrait implements PathAware, ProjectAware {
     private final RegularFileProperty publicKeyFile = project.objects.fileProperty()
 
-    @Input
     @Option(option = 'public-key-file', description = 'Location of SSH public key file (REQUIRED).')
     void setPublicKeyFile(String publicKeyFile) {
         this.publicKeyFile.set(project.file(publicKeyFile))
     }
 
-    File getPublicKeyFile() {
-        fileProperty('OCI_PUBLIC_KEY_FILE', 'oci.public.key.file', this.@publicKeyFile.asFile.orNull)
+    @Input
+    RegularFile getPublicKeyFile() {
+        fileProperty('OCI_PUBLIC_KEY_FILE', 'oci.public.key.file', this.@publicKeyFile.orNull, project)
     }
 
     void validatePublicKeyFile() {

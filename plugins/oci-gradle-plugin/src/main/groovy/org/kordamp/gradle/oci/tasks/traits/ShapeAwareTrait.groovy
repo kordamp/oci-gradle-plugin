@@ -39,12 +39,12 @@ import static org.kordamp.gradle.StringUtils.isBlank
 trait ShapeAwareTrait implements PathAware, ProjectAware {
     private final Property<String> shape = project.objects.property(String)
 
-    @Input
     @Option(option = 'shape', description = 'The Shape of the Instance (REQUIRED).')
     void setShape(String shape) {
         this.shape.set(shape)
     }
 
+    @Input
     String getShape() {
         stringProperty('OCI_SHAPE', 'oci.shape', this.@shape.orNull)
     }

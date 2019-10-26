@@ -43,6 +43,7 @@ import com.oracle.bmc.core.requests.ListInstancesRequest
 import groovy.transform.CompileStatic
 import org.apache.commons.codec.binary.Base64
 import org.gradle.api.provider.Property
+import org.gradle.api.tasks.Internal
 import org.kordamp.gradle.oci.tasks.AbstractOCITask
 import org.kordamp.gradle.oci.tasks.interfaces.OCITask
 import org.kordamp.gradle.oci.tasks.traits.CompartmentIdAwareTrait
@@ -79,6 +80,7 @@ class CreateInstanceTask extends AbstractOCITask implements CompartmentIdAwareTr
 
     private final Property<String> createdInstanceId = project.objects.property(String)
 
+    @Internal
     String getCreatedInstanceId() {
         return createdInstanceId.orNull
     }
@@ -96,8 +98,8 @@ class CreateInstanceTask extends AbstractOCITask implements CompartmentIdAwareTr
         Image _image = validateImage(computeClient, getCompartmentId())
         Shape _shape = validateShape(computeClient, getCompartmentId())
 
-        String publicKeyFile = getPublicKeyFile().text
-        String userDataFile = getUserDataFile()?.text
+        String publicKeyFile = getPublicKeyFile()?.asFile?.text
+        String userDataFile = getUserDataFile()?.asFile?.text
         String kmsKeyId = ''
 
         VirtualNetworkClient vcnClient = createVirtualNetworkClient()

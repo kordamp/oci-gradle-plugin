@@ -18,6 +18,7 @@
 package org.kordamp.gradle.oci.tasks.traits
 
 import groovy.transform.CompileStatic
+import org.gradle.api.file.RegularFile
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Optional
@@ -35,15 +36,15 @@ import static org.kordamp.gradle.PropertyUtils.fileProperty
 trait UserDataFileAwareTrait implements PathAware, ProjectAware {
     private final RegularFileProperty userDataFile = project.objects.fileProperty()
 
-    @Optional
-    @Input
     @Option(option = 'user-data-file', description = 'Location of cloud init file (REQUIRED).')
     void setUserDataFile(String userDataFile) {
         this.userDataFile.set(project.file(userDataFile))
     }
 
-    File getUserDataFile() {
-        fileProperty('OCI_USER_DATA_FILE', 'oci.user.data.file', this.@userDataFile.asFile.orNull)
+    @Input
+    @Optional
+    RegularFile getUserDataFile() {
+        fileProperty('OCI_USER_DATA_FILE', 'oci.user.data.file', this.@userDataFile.orNull, project)
     }
 
     void validateUserDataFile() {

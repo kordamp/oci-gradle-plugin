@@ -38,13 +38,13 @@ import static org.kordamp.gradle.StringUtils.isNotBlank
 trait OptionalInstanceIdAwareTrait implements PathAware, ProjectAware {
     private final Property<String> instanceId = project.objects.property(String)
 
-    @Optional
-    @Input
     @Option(option = 'instance-id', description = 'The id of the Instance (OPTIONAL).')
     void setInstanceId(String instanceId) {
         this.instanceId.set(instanceId)
     }
 
+    @Input
+    @Optional
     String getInstanceId() {
         stringProperty('OCI_INSTANCE_ID', 'oci.instance.id', this.@instanceId.orNull)
     }

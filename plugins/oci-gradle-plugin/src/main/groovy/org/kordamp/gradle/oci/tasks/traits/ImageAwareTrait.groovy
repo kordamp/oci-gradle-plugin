@@ -39,12 +39,12 @@ import static org.kordamp.gradle.StringUtils.isBlank
 trait ImageAwareTrait implements PathAware, ProjectAware {
     private final Property<String> image = project.objects.property(String)
 
-    @Input
     @Option(option = 'image', description = 'The Image of the Instance (REQUIRED).')
     void setImage(String image) {
         this.image.set(image)
     }
 
+    @Input
     String getImage() {
         stringProperty('OCI_IMAGE', 'oci.image', this.@image.orNull)
     }

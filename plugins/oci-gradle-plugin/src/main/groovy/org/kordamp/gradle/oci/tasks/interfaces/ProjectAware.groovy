@@ -18,11 +18,13 @@
 package org.kordamp.gradle.oci.tasks.interfaces
 
 import org.gradle.api.Project
+import org.gradle.api.tasks.Internal
 
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
 interface ProjectAware {
+    @Internal
     Project getProject()
 }

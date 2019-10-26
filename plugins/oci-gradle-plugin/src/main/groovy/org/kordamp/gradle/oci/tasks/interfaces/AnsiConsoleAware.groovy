@@ -17,6 +17,7 @@
  */
 package org.kordamp.gradle.oci.tasks.interfaces
 
+import org.gradle.api.tasks.Internal
 import org.kordamp.gradle.AnsiConsole
 
 /**
@@ -24,5 +25,6 @@ import org.kordamp.gradle.AnsiConsole
  * @since 0.1.0
  */
 interface AnsiConsoleAware {
+    @Internal
     AnsiConsole getConsole()
 }

@@ -18,6 +18,8 @@
 package org.kordamp.gradle
 
 import groovy.transform.CompileStatic
+import org.gradle.api.Project
+import org.gradle.api.file.RegularFile
 
 import java.nio.file.Paths
 
@@ -54,11 +56,11 @@ class PropertyUtils {
         return alternateValue
     }
 
-    static File fileProperty(String envKey, String propertyKey, File alternateValue) {
+    static RegularFile fileProperty(String envKey, String propertyKey, RegularFile alternateValue, Project project) {
         String value = System.getenv(envKey)
         if (isBlank(value)) value = System.getProperty(propertyKey)
         if (isNotBlank(value)) {
-            return Paths.get(value).toFile()
+            return project.objects.fileProperty().set(Paths.get(value).toFile())
         }
         return alternateValue
     }

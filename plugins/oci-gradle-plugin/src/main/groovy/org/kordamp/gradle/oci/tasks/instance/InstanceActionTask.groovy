@@ -71,12 +71,12 @@ class InstanceActionTask extends AbstractOCITask implements CompartmentIdAwareTr
 
     private final Property<InstanceAction> action = project.objects.property(InstanceAction)
 
-    @Input
     @Option(option = 'action', description = 'The action to be executed (REQUIRED).')
     void setAction(InstanceAction action) {
         this.action.set(action)
     }
 
+    @Input
     InstanceAction getAction() {
         InstanceAction.valueOf(stringProperty('OCI_INSTANCE_ACTION', 'oci.instance.action', (this.@action.orNull ?: InstanceAction.STOP).name()).toUpperCase())
     }

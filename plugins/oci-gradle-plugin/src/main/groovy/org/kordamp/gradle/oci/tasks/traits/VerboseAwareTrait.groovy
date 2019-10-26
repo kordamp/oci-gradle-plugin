@@ -33,12 +33,12 @@ import static org.kordamp.gradle.PropertyUtils.booleanProperty
 trait VerboseAwareTrait implements ProjectAware {
     private final Property<Boolean> verbose = project.objects.property(Boolean)
 
-    @Input
     @Option(option = 'verbose', description = 'Display additional information (OPTIONAL).')
     void setVerbose(boolean verbose) {
         this.verbose.set(verbose)
     }
 
+    @Input
     boolean isVerbose() {
         booleanProperty('OCI_VERBOSE', 'oci.verbose', this.@verbose.getOrElse(false))
     }

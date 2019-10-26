@@ -57,13 +57,13 @@ class AddIngressSecurityRuleTask extends AbstractOCITask implements SecurityList
     private final Property<PortType> portType = project.objects.property(PortType)
     private final ListProperty<Integer> ports = project.objects.listProperty(Integer)
 
-    @Optional
-    @Input
     @Option(option = 'port-type', description = 'The port type to use. Defaults to TCP (OPTIONAL).')
     void setPortType(PortType portType) {
         this.portType.set(portType)
     }
 
+    @Input
+    @Optional
     PortType getPortType() {
         PortType.valueOf(stringProperty('OCI_PORT_TYPE', 'oci.port.type', (this.@portType.getOrElse(PortType.TCP)).name()).toUpperCase())
     }
@@ -73,7 +73,6 @@ class AddIngressSecurityRuleTask extends AbstractOCITask implements SecurityList
         return new ArrayList<PortType>(Arrays.asList(PortType.values()))
     }
 
-    @Input
     @Option(option = 'port', description = 'The port type to add. May be defined multiple times (REQUIRED).')
     void setPort(List<String> ports) {
         List<Integer> converted = []
@@ -91,6 +90,7 @@ class AddIngressSecurityRuleTask extends AbstractOCITask implements SecurityList
         this.ports.addAll(converted)
     }
 
+    @Input
     List<Integer> getPorts() {
         return ports.get()
     }

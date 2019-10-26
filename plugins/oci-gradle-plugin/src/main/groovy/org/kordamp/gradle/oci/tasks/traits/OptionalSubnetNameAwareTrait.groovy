@@ -35,13 +35,13 @@ import static org.kordamp.gradle.PropertyUtils.stringProperty
 trait OptionalSubnetNameAwareTrait implements PathAware, ProjectAware {
     private final Property<String> subnetName = project.objects.property(String)
 
-    @Optional
-    @Input
     @Option(option = 'subnet-name', description = 'The name of the Subnet (OPTIONAL).')
     void setSubnetName(String subnetName) {
         this.subnetName.set(subnetName)
     }
 
+    @Input
+    @Optional
     String getSubnetName() {
         stringProperty('OCI_SUBNET_NAME', 'oci.subnet.name', this.@subnetName.orNull)
     }

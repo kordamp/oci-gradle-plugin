@@ -31,6 +31,7 @@ import com.oracle.bmc.resourcesearch.ResourceSearchClient
 import groovy.transform.CompileStatic
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.options.Option
@@ -54,35 +55,36 @@ abstract class AbstractOCITask extends AbstractReportingTask implements OCITask 
     protected final List<AutoCloseable> closeables = []
     private AuthenticationDetailsProvider authenticationDetailsProvider
 
-    protected Property<String> profile = project.objects.property(String)
-    protected Property<String> region = project.objects.property(String)
+    private Property<String> profile = project.objects.property(String)
+    private Property<String> region = project.objects.property(String)
 
     AbstractOCITask() {
         ociConfig = extensions.create('ociConfig', OCIConfigExtension, project)
     }
 
-    @Optional
-    @Input
     @Option(option = 'profile', description = 'The profile to use. Defaults to DEFAULT (OPTIONAL).')
     void setProfile(String profile) {
         this.profile.set(profile)
     }
 
+    @Input
+    @Optional
     String getProfile() {
         stringProperty('OCI_PROFILE', 'oci.profile', this.@profile.getOrElse('DEFAULT'))
     }
 
-    @Optional
-    @Input
     @Option(option = 'region', description = 'The region to use (OPTIONAL).')
     void setRegion(String region) {
         this.region.set(region)
     }
 
+    @Input
+    @Optional
     String getRegion() {
         stringProperty('OCI_REGION', 'oci.region', this.@region.orNull)
     }
 
+    @Internal
     @Override
     AnsiConsole getConsole() {
         this.@console

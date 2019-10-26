@@ -25,6 +25,7 @@ import com.oracle.bmc.core.requests.GetVcnRequest
 import com.oracle.bmc.core.requests.ListVcnsRequest
 import groovy.transform.CompileStatic
 import org.gradle.api.provider.Property
+import org.gradle.api.tasks.Internal
 import org.kordamp.gradle.oci.tasks.AbstractOCITask
 import org.kordamp.gradle.oci.tasks.interfaces.OCITask
 import org.kordamp.gradle.oci.tasks.traits.CompartmentIdAwareTrait
@@ -51,6 +52,7 @@ class CreateVcnTask extends AbstractOCITask implements CompartmentIdAwareTrait,
 
     private final Property<String> createdVcnId = project.objects.property(String)
 
+    @Internal
     String getCreatedVcnId() {
         return createdVcnId.orNull
     }

@@ -20,7 +20,6 @@ package org.kordamp.gradle.oci.tasks.traits
 import groovy.transform.CompileStatic
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.options.Option
 import org.kordamp.gradle.oci.tasks.interfaces.ProjectAware
 
@@ -34,13 +33,12 @@ import static org.kordamp.gradle.PropertyUtils.booleanProperty
 trait WaitForCompletionAwareTrait implements ProjectAware {
     private final Property<Boolean> waitForCompletion = project.objects.property(Boolean)
 
-    @Optional
-    @Input
     @Option(option = 'wait-for-completion', description = 'Wait for operation to finish.')
     void setWaitForCompletion(boolean waitForCompletion) {
         this.waitForCompletion.set(waitForCompletion)
     }
 
+    @Input
     boolean isWaitForCompletion() {
         booleanProperty('OCI_WAIT_FOR_COMPLETION', 'oci.wait.for.completion', this.@waitForCompletion.getOrElse(false))
     }

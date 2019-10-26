@@ -35,13 +35,13 @@ import static org.kordamp.gradle.PropertyUtils.stringProperty
 trait OptionalInternetGatewayNameAwareTrait implements PathAware, ProjectAware {
     private final Property<String> internetGatewayName = project.objects.property(String)
 
-    @Optional
-    @Input
     @Option(option = 'internet-gateway-name', description = 'The name of the InternetGateway (OPTIONAL).')
     void setInternetGatewayName(String internetGatewayName) {
         this.internetGatewayName.set(internetGatewayName)
     }
 
+    @Input
+    @Optional
     String getInternetGatewayName() {
         stringProperty('OCI_INTERNET_GATEWAY_NAME', 'oci.internet.gateway.name', this.@internetGatewayName.orNull)
     }

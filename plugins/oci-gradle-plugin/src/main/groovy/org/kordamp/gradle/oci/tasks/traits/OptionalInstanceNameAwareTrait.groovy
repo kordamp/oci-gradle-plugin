@@ -35,13 +35,13 @@ import static org.kordamp.gradle.PropertyUtils.stringProperty
 trait OptionalInstanceNameAwareTrait implements PathAware, ProjectAware {
     private final Property<String> instanceName = project.objects.property(String)
 
-    @Optional
-    @Input
     @Option(option = 'instance-name', description = 'The name of the Instance (OPTIONAL).')
     void setInstanceName(String instanceName) {
         this.instanceName.set(instanceName)
     }
 
+    @Input
+    @Optional
     String getInstanceName() {
         stringProperty('OCI_INSTANCE_NAME', 'oci.instance.name', this.@instanceName.orNull)
     }

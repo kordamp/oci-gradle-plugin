@@ -32,6 +32,7 @@ import com.oracle.bmc.core.requests.ListInternetGatewaysRequest
 import com.oracle.bmc.core.requests.UpdateRouteTableRequest
 import groovy.transform.CompileStatic
 import org.gradle.api.provider.Property
+import org.gradle.api.tasks.Internal
 import org.kordamp.gradle.oci.tasks.AbstractOCITask
 import org.kordamp.gradle.oci.tasks.interfaces.OCITask
 import org.kordamp.gradle.oci.tasks.traits.CompartmentIdAwareTrait
@@ -58,6 +59,7 @@ class CreateInternetGatewayTask extends AbstractOCITask implements CompartmentId
 
     private final Property<String> createdInternetGatewayId = project.objects.property(String)
 
+    @Internal
     String getCreatedInternetGatewayId() {
         return createdInternetGatewayId.orNull
     }

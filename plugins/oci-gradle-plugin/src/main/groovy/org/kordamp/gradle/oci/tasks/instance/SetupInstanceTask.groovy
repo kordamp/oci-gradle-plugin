@@ -33,6 +33,7 @@ import groovy.transform.CompileStatic
 import org.gradle.api.file.RegularFile
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
+import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.OutputFile
 import org.gradle.internal.hash.HashUtil
 import org.kordamp.gradle.oci.tasks.AbstractOCITask
@@ -70,6 +71,7 @@ class SetupInstanceTask extends AbstractOCITask implements CompartmentIdAwareTra
     private final Property<String> createdInstanceId = project.objects.property(String)
     private final RegularFileProperty result = project.objects.fileProperty()
 
+    @Internal
     String getCreatedInstanceId() {
         return createdInstanceId.orNull
     }
@@ -100,8 +102,8 @@ class SetupInstanceTask extends AbstractOCITask implements CompartmentIdAwareTra
         Shape _shape = validateShape(computeClient, getCompartmentId())
 
         String networkCidrBlock = '10.0.0.0/16'
-        String publicKeyFile = getPublicKeyFile().text
-        String userDataFile = getUserDataFile()?.text
+        String publicKeyFile = getPublicKeyFile()?.asFile?.text
+        String userDataFile = getUserDataFile()?.asFile?.text
         String vcnDisplayName = getInstanceName() + '-vcn'
         String dnsLabel = getInstanceName()
         String internetGatewayDisplayName = getInstanceName() + '-internet-gateway'

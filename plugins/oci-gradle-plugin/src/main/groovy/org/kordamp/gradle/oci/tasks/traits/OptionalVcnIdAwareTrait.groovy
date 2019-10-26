@@ -37,13 +37,13 @@ import static org.kordamp.gradle.StringUtils.isNotBlank
 trait OptionalVcnIdAwareTrait implements PathAware, ProjectAware {
     private final Property<String> vcnId = project.objects.property(String)
 
-    @Optional
-    @Input
     @Option(option = 'vcn-id', description = 'The id of the Vcn (OPTIONAL).')
     void setVcnId(String vcnId) {
         this.vcnId.set(vcnId)
     }
 
+    @Input
+    @Optional
     String getVcnId() {
         stringProperty('OCI_VCN_ID', 'oci.vcn.id', this.@vcnId.orNull)
     }

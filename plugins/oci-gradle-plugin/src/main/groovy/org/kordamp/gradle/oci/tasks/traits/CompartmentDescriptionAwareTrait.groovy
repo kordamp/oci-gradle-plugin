@@ -35,12 +35,12 @@ import static org.kordamp.gradle.StringUtils.isBlank
 trait CompartmentDescriptionAwareTrait implements PathAware, ProjectAware {
     private final Property<String> compartmentDescription = project.objects.property(String)
 
-    @Input
     @Option(option = 'compartment-description', description = 'The Compartment description to use (REQUIRED).')
     void setCompartmentDescription(String compartmentDescription) {
         this.compartmentDescription.set(compartmentDescription)
     }
 
+    @Input
     String getCompartmentDescription() {
         stringProperty('OCI_COMPARTMENT_DESCRIPTION', 'oci.compartment.description', this.@compartmentDescription.orNull)
     }

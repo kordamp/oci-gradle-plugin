@@ -6,3 +6,8 @@ A Gradle plugin for the {link_oci_java_sdk}.
 
 Currently supported OCI Java SDK version is *`{oci-java-sdk-version}`*.
 
+WARNING: For the time being, this plugin provides the minimum capabilities to setup instances. In the future this plugin
+may provide access to all services exposed by the OCI Java SDK.
+
+WARNING:  This plugin is not endorsed by Oracle nor does the company provide any support for it.
+

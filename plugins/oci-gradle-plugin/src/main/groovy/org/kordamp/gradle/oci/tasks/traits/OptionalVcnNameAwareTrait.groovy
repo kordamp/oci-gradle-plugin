@@ -35,13 +35,13 @@ import static org.kordamp.gradle.PropertyUtils.stringProperty
 trait OptionalVcnNameAwareTrait implements PathAware, ProjectAware {
     private final Property<String> vcnName = project.objects.property(String)
 
-    @Optional
-    @Input
     @Option(option = 'vcn-name', description = 'The name of the Vcn (OPTIONAL).')
     void setVcnName(String vcnName) {
         this.vcnName.set(vcnName)
     }
 
+    @Input
+    @Optional
     String getVcnName() {
         stringProperty('OCI_VCN_NAME', 'oci.vcn.name', this.@vcnName.orNull)
     }

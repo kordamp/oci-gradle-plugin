@@ -38,13 +38,13 @@ import static org.kordamp.gradle.StringUtils.isNotBlank
 trait OptionalSubnetIdAwareTrait implements PathAware, ProjectAware {
     private final Property<String> subnetId = project.objects.property(String)
 
-    @Optional
-    @Input
     @Option(option = 'subnet-id', description = 'The id of the Subnet (OPTIONAL).')
     void setSubnetId(String subnetId) {
         this.subnetId.set(subnetId)
     }
 
+    @Input
+    @Optional
     String getSubnetId() {
         stringProperty('OCI_SUBNET_ID', 'oci.subnet.id', this.@subnetId.orNull)
     }

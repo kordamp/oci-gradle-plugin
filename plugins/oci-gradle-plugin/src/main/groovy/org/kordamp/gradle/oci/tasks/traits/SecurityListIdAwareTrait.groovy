@@ -36,12 +36,12 @@ import static org.kordamp.gradle.StringUtils.isBlank
 trait SecurityListIdAwareTrait implements PathAware, ProjectAware {
     private final Property<String> securityListId = project.objects.property(String)
 
-    @Input
     @Option(option = 'security-list-id', description = 'The id of the SecurityList (REQUIRED).')
     void setSecurityListId(String securityListId) {
         this.securityListId.set(securityListId)
     }
 
+    @Input
     String getSecurityListId() {
         stringProperty('OCI_SECURITY_LIST_ID', 'oci.security.list.id', this.@securityListId.orNull)
     }

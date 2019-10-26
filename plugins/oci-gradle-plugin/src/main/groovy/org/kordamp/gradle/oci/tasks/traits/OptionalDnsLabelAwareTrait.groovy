@@ -37,8 +37,6 @@ import static org.kordamp.gradle.StringUtils.isBlank
 trait OptionalDnsLabelAwareTrait implements PathAware, ProjectAware {
     private final Property<String> dnsLabel = project.objects.property(String)
 
-    @Optional
-    @Input
     @Option(option = 'dns-label', description = 'The DNS label to use (OPTIONAL).')
     void setDnsLabel(String dnsLabel) {
         String label = dnsLabel?.replace('.', '')?.replace('-', '')
@@ -46,6 +44,8 @@ trait OptionalDnsLabelAwareTrait implements PathAware, ProjectAware {
         this.dnsLabel.set(label)
     }
 
+    @Input
+    @Optional
     String getDnsLabel() {
         stringProperty('OCI_DNS_LABEL', 'oci.dns.label', this.@dnsLabel.orNull)
     }

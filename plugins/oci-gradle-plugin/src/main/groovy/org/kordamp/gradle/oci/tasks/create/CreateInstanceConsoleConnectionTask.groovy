@@ -67,7 +67,7 @@ class CreateInstanceConsoleConnectionTask extends AbstractOCITask implements Com
         InstanceConsoleConnection connection = createInstanceConsoleConnection(this,
                 client,
                 getInstanceId(),
-                getPublicKeyFile()?.asFile?.text,
+                getPublicKeyFile()?.asFile,
                 isWaitForCompletion(),
                 isVerbose())
         createdConnectionId.set(connection.id)
@@ -76,12 +76,12 @@ class CreateInstanceConsoleConnectionTask extends AbstractOCITask implements Com
     static InstanceConsoleConnection createInstanceConsoleConnection(OCITask owner,
                                                                      ComputeClient client,
                                                                      String instanceId,
-                                                                     String publicKeyFile,
+                                                                     File publicKeyFile,
                                                                      boolean waitForCompletion,
                                                                      boolean verbose) {
         println('Provisioning InstanceConsoleConnection. This may take a while.')
         CreateInstanceConsoleConnectionDetails details = CreateInstanceConsoleConnectionDetails.builder()
-                .publicKey(publicKeyFile)
+                .publicKey(publicKeyFile.text)
                 .instanceId(instanceId)
                 .build()
 

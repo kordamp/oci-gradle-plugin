@@ -39,6 +39,9 @@ import org.kordamp.gradle.oci.tasks.printers.SecurityListPrinter
 import org.kordamp.gradle.oci.tasks.traits.SecurityListIdAwareTrait
 import org.kordamp.jipsy.TypeProviderFor
 
+import java.util.regex.Matcher
+import java.util.regex.Pattern
+
 import static org.kordamp.gradle.PropertyUtils.stringProperty
 
 /**
@@ -49,13 +52,15 @@ import static org.kordamp.gradle.PropertyUtils.stringProperty
 @TypeProviderFor(OCITask)
 class AddIngressSecurityRuleTask extends AbstractOCITask implements SecurityListIdAwareTrait {
     static final String TASK_DESCRIPTION = 'Adds IngressSecurityRules to a SecurityList.'
+    static final Pattern PORT_RANGE_PATTERN = ~/(\d{1,5})\-(\d{1,5})/
 
     static enum PortType {
         TCP, UDP
     }
 
     private final Property<PortType> portType = project.objects.property(PortType)
-    private final ListProperty<Integer> ports = project.objects.listProperty(Integer)
+    private final ListProperty<String> sourcePorts = project.objects.listProperty(String)
+    private final ListProperty<String> destinationPorts = project.objects.listProperty(String)
 
     @Option(option = 'port-type', description = 'The port type to use. Defaults to TCP (OPTIONAL).')
     void setPortType(PortType portType) {
@@ -73,33 +78,70 @@ class AddIngressSecurityRuleTask extends AbstractOCITask implements SecurityList
         return new ArrayList<PortType>(Arrays.asList(PortType.values()))
     }
 
-    @Option(option = 'port', description = 'The port type to add. May be defined multiple times (REQUIRED).')
-    void setPort(List<String> ports) {
-        List<Integer> converted = []
-        for (String port : ports) {
-            try {
-                int p = port.toInteger()
-                if (p < 1 || p > 65355) {
-                    throw new IllegalArgumentException("Port '$port' is out of range.")
-                }
-                converted << p
-            } catch (NumberFormatException e) {
-                throw new IllegalArgumentException("Port '$port' is not a valid integer")
+    @Option(option = 'source-port', description = 'The source port type to add. May be defined multiple times (REQUIRED).')
+    void setSourcePort(List<String> sourcePorts) {
+        for (String port : sourcePorts) {
+            Matcher m = PORT_RANGE_PATTERN.matcher(port)
+            if (m.matches()) {
+                checkPort(m.group(1))
+                checkPort(m.group(2))
+            } else {
+                checkPort(port)
             }
         }
-        this.ports.addAll(converted)
+        this.sourcePorts.addAll(sourcePorts)
+    }
+
+    void setSourcePort(String port) {
+        checkPort(port)
+        this.sourcePorts.add(port)
     }
 
     @Input
-    List<Integer> getPorts() {
-        return ports.get()
+    List<String> getSourcePorts() {
+        return sourcePorts.get()
+    }
+
+    @Option(option = 'destination-port', description = 'The destination port type to add. May be defined multiple times (REQUIRED).')
+    void setDestinationPort(List<String> destinationPorts) {
+        for (String port : destinationPorts) {
+            Matcher m = PORT_RANGE_PATTERN.matcher(port)
+            if (m.matches()) {
+                checkPort(m.group(1))
+                checkPort(m.group(2))
+            } else {
+                checkPort(port)
+            }
+        }
+        this.destinationPorts.addAll(destinationPorts)
+    }
+
+    void setDestinationPort(String port) {
+        checkPort(port)
+        this.destinationPorts.add(port)
+    }
+
+    @Input
+    List<String> getDestinationPorts() {
+        return destinationPorts.get()
+    }
+
+    private void checkPort(String port) {
+        try {
+            int p = port.toInteger()
+            if (p < 1 || p > 65355) {
+                throw new IllegalArgumentException("Port '$port' is out of range.")
+            }
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("Port '$port' is not a valid integer")
+        }
     }
 
     @Override
     protected void doExecuteTask() {
         validateSecurityListId()
 
-        if (getPorts().empty) {
+        if (getSourcePorts().empty && getDestinationPorts().empty) {
             throw new IllegalStateException("No ports have been defined in $path")
         }
 
@@ -109,7 +151,8 @@ class AddIngressSecurityRuleTask extends AbstractOCITask implements SecurityList
                 client,
                 getSecurityListId(),
                 getPortType(),
-                getPorts())
+                getSourcePorts(),
+                getDestinationPorts())
 
         SecurityListPrinter.printSecurityList(this, securityList, 0)
     }
@@ -118,50 +161,150 @@ class AddIngressSecurityRuleTask extends AbstractOCITask implements SecurityList
                                                 VirtualNetworkClient client,
                                                 String securityListId,
                                                 PortType portType,
-                                                List<Integer> ports) {
+                                                List<String> sourcePorts,
+                                                List<String> destinationPorts) {
         SecurityList securityList = client.getSecurityList(GetSecurityListRequest.builder()
                 .securityListId(securityListId)
                 .build())
                 .securityList
 
         List<IngressSecurityRule> rules = securityList.ingressSecurityRules
-        for (Integer port : ports.sort(false)) {
-            IngressSecurityRule.Builder builder = IngressSecurityRule.builder()
-                    .source('0.0.0.0/0')
-                    .sourceType(IngressSecurityRule.SourceType.CidrBlock)
-                    .isStateless(false)
-                    .protocol('6')
+        if (!destinationPorts) { // source ports only
+            for (String range : sourcePorts.sort(false)) {
+                List<Integer> ports = extractRange(range)
+                int min = ports[0]
+                int max = ports[1]
 
-            switch (portType) {
-                case PortType.TCP:
-                    builder = builder.tcpOptions(TcpOptions.builder()
-                            .sourcePortRange(PortRange.builder()
-                            .min(port)
-                            .max(port)
-                            .build())
-                            .build())
-                    break
-                case PortType.UDP:
-                    builder = builder.udpOptions(UdpOptions.builder()
-                            .sourcePortRange(PortRange.builder()
-                            .min(port)
-                            .max(port)
-                            .build())
-                            .build())
-                    break
-                default:
-                    throw new IllegalStateException("Invalid port type '$portType'")
+                IngressSecurityRule.Builder builder = createIngressSecurityRuleBuilder()
+
+                switch (portType) {
+                    case PortType.TCP:
+                        builder = builder.tcpOptions(TcpOptions.builder()
+                                .sourcePortRange(PortRange.builder()
+                                        .min(min)
+                                        .max(max)
+                                        .build())
+                                .build())
+                        break
+                    case PortType.UDP:
+                        builder = builder.udpOptions(UdpOptions.builder()
+                                .sourcePortRange(PortRange.builder()
+                                        .min(min)
+                                        .max(max)
+                                        .build())
+                                .build())
+                        break
+                    default:
+                        throw new IllegalStateException("Invalid port type '$portType'")
+                }
+
+                IngressSecurityRule rule = builder.build()
+                if (!rules.contains(rule)) rules << rule
             }
+        } else if (!sourcePorts) { // dest ports only
+            for (String range : destinationPorts.sort(false)) {
+                List<Integer> ports = extractRange(range)
+                int min = ports[0]
+                int max = ports[1]
 
-            rules << builder.build()
+                IngressSecurityRule.Builder builder = createIngressSecurityRuleBuilder()
+
+                switch (portType) {
+                    case PortType.TCP:
+                        builder = builder.tcpOptions(TcpOptions.builder()
+                                .destinationPortRange(PortRange.builder()
+                                        .min(min)
+                                        .max(max)
+                                        .build())
+                                .build())
+                        break
+                    case PortType.UDP:
+                        builder = builder.udpOptions(UdpOptions.builder()
+                                .destinationPortRange(PortRange.builder()
+                                        .min(min)
+                                        .max(max)
+                                        .build())
+                                .build())
+                        break
+                    default:
+                        throw new IllegalStateException("Invalid port type '$portType'")
+                }
+
+                IngressSecurityRule rule = builder.build()
+                if (!rules.contains(rule)) rules << rule
+            }
+        } else { // both
+            List<List<String>> combinations = GroovyCollections.combinations(sourcePorts, destinationPorts)
+            for (List<String> ranges : combinations) {
+                List<Integer> ports = extractRange(ranges[0])
+                int smin = ports[0]
+                int smax = ports[1]
+                ports = extractRange(ranges[1])
+                int dmin = ports[0]
+                int dmax = ports[1]
+
+                IngressSecurityRule.Builder builder = createIngressSecurityRuleBuilder()
+
+                switch (portType) {
+                    case PortType.TCP:
+                        builder = builder.tcpOptions(TcpOptions.builder()
+                                .sourcePortRange(PortRange.builder()
+                                        .min(smin)
+                                        .max(smax)
+                                        .build())
+                                .destinationPortRange(PortRange.builder()
+                                        .min(dmin)
+                                        .max(dmax)
+                                        .build())
+                                .build())
+                        break
+                    case PortType.UDP:
+                        builder = builder.udpOptions(UdpOptions.builder()
+                                .sourcePortRange(PortRange.builder()
+                                        .min(smin)
+                                        .max(smax)
+                                        .build())
+                                .destinationPortRange(PortRange.builder()
+                                        .min(dmin)
+                                        .max(dmax)
+                                        .build())
+                                .build())
+                        break
+                    default:
+                        throw new IllegalStateException("Invalid port type '$portType'")
+                }
+
+                IngressSecurityRule rule = builder.build()
+                if (!rules.contains(rule)) rules << rule
+            }
         }
 
         client.updateSecurityList(UpdateSecurityListRequest.builder()
                 .securityListId(securityListId)
                 .updateSecurityListDetails(UpdateSecurityListDetails.builder()
-                .ingressSecurityRules(rules)
-                .build())
+                        .ingressSecurityRules(rules)
+                        .build())
                 .build())
                 .securityList
+    }
+
+    private static IngressSecurityRule.Builder createIngressSecurityRuleBuilder() {
+        IngressSecurityRule.builder()
+                .source('0.0.0.0/0')
+                .sourceType(IngressSecurityRule.SourceType.CidrBlock)
+                .isStateless(false)
+                .protocol('6')
+    }
+
+    private static List<Integer> extractRange(String range) {
+        int min, max = 0
+        Matcher m = PORT_RANGE_PATTERN.matcher(range)
+        if (m.matches()) {
+            min = Integer.parseInt(m.group(1))
+            max = Integer.parseInt(m.group(2))
+        } else {
+            min = max = Integer.parseInt(range)
+        }
+        [min, max]
     }
 }

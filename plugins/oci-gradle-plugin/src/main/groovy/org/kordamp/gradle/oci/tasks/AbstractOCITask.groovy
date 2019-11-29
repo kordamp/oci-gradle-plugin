@@ -62,7 +62,7 @@ abstract class AbstractOCITask extends AbstractReportingTask implements OCITask 
         ociConfig = extensions.create('ociConfig', OCIConfigExtension, project)
     }
 
-    @Option(option = 'profile', description = 'The profile to use. Defaults to DEFAULT (OPTIONAL).')
+    @Option(option = 'oci-profile', description = 'The profile to use. Defaults to DEFAULT (OPTIONAL).')
     void setProfile(String profile) {
         this.profile.set(profile)
     }

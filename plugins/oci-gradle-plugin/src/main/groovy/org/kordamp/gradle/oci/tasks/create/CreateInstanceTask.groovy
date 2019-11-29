@@ -98,8 +98,8 @@ class CreateInstanceTask extends AbstractOCITask implements CompartmentIdAwareTr
         Image _image = validateImage(computeClient, getCompartmentId())
         Shape _shape = validateShape(computeClient, getCompartmentId())
 
-        String publicKeyFile = getPublicKeyFile()?.asFile?.text
-        String userDataFile = getUserDataFile()?.asFile?.text
+        File publicKeyFile = getPublicKeyFile()?.asFile
+        File userDataFile = getUserDataFile()?.asFile
         String kmsKeyId = ''
 
         VirtualNetworkClient vcnClient = createVirtualNetworkClient()
@@ -135,8 +135,8 @@ class CreateInstanceTask extends AbstractOCITask implements CompartmentIdAwareTr
                                         Image image,
                                         Shape shape,
                                         Subnet subnet,
-                                        String publicKeyFile,
-                                        String userDataFile,
+                                        File publicKeyFile,
+                                        File userDataFile,
                                         String kmsKeyId,
                                         boolean verbose) {
         Instance instance = doMaybeCreateInstance(owner,
@@ -181,8 +181,8 @@ class CreateInstanceTask extends AbstractOCITask implements CompartmentIdAwareTr
                                                   String imageId,
                                                   String shape,
                                                   String subnetId,
-                                                  String publicKeyFile,
-                                                  String userDataFile,
+                                                  File publicKeyFile,
+                                                  File userDataFile,
                                                   String kmsKeyId,
                                                   boolean verbose) {
         // 1. Check if it exists
@@ -200,8 +200,8 @@ class CreateInstanceTask extends AbstractOCITask implements CompartmentIdAwareTr
             return instances[0]
         }
 
-        Map<String, String> metadata = new HashMap<>('ssh_authorized_keys': publicKeyFile)
-        if (isNotBlank(userDataFile)) {
+        Map<String, String> metadata = new HashMap<>('ssh_authorized_keys': publicKeyFile.text)
+        if (userDataFile && userDataFile.exists() && isNotBlank(userDataFile.text)) {
             metadata.put("user_data", Base64.encodeBase64String(userDataFile.getBytes()))
         }
 

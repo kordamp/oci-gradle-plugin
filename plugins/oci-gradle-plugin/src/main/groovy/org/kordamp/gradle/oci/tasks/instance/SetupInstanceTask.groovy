@@ -102,8 +102,8 @@ class SetupInstanceTask extends AbstractOCITask implements CompartmentIdAwareTra
         Shape _shape = validateShape(computeClient, getCompartmentId())
 
         String networkCidrBlock = '10.0.0.0/16'
-        String publicKeyFile = getPublicKeyFile()?.asFile?.text
-        String userDataFile = getUserDataFile()?.asFile?.text
+        File publicKeyFile = getPublicKeyFile()?.asFile
+        File userDataFile = getUserDataFile()?.asFile
         String vcnDisplayName = getInstanceName() + '-vcn'
         String dnsLabel = getInstanceName()
         String internetGatewayDisplayName = getInstanceName() + '-internet-gateway'

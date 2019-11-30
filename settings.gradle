@@ -29,7 +29,7 @@ buildscript {
         mavenLocal()
     }
     dependencies {
-        classpath 'org.kordamp.gradle:settings-gradle-plugin:0.30.0-SNAPSHOT'
+        classpath 'org.kordamp.gradle:settings-gradle-plugin:0.30.4-SNAPSHOT'
     }
 }
 apply plugin: 'org.kordamp.gradle.settings'

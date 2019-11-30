@@ -55,8 +55,8 @@ abstract class AbstractOCITask extends AbstractReportingTask implements OCITask 
     protected final List<AutoCloseable> closeables = []
     private AuthenticationDetailsProvider authenticationDetailsProvider
 
-    private Property<String> profile = project.objects.property(String)
-    private Property<String> region = project.objects.property(String)
+    private final Property<String> profile = project.objects.property(String)
+    private final Property<String> region = project.objects.property(String)
 
     AbstractOCITask() {
         ociConfig = extensions.create('ociConfig', OCIConfigExtension, project)

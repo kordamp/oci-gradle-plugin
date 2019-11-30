@@ -55,12 +55,23 @@ gradle setupInstance \
 ----
 #!/bin/bash
 
+cp /etc/motd /etc/motd.bkp
+cat << EOF > /etc/motd
+I have been modified by cloud-init at $(date)
+EOF
+
 # install Java
 yum install -y yum java-1.8.0-openjdk
 
-# amend firewall rules to allow port 8080
-firewall-cmd --permanent --zone=public --add-port=8080/tcp
-firewall-cmd --reload
+# amend firewall rules to allow port 4567
+function conf-firewalld() {
+    setenforce 0
+    firewall-cmd --permanent --permanent --zone=public --add-port=4567/tcp
+    systemctl restart firewalld
+    setenforce 1
+}
+
+conf-firewalld
 ----
 
 == Configuration
@@ -79,11 +90,11 @@ it looks something similar to
 ----
 [DEFAULT]
 user=ocid1.user.oc1...
-fingerprint=f9:14:d0:...
-key_file=~/.oci/oci_api_key.pem
 tenancy=ocid1.tenancy.oc1...
 region=eu-frankfurt-1
+key_file=~/.oci/oci_api_key.pem
 pass_phrase=<secret>
+fingerprint=f9:14:d0:...
 ----
 
 === OciConfig Extension Block
@@ -98,10 +109,10 @@ listInstances {
     ociConfig {
         userId.set('ocid1.user.oc1...'
         tenantId.set('ocid1.tenancy.oc1...')
-        fingerprint.set('f9:14:d0:...')
         region.set('eu-frankfurt-1')
         keyfile.set(project.file('/.oci/oci_api_key.pem'))
         passphrase.set('<secret>')
+        fingerprint.set('f9:14:d0:...')
     }
 }
 ----
@@ -114,7 +125,7 @@ All tasks share the following properties
 [options="header", cols="6*<,^"]
 |===
 | Property    | Type    | Option       | System      | Environment | Default | Required
-| profile     | String  | profile      | oci.profile | OCI_PROFILE | DEFAULT | icon:times[role="red"]
+| profile     | String  | oci-profile  | oci.profile | OCI_PROFILE | DEFAULT | icon:times[role="red"]
 | region      | String  | region       | oci.region  | OCI_REGION  |         | icon:times[role="red"]
 | showSecrets | boolean | show-secrets |             |             | false   | icon:times[role="red"]
 |===
@@ -124,7 +135,7 @@ Where each column defines
 [horizontal]
 Property:: The name of the task property.
 Type:: The type of the property.
-Option:: The command line flag to set this property's value. Use `--` as prefix, i.e, `--profile=mine`.
+Option:: The command line flag to set this property's value. Use `--` as prefix, i.e, `--oic-profile=mine`.
 System:: The system property to set this property's value. Use `-D` as prefix, i.e, `-Doci.profile=mine`
 Environment:: The environment key to set this property's value. Set as key/value in command shell, i.e, `export OCI_PROFILE=mine`.
 Default:: Default value for this property (if any).

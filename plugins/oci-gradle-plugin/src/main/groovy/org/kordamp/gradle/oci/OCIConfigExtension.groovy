@@ -21,6 +21,9 @@ import groovy.transform.CompileStatic
 import org.gradle.api.Project
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
+import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Nested
+import org.gradle.api.tasks.Optional
 
 /**
  * @author Andres Almiray
@@ -28,12 +31,12 @@ import org.gradle.api.provider.Property
  */
 @CompileStatic
 class OCIConfigExtension {
-    Property<String> userId
-    Property<String> tenantId
-    Property<String> fingerprint
-    Property<String> region
-    RegularFileProperty keyfile
-    Property<String> passphrase
+    final Property<String> userId
+    final Property<String> tenantId
+    final Property<String> fingerprint
+    final Property<String> region
+    final RegularFileProperty keyfile
+    final Property<String> passphrase
 
     OCIConfigExtension(Project project) {
         userId = project.objects.property(String)
@@ -42,6 +45,42 @@ class OCIConfigExtension {
         region = project.objects.property(String)
         keyfile = project.objects.fileProperty()
         passphrase = project.objects.property(String)
+    }
+
+    @Input
+    @Optional
+    Property<String> getUserId() {
+        this.@userId
+    }
+
+    @Input
+    @Optional
+    Property<String> getTenantId() {
+        this.@tenantId
+    }
+
+    @Input
+    @Optional
+    Property<String> getFingerprint() {
+        this.@fingerprint
+    }
+
+    @Input
+    @Optional
+    Property<String> getRegion() {
+        this.@region
+    }
+
+    @Input
+    @Optional
+    RegularFileProperty getKeyfile() {
+        this.@keyfile
+    }
+
+    @Input
+    @Optional
+    Property<String> getPassphrase() {
+        this.@passphrase
     }
 
     boolean isEmpty() {

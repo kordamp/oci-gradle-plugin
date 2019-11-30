@@ -16,21 +16,16 @@
  * limitations under the License.
  */
 plugins {
-    id 'org.kordamp.gradle.groovy-project' version '0.30.0-SNAPSHOT'
-    id 'org.kordamp.gradle.bintray'        version '0.30.0-SNAPSHOT'
-    id 'org.kordamp.gradle.plugin'         version '0.30.0-SNAPSHOT' apply false
+    id 'org.kordamp.gradle.kordamp-parentpom' version '1.9.1'
+    id 'org.kordamp.gradle.groovy-project'    version '0.30.4-SNAPSHOT'
+    id 'org.kordamp.gradle.bintray'           version '0.30.4-SNAPSHOT'
+    id 'org.kordamp.gradle.plugin'            version '0.30.4-SNAPSHOT' apply false
 }
 
-if (!project.hasProperty('bintrayUsername')) ext.bintrayUsername = '**UNDEFINED**'
-if (!project.hasProperty('bintrayApiKey'))   ext.bintrayApiKey   = '**UNDEFINED**'
-
 config {
-    release = (rootProject.findProperty('release') ?: false).toBoolean()
-
     info {
-        name          = rootProject.name
-        vendor        = 'Kordamp'
-        description   = project.project_description
+        name          = 'oci-gradle-plugin'
+        description   = 'OCI Java SDK Gradle Plugin'
         inceptionYear = '2019'
         tags          = ['project', 'oci', 'sdk']
 
@@ -40,31 +35,18 @@ config {
             scm          = 'https://github.com/aalmiray/oci-gradle-plugin.git'
         }
 
+        scm {
+            url                 = 'https://github.com/aalmiray/oci-gradle-plugin'
+            connection          = 'scm:git:https://github.com/aalmiray/oci-gradle-plugin.git'
+            developerConnection = 'scm:git:git@github.com:aalmiray/oci-gradle-plugin.git'
+        }
+
         specification {
             enabled = false
         }
 
         implementation {
             enabled = false
-        }
-
-        people {
-            person {
-                id    = 'aalmiray'
-                name  = 'Andres Almiray'
-                roles = ['developer']
-            }
-        }
-
-        repositories {
-            repository {
-                name = 'stagingRelease'
-                url  = "${project.rootProject.buildDir}/repos/staging/release"
-            }
-            repository {
-                name = 'stagingSnapshot'
-                url  = "${project.rootProject.buildDir}/repos/staging/snapshot"
-            }
         }
     }
 
@@ -80,55 +62,20 @@ config {
         }
     }
 
-    licensing {
-        licenses {
-            license {
-                id = 'Apache-2.0'
-            }
-        }
-    }
-
-    publishing {
-        signing             = false
-        releasesRepository  = 'stagingRelease'
-        snapshotsRepository = 'stagingSnapshot'
-    }
-
     bintray {
-        credentials {
-            username = project.bintrayUsername
-            password = project.bintrayApiKey
-        }
-        repo    = 'kordamp'
-        userOrg = 'aalmiray'
-        name    = 'oci-gradle-plugin'
+        name = 'oci-gradle-plugin'
     }
 }
 
 allprojects {
-    apply plugin: 'idea'
-
     repositories {
-        jcenter()
         gradlePluginPortal()
-    }
-
-    dependencyUpdates.resolutionStrategy = {
-        componentSelection { rules ->
-            rules.all { selection ->
-                boolean rejected = ['alpha', 'beta', 'rc', 'cr'].any { qualifier ->
-                    selection.candidate.version ==~ /(?i).*[.-]${qualifier}[.\d-]*/
-                }
-                if (rejected) {
-                    selection.reject('Release candidate')
-                }
-            }
-        }
     }
 }
 
 subprojects {
     if (project.name.endsWith('-plugin')) {
+        apply plugin: 'java-library'
         apply plugin: 'groovy'
         apply plugin: 'org.kordamp.gradle.plugin'
 
@@ -142,20 +89,8 @@ subprojects {
             }
         }
 
-        normalization {
-            runtimeClasspath {
-                ignore('/META-INF/MANIFEST.MF')
-                ignore('/application.properties')
-            }
-        }
-
         dependencies {
-            compile gradleApi()
-        }
-
-        compileGroovy {
-            sourceCompatibility = project.sourceCompatibility
-            targetCompatibility = project.targetCompatibility
+            compileOnly gradleApi()
         }
 
         task publishRelease(dependsOn: [bintrayUpload, publishPlugins]) {}

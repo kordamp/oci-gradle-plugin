@@ -56,3 +56,13 @@ dependencies {
     api "com.oracle.oci.sdk:oci-java-sdk-dts:$ociJavaSdkVersion"
     api "com.oracle.oci.sdk:oci-java-sdk-oce:$ociJavaSdkVersion"
 }
+
+processResources {
+    filesMatching(['**/*.properties']) {
+        expand(
+            'version': project.version,
+            'id': 'oci-gradle',
+            'name': 'OCI Gradle plugins'
+        )
+    }
+}

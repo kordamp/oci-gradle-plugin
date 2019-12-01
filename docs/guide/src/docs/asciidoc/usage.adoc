@@ -424,13 +424,14 @@ NOTE: Either `vcnId` or `vcnName` must be specified.
 .addIngressSecurityRule
 [options="header", cols="6*<,^"]
 |===
-| Property       | Type   | Option           | System               | Environment          | Default | Required
-| port           | int    | port             | oci.port             | OCI_PORT             |         | icon:check[role="green"]
-| portType       | String | port-type        | oci.port.typ         | OCI_PORT_TYPE        | TCP     | icon:times[role="red"]
-| securityListId | String | security-list-id | oci.security.list.id | OCI_SECURITY_LIST_ID |         | icon:check[role="green"]
+| Property        | Type   | Option           | System               | Environment          | Default | Required
+| sourcePort      | int    | source-port      |                      |                      |         | icon:check[role="green"]
+| destinationPort | int    | destination-port |                      |                      |         | icon:check[role="green"]
+| portType        | String | port-type        | oci.port.type        | OCI_PORT_TYPE        | TCP     | icon:times[role="red"]
+| securityListId  | String | security-list-id | oci.security.list.id | OCI_SECURITY_LIST_ID |         | icon:check[role="green"]
 |===
 
-NOTE: Multiple entries for `--port` may be defined.
+NOTE: Multiple entries for `--source-port` and/or `--destination-port` may be defined.
 
 NOTE: Valid values for `portType` are: `TCP`, `UDP`.
 

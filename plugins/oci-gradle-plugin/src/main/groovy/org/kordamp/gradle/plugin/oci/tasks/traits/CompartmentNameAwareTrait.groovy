@@ -19,12 +19,14 @@ package org.kordamp.gradle.plugin.oci.tasks.traits
 
 import groovy.transform.CompileStatic
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.options.Option
 import org.kordamp.gradle.plugin.oci.tasks.interfaces.PathAware
 import org.kordamp.gradle.plugin.oci.tasks.interfaces.ProjectAware
 
-import static org.kordamp.gradle.PropertyUtils.stringProperty
+import static org.kordamp.gradle.PropertyUtils.stringProvider
 import static org.kordamp.gradle.StringUtils.isBlank
 
 /**
@@ -33,23 +35,25 @@ import static org.kordamp.gradle.StringUtils.isBlank
  */
 @CompileStatic
 trait CompartmentNameAwareTrait implements PathAware, ProjectAware {
-    private final Property<String> compartmentName = stringProperty(
-        'OCI_COMPARTMENT_NAME', 'oci.compartment.name', project.objects.property(String))
+    @Internal
+    final Property<String> compartmentName = project.objects.property(String)
+
+    @Input
+    final Provider<String> resolvedCompartmentName = stringProvider(
+        'OCI_COMPARTMENT_NAME',
+        'oci.compartment.name',
+        compartmentName,
+        project)
 
     @Option(option = 'compartment-name', description = 'The name of the Compartment (REQUIRED).')
     void setCompartmentName(String compartmentName) {
         this.compartmentName.set(compartmentName)
     }
 
-    @Input
-    Property<String> getCompartmentName() {
-        this.@compartmentName
-    }
-
     void validateCompartmentName() {
-        if (isBlank(getCompartmentName().orNull)) {
+        if (isBlank(getResolvedCompartmentName().orNull)) {
             setCompartmentName('compartment-' + UUID.randomUUID().toString())
-            project.logger.warn("Missing value for 'compartmentName' in $path. Value set to ${getCompartmentName().get()}")
+            project.logger.warn("Missing value for 'compartmentName' in $path. Value set to ${getResolvedCompartmentName().get()}")
         }
     }
 }

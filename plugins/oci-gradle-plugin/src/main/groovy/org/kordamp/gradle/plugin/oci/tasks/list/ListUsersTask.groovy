@@ -45,14 +45,14 @@ class ListUsersTask extends AbstractOCITask implements CompartmentIdAwareTrait, 
 
         IdentityClient client = createIdentityClient()
         ListUsersResponse response = client.listUsers(ListUsersRequest.builder()
-            .compartmentId(getCompartmentId().get())
+            .compartmentId(getResolvedCompartmentId().get())
             .build())
 
         println('Total Users: ' + console.cyan(response.items.size().toString()))
         println(' ')
         for (User user : response.items) {
-            println(user.name + (isVerbose().get() ? ':' : ''))
-            if (isVerbose().get()) {
+            println(user.name + (getResolvedVerbose().get() ? ':' : ''))
+            if (getResolvedVerbose().get()) {
                 printUser(this, user, 0)
             }
         }

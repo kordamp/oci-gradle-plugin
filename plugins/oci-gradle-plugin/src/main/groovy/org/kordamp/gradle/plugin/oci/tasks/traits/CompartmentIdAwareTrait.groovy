@@ -19,13 +19,15 @@ package org.kordamp.gradle.plugin.oci.tasks.traits
 
 import groovy.transform.CompileStatic
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.options.Option
 import org.kordamp.gradle.plugin.oci.tasks.interfaces.PathAware
 import org.kordamp.gradle.plugin.oci.tasks.interfaces.ProjectAware
 
 import static com.oracle.bmc.OCID.isValid
-import static org.kordamp.gradle.PropertyUtils.stringProperty
+import static org.kordamp.gradle.PropertyUtils.stringProvider
 import static org.kordamp.gradle.StringUtils.isBlank
 
 /**
@@ -34,25 +36,27 @@ import static org.kordamp.gradle.StringUtils.isBlank
  */
 @CompileStatic
 trait CompartmentIdAwareTrait implements PathAware, ProjectAware {
-    private final Property<String> compartmentId = stringProperty(
-        'OCI_COMPARTMENT_ID', 'oci.compartment.id', project.objects.property(String))
+    @Internal
+    final Property<String> compartmentId = project.objects.property(String)
+
+    @Input
+    final Provider<String> resolvedCompartmentId = stringProvider(
+        'OCI_COMPARTMENT_ID',
+        'oci.compartment.id',
+        compartmentId,
+        project)
 
     @Option(option = 'compartment-id', description = 'The id of the Compartment (REQUIRED).')
     void setCompartmentId(String compartmentId) {
         this.compartmentId.set(compartmentId)
     }
 
-    @Input
-    Property<String> getCompartmentId() {
-        this.@compartmentId
-    }
-
     void validateCompartmentId() {
-        if (isBlank(getCompartmentId().orNull)) {
+        if (isBlank(getResolvedCompartmentId().orNull)) {
             throw new IllegalStateException("Missing value for 'compartmentId' in $path")
         }
-        if (!isValid(getCompartmentId().get())) {
-            throw new IllegalStateException("Compartment id '${getCompartmentId().get()}' is invalid")
+        if (!isValid(getResolvedCompartmentId().get())) {
+            throw new IllegalStateException("Compartment id '${getResolvedCompartmentId().get()}' is invalid")
         }
     }
 }

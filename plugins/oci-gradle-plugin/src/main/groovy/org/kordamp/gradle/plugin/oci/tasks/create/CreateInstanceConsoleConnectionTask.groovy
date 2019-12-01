@@ -67,11 +67,11 @@ class CreateInstanceConsoleConnectionTask extends AbstractOCITask implements Com
 
         InstanceConsoleConnection connection = maybeCreateInstanceConsoleConnection(this,
             client,
-            getCompartmentId().get(),
-            getInstanceId().get(),
-            getPublicKeyFile()?.asFile,
-            isWaitForCompletion().get(),
-            isVerbose().get())
+            getResolvedCompartmentId().get(),
+            getResolvedInstanceId().get(),
+            getResolvedPublicKeyFile().get().asFile,
+            getResolvedWaitForCompletion().get(),
+            getResolvedVerbose().get())
         createdConnectionId.set(connection.id)
     }
 

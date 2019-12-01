@@ -49,15 +49,15 @@ class ListRouteTablesTask extends AbstractOCITask implements CompartmentIdAwareT
 
         VirtualNetworkClient client = createVirtualNetworkClient()
         ListRouteTablesResponse response = client.listRouteTables(ListRouteTablesRequest.builder()
-            .compartmentId(getCompartmentId().get())
-            .vcnId(getVcnId().get())
+            .compartmentId(getResolvedCompartmentId().get())
+            .vcnId(getResolvedVcnId().get())
             .build())
 
         println('Total RouteTables: ' + console.cyan(response.items.size().toString()))
         println(' ')
         for (RouteTable routeTable : response.items) {
-            println(routeTable.displayName + (isVerbose().get() ? ':' : ''))
-            if (isVerbose().get()) {
+            println(routeTable.displayName + (getResolvedVerbose().get() ? ':' : ''))
+            if (getResolvedVerbose().get()) {
                 printRouteTable(this, routeTable, 0)
             }
         }

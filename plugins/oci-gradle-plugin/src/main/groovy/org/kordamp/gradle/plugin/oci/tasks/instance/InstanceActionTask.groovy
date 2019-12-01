@@ -23,7 +23,9 @@ import com.oracle.bmc.core.requests.GetInstanceRequest
 import com.oracle.bmc.core.requests.InstanceActionRequest
 import com.oracle.bmc.core.requests.ListInstancesRequest
 import groovy.transform.CompileStatic
+import groovy.transform.Internal
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.options.Option
 import org.gradle.api.tasks.options.OptionValues
@@ -35,7 +37,6 @@ import org.kordamp.gradle.plugin.oci.tasks.traits.OptionalInstanceNameAwareTrait
 import org.kordamp.gradle.plugin.oci.tasks.traits.WaitForCompletionAwareTrait
 import org.kordamp.jipsy.TypeProviderFor
 
-import static org.kordamp.gradle.PropertyUtils.stringProperty
 import static org.kordamp.gradle.StringUtils.isBlank
 import static org.kordamp.gradle.StringUtils.isNotBlank
 
@@ -69,7 +70,8 @@ class InstanceActionTask extends AbstractOCITask implements CompartmentIdAwareTr
         }
     }
 
-    private final Property<InstanceAction> action = project.objects.property(InstanceAction)
+    @Internal
+    final Property<InstanceAction> action = project.objects.property(InstanceAction)
 
     @Option(option = 'action', description = 'The action to be executed (REQUIRED).')
     void setAction(InstanceAction action) {
@@ -77,8 +79,12 @@ class InstanceActionTask extends AbstractOCITask implements CompartmentIdAwareTr
     }
 
     @Input
-    InstanceAction getAction() {
-        InstanceAction.valueOf(stringProperty('OCI_INSTANCE_ACTION', 'oci.instance.action', (this.@action.orNull ?: InstanceAction.STOP).name()).toUpperCase())
+    Provider<InstanceAction> getResolvedAction() {
+        project.providers.provider {
+            String value = System.getenv('OCI_INSTANCE_ACTION')
+            if (isBlank(value)) value = System.getProperty('oci.instance.action')
+            isNotBlank(value) ? InstanceAction.valueOf(value) : action.getOrElse(InstanceAction.STOP)
+        }
     }
 
     @OptionValues("action")
@@ -90,40 +96,40 @@ class InstanceActionTask extends AbstractOCITask implements CompartmentIdAwareTr
     protected void doExecuteTask() {
         validateInstanceId()
 
-        if (isBlank(getInstanceId().orNull) && isBlank(getInstanceName().orNull)) {
+        if (isBlank(getResolvedInstanceId().orNull) && isBlank(getResolvedInstanceName().orNull)) {
             throw new IllegalStateException("Missing value for either 'instanceId' or 'instanceName' in $path")
         }
-        if (!getAction()) {
+        if (!getResolvedAction()) {
             throw new IllegalStateException("Missing value for 'action' in $path")
         }
 
         ComputeClient client = createComputeClient()
 
-        if (isNotBlank(getInstanceId().orNull)) {
-            instanceAction(client, getInstanceId().get(), getAction())
+        if (isNotBlank(getResolvedInstanceId().orNull)) {
+            instanceAction(client, getResolvedInstanceId().get(), getResolvedAction().get())
         } else {
             validateCompartmentId()
 
             client.listInstances(ListInstancesRequest.builder()
-                .compartmentId(getCompartmentId().get())
-                .displayName(getInstanceName().get())
+                .compartmentId(getResolvedCompartmentId().get())
+                .displayName(getResolvedInstanceName().get())
                 .build())
                 .items.each { instance ->
                 setInstanceId(instance.id)
-                instanceAction(client, instance.id, getAction())
+                instanceAction(client, instance.id, getResolvedAction().get())
             }
         }
     }
 
     private Instance instanceAction(ComputeClient client, String instanceId, InstanceAction action) {
-        println("Sending ${getAction().name()} to Instance with id ${console.yellow(instanceId)}")
+        println("Sending ${getResolvedAction().get().name()} to Instance with id ${console.yellow(instanceId)}")
         Instance instance = client.instanceAction(InstanceActionRequest.builder()
             .instanceId(instanceId)
             .action(action.name())
             .build())
             .instance
 
-        if (isWaitForCompletion().get()) {
+        if (getResolvedWaitForCompletion().get()) {
             println("Waiting for Instance to be ${state(action.state().name())}")
             client.waiters
                 .forInstance(GetInstanceRequest.builder()

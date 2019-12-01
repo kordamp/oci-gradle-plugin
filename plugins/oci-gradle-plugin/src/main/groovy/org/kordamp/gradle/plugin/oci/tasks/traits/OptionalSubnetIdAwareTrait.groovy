@@ -17,17 +17,18 @@
  */
 package org.kordamp.gradle.plugin.oci.tasks.traits
 
-
 import groovy.transform.CompileStatic
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.options.Option
 import org.kordamp.gradle.plugin.oci.tasks.interfaces.PathAware
 import org.kordamp.gradle.plugin.oci.tasks.interfaces.ProjectAware
 
 import static com.oracle.bmc.OCID.isValid
-import static org.kordamp.gradle.PropertyUtils.stringProperty
+import static org.kordamp.gradle.PropertyUtils.stringProvider
 import static org.kordamp.gradle.StringUtils.isNotBlank
 
 /**
@@ -36,23 +37,25 @@ import static org.kordamp.gradle.StringUtils.isNotBlank
  */
 @CompileStatic
 trait OptionalSubnetIdAwareTrait implements PathAware, ProjectAware {
-    private final Property<String> subnetId = stringProperty(
-        'OCI_SUBNET_ID', 'oci.subnet.id', project.objects.property(String))
+    @Internal
+    final Property<String> subnetId = project.objects.property(String)
+
+    @Input
+    @Optional
+    final Provider<String> resolvedSubnetId = stringProvider(
+        'OCI_SUBNET_ID',
+        'oci.subnet.id',
+        subnetId,
+        project)
 
     @Option(option = 'subnet-id', description = 'The id of the Subnet (OPTIONAL).')
     void setSubnetId(String subnetId) {
         this.subnetId.set(subnetId)
     }
 
-    @Input
-    @Optional
-    Property<String> getSubnetId() {
-        this.@subnetId
-    }
-
     void validateSubnetId() {
-        if (isNotBlank(getSubnetId().orNull) && !isValid(getSubnetId().get())) {
-            throw new IllegalStateException("Subnet id '${getSubnetId().get()}' is invalid")
+        if (isNotBlank(getResolvedSubnetId().orNull) && !isValid(getResolvedSubnetId().get())) {
+            throw new IllegalStateException("Subnet id '${getResolvedSubnetId().get()}' is invalid")
         }
     }
 }

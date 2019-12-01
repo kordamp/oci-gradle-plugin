@@ -49,21 +49,21 @@ class DeleteCompartmentTask extends AbstractOCITask implements CompartmentIdAwar
         // TODO: check if compartment is empty
 
         Compartment compartment = client.getCompartment(GetCompartmentRequest.builder()
-            .compartmentId(getCompartmentId().get())
+            .compartmentId(getResolvedCompartmentId().get())
             .build())
             .compartment
 
-        println("Deleting Compartment ${compartment.name} with id ${getCompartmentId().get()}")
+        println("Deleting Compartment ${compartment.name} with id ${getResolvedCompartmentId().get()}")
 
         client.deleteCompartment(DeleteCompartmentRequest.builder()
-            .compartmentId(getCompartmentId().get())
+            .compartmentId(getResolvedCompartmentId().get())
             .build())
 
-        if (isWaitForCompletion().get()) {
+        if (getResolvedWaitForCompletion().get()) {
             println("Waiting for Compartment to be ${state('Deleted')}")
             client.waiters
                 .forCompartment(GetCompartmentRequest.builder()
-                    .compartmentId(getCompartmentId().get())
+                    .compartmentId(getResolvedCompartmentId().get())
                     .build(),
                     Compartment.LifecycleState.Deleted)
                 .execute()

@@ -19,14 +19,16 @@ package org.kordamp.gradle.plugin.oci.tasks.traits
 
 import groovy.transform.CompileStatic
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.options.Option
 import org.kordamp.gradle.plugin.oci.tasks.interfaces.PathAware
 import org.kordamp.gradle.plugin.oci.tasks.interfaces.ProjectAware
 
 import static com.oracle.bmc.OCID.isValid
-import static org.kordamp.gradle.PropertyUtils.stringProperty
+import static org.kordamp.gradle.PropertyUtils.stringProvider
 import static org.kordamp.gradle.StringUtils.isNotBlank
 
 /**
@@ -35,23 +37,25 @@ import static org.kordamp.gradle.StringUtils.isNotBlank
  */
 @CompileStatic
 trait OptionalVcnIdAwareTrait implements PathAware, ProjectAware {
-    private final Property<String> vcnId = stringProperty(
-        'OCI_VCN_ID', 'oci.vcn.id', project.objects.property(String))
+    @Internal
+    final Property<String> vcnId = project.objects.property(String)
+
+    @Input
+    @Optional
+    final Provider<String> resolvedVcnId = stringProvider(
+        'OCI_VCN_ID',
+        'oci.vcn.id',
+        vcnId,
+        project)
 
     @Option(option = 'vcn-id', description = 'The id of the Vcn (OPTIONAL).')
     void setVcnId(String vcnId) {
         this.vcnId.set(vcnId)
     }
 
-    @Input
-    @Optional
-    Property<String> getVcnId() {
-        this.@vcnId
-    }
-
     void validateVcnId() {
-        if (isNotBlank(getVcnId().orNull) && !isValid(getVcnId().get())) {
-            throw new IllegalStateException("Vcn id '${getVcnId().get()}' is invalid")
+        if (isNotBlank(getResolvedVcnId().orNull) && !isValid(getResolvedVcnId().get())) {
+            throw new IllegalStateException("Vcn id '${getResolvedVcnId().get()}' is invalid")
         }
     }
 }

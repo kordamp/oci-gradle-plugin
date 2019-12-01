@@ -57,8 +57,8 @@ class GetInstancePublicIpTask extends AbstractOCITask implements CompartmentIdAw
         Set<String> publicIps = getInstancePublicIp(this,
             computeClient,
             vcnClient,
-            getCompartmentId().get(),
-            getInstanceId().get())
+            getResolvedCompartmentId().get(),
+            getResolvedInstanceId().get())
 
         for (String publicIp : publicIps) {
             println(publicIp)

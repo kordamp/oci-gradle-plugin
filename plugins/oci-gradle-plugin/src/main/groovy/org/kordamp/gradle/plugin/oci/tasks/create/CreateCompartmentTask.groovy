@@ -67,11 +67,11 @@ class CreateCompartmentTask extends AbstractOCITask implements CompartmentIdAwar
 
         Compartment compartment = maybeCreateCompartment(this,
             client,
-            getCompartmentId().get(),
-            getCompartmentName().get(),
-            getCompartmentDescription().get(),
-            isWaitForCompletion().get(),
-            isVerbose().get())
+            getResolvedCompartmentId().get(),
+            getResolvedCompartmentName().get(),
+            getResolvedCompartmentDescription().get(),
+            getResolvedWaitForCompletion().get(),
+            getResolvedVerbose().get())
         createdCompartmentId.set(compartment.id)
     }
 

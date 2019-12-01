@@ -23,12 +23,14 @@ import com.oracle.bmc.core.requests.ListImagesRequest
 import com.oracle.bmc.core.responses.ListImagesResponse
 import groovy.transform.CompileStatic
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.options.Option
 import org.kordamp.gradle.plugin.oci.tasks.interfaces.PathAware
 import org.kordamp.gradle.plugin.oci.tasks.interfaces.ProjectAware
 
-import static org.kordamp.gradle.PropertyUtils.stringProperty
+import static org.kordamp.gradle.PropertyUtils.stringProvider
 import static org.kordamp.gradle.StringUtils.isBlank
 
 /**
@@ -37,20 +39,23 @@ import static org.kordamp.gradle.StringUtils.isBlank
  */
 @CompileStatic
 trait ImageAwareTrait implements PathAware, ProjectAware {
-    private final Property<String> image = stringProperty('OCI_IMAGE', 'oci.image', project.objects.property(String))
+    @Internal
+    final Property<String> image = project.objects.property(String)
+
+    @Input
+    final Provider<String> resolvedImage = stringProvider(
+        'OCI_IMAGE',
+        'oci.image',
+        image,
+        project)
 
     @Option(option = 'image', description = 'The Image of the Instance (REQUIRED).')
     void setImage(String image) {
         this.image.set(image)
     }
 
-    @Input
-    Property<String> getImage() {
-        this.@image
-    }
-
     void validateImage() {
-        if (isBlank(getImage().orNull)) {
+        if (isBlank(getResolvedImage().orNull)) {
             throw new IllegalStateException("Missing value for 'image' in $path")
         }
     }
@@ -59,8 +64,8 @@ trait ImageAwareTrait implements PathAware, ProjectAware {
         ListImagesResponse response = client.listImages(ListImagesRequest.builder()
             .compartmentId(compartmentId)
             .build())
-        Image image = response.items.find { Image img -> img.displayName == getImage().get() }
-        if (!image) throw new IllegalStateException("Invalid image ${getImage().get()}")
+        Image image = response.items.find { Image img -> img.displayName == getResolvedImage().get() }
+        if (!image) throw new IllegalStateException("Invalid image ${getResolvedImage().get()}")
         image
     }
 }

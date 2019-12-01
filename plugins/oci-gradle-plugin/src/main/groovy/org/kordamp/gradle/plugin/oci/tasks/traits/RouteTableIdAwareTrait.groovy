@@ -20,12 +20,14 @@ package org.kordamp.gradle.plugin.oci.tasks.traits
 import com.oracle.bmc.OCID
 import groovy.transform.CompileStatic
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.options.Option
 import org.kordamp.gradle.plugin.oci.tasks.interfaces.PathAware
 import org.kordamp.gradle.plugin.oci.tasks.interfaces.ProjectAware
 
-import static org.kordamp.gradle.PropertyUtils.stringProperty
+import static org.kordamp.gradle.PropertyUtils.stringProvider
 import static org.kordamp.gradle.StringUtils.isBlank
 
 /**
@@ -34,25 +36,27 @@ import static org.kordamp.gradle.StringUtils.isBlank
  */
 @CompileStatic
 trait RouteTableIdAwareTrait implements PathAware, ProjectAware {
-    private final Property<String> routeTableId = stringProperty(
-        'OCI_ROUTE_TABLE_ID', 'oci.route.tale.id', project.objects.property(String))
+    @Internal
+    final Property<String> routeTableId = project.objects.property(String)
+
+    @Input
+    final Provider<String> resolvedRouteTableId = stringProvider(
+        'OCI_ROUTE_TABLE_ID',
+        'oci.route.tale.id',
+        routeTableId,
+        project)
 
     @Option(option = 'route-table-id', description = 'The id of the RouteTable (REQUIRED).')
     void setRouteTableId(String routeTableId) {
         this.routeTableId.set(routeTableId)
     }
 
-    @Input
-    Property<String> getRouteTableId() {
-        this.@routeTableId
-    }
-
     void validateRouteTableId() {
-        if (isBlank(getRouteTableId().orNull)) {
+        if (isBlank(getResolvedRouteTableId().orNull)) {
             throw new IllegalStateException("Missing value for 'routeTableId' in $path")
         }
-        if (!OCID.isValid(getRouteTableId().get())) {
-            throw new IllegalStateException("RouteTable id '${getRouteTableId().get()}' is invalid")
+        if (!OCID.isValid(getResolvedRouteTableId().get())) {
+            throw new IllegalStateException("RouteTable id '${getResolvedRouteTableId().get()}' is invalid")
         }
     }
 }

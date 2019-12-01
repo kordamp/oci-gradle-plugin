@@ -17,17 +17,18 @@
  */
 package org.kordamp.gradle.plugin.oci.tasks.traits
 
-
 import groovy.transform.CompileStatic
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.options.Option
 import org.kordamp.gradle.plugin.oci.tasks.interfaces.PathAware
 import org.kordamp.gradle.plugin.oci.tasks.interfaces.ProjectAware
 
 import static com.oracle.bmc.OCID.isValid
-import static org.kordamp.gradle.PropertyUtils.stringProperty
+import static org.kordamp.gradle.PropertyUtils.stringProvider
 import static org.kordamp.gradle.StringUtils.isNotBlank
 
 /**
@@ -36,23 +37,25 @@ import static org.kordamp.gradle.StringUtils.isNotBlank
  */
 @CompileStatic
 trait OptionalInstanceIdAwareTrait implements PathAware, ProjectAware {
-    private final Property<String> instanceId = stringProperty(
-        'OCI_INSTANCE_ID', 'oci.instance.id', project.objects.property(String))
+    @Internal
+    final Property<String> instanceId = project.objects.property(String)
+
+    @Input
+    @Optional
+    final Provider<String> resolvedInstanceId = stringProvider(
+        'OCI_INSTANCE_ID',
+        'oci.instance.id',
+        instanceId,
+        project)
 
     @Option(option = 'instance-id', description = 'The id of the Instance (OPTIONAL).')
     void setInstanceId(String instanceId) {
         this.instanceId.set(instanceId)
     }
 
-    @Input
-    @Optional
-    Property<String> getInstanceId() {
-        this.@instanceId
-    }
-
     void validateInstanceId() {
-        if (isNotBlank(getInstanceId().orNull) && !isValid(getInstanceId().get())) {
-            throw new IllegalStateException("Instance id '${getInstanceId().get()}' is invalid")
+        if (isNotBlank(getResolvedInstanceId().orNull) && !isValid(getResolvedInstanceId().get())) {
+            throw new IllegalStateException("Instance id '${getResolvedInstanceId().get()}' is invalid")
         }
     }
 }

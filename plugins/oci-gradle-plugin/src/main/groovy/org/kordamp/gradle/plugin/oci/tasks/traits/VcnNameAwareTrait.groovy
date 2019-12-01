@@ -19,12 +19,14 @@ package org.kordamp.gradle.plugin.oci.tasks.traits
 
 import groovy.transform.CompileStatic
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.options.Option
 import org.kordamp.gradle.plugin.oci.tasks.interfaces.PathAware
 import org.kordamp.gradle.plugin.oci.tasks.interfaces.ProjectAware
 
-import static org.kordamp.gradle.PropertyUtils.stringProperty
+import static org.kordamp.gradle.PropertyUtils.stringProvider
 import static org.kordamp.gradle.StringUtils.isBlank
 
 /**
@@ -33,23 +35,25 @@ import static org.kordamp.gradle.StringUtils.isBlank
  */
 @CompileStatic
 trait VcnNameAwareTrait implements PathAware, ProjectAware {
-    private final Property<String> vcnName = stringProperty(
-        'OCI_VCN_NAME', 'oci.vcn.name', project.objects.property(String))
+    @Internal
+    final Property<String> vcnName = project.objects.property(String)
+
+    @Input
+    final Provider<String> resolvedVcnName = stringProvider(
+        'OCI_VCN_NAME',
+        'oci.vcn.name',
+        vcnName,
+        project)
 
     @Option(option = 'vcn-name', description = 'The name of the Vcn (REQUIRED).')
     void setVcnName(String vcnName) {
         this.vcnName.set(vcnName)
     }
 
-    @Input
-    Property<String> getVcnName() {
-        this.@vcnName
-    }
-
     void validateVcnName() {
-        if (isBlank(getVcnName().orNull)) {
+        if (isBlank(getResolvedVcnName().orNull)) {
             setVcnName('vcn-' + UUID.randomUUID().toString())
-            project.logger.warn("Missing value for 'vcnName' in $path. Value set to ${getVcnName().get()}")
+            project.logger.warn("Missing value for 'vcnName' in $path. Value set to ${getResolvedVcnName().get()}")
         }
     }
 }

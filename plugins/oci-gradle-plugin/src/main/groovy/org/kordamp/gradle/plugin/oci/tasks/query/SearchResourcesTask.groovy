@@ -26,14 +26,16 @@ import com.oracle.bmc.resourcesearch.responses.GetResourceTypeResponse
 import com.oracle.bmc.resourcesearch.responses.ListResourceTypesResponse
 import groovy.transform.CompileStatic
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.options.Option
 import org.kordamp.gradle.plugin.oci.tasks.AbstractOCITask
 import org.kordamp.gradle.plugin.oci.tasks.interfaces.OCITask
 import org.kordamp.jipsy.TypeProviderFor
 
-import static org.kordamp.gradle.PropertyUtils.stringProperty
+import static org.kordamp.gradle.PropertyUtils.stringProvider
 import static org.kordamp.gradle.StringUtils.isBlank
 
 /**
@@ -45,27 +47,29 @@ import static org.kordamp.gradle.StringUtils.isBlank
 class SearchResourcesTask extends AbstractOCITask {
     static final String TASK_DESCRIPTION = 'Lists information on resource types.'
 
-    private Property<String> resourceType = stringProperty(
-        'OCI_RESOURCE_TYPE', 'oci.resource.type', project.objects.property(String))
+    @Internal
+    private final Property<String> resourceType = project.objects.property(String)
+
+    @Input
+    @Optional
+    final Provider<String> resolvedResourceType = stringProvider(
+        'OCI_RESOURCE_TYPE',
+        'oci.resource.type',
+        resourceType,
+        project)
 
     @Option(option = 'resource-type', description = 'The type to search (OPTIONAL).')
     void setResourceType(String resourceType) {
         this.resourceType.set(resourceType)
     }
 
-    @Input
-    @Optional
-    Property<String> getType() {
-        this.@resourceType
-    }
-
     @Override
     protected void doExecuteTask() {
         ResourceSearch client = createResourceSearchClient()
-        if (isBlank(getType().orNull)) {
+        if (isBlank(getResolvedResourceType().orNull)) {
             listTypes(client)
         } else {
-            getTypeDetails(client, getType().get())
+            getTypeDetails(client, getResolvedResourceType().get())
         }
     }
 

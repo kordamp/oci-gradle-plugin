@@ -74,11 +74,11 @@ class CreateInternetGatewayTask extends AbstractOCITask implements CompartmentId
 
         InternetGateway internetGateway = maybeCreateInternetGateway(this,
             client,
-            getCompartmentId().get(),
-            getVcnId().get(),
-            getInternetGatewayName().get(),
-            isWaitForCompletion().get(),
-            isVerbose().get())
+            getResolvedCompartmentId().get(),
+            getResolvedVcnId().get(),
+            getResolvedInternetGatewayName().get(),
+            getResolvedWaitForCompletion().get(),
+            getResolvedVerbose().get())
         createdInternetGatewayId.set(internetGateway.id)
     }
 

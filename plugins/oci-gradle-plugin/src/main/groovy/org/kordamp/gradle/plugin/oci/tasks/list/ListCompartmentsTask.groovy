@@ -45,14 +45,14 @@ class ListCompartmentsTask extends AbstractOCITask implements CompartmentIdAware
 
         IdentityClient client = createIdentityClient()
         ListCompartmentsResponse response = client.listCompartments(ListCompartmentsRequest.builder()
-            .compartmentId(getCompartmentId().get())
+            .compartmentId(getResolvedCompartmentId().get())
             .build())
 
         println('Total Compartments: ' + console.cyan(response.items.size().toString()))
         println(' ')
         for (Compartment compartment : response.items) {
-            println(compartment.name + (isVerbose().get() ? ':' : ''))
-            if (isVerbose().get()) {
+            println(compartment.name + (getResolvedVerbose().get() ? ':' : ''))
+            if (getResolvedVerbose().get()) {
                 printCompartment(this, compartment, 0)
             }
         }

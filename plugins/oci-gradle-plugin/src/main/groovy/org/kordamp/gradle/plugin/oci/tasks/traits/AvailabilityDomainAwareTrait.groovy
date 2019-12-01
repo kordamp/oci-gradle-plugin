@@ -23,12 +23,14 @@ import com.oracle.bmc.identity.requests.ListAvailabilityDomainsRequest
 import com.oracle.bmc.identity.responses.ListAvailabilityDomainsResponse
 import groovy.transform.CompileStatic
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.options.Option
 import org.kordamp.gradle.plugin.oci.tasks.interfaces.PathAware
 import org.kordamp.gradle.plugin.oci.tasks.interfaces.ProjectAware
 
-import static org.kordamp.gradle.PropertyUtils.stringProperty
+import static org.kordamp.gradle.PropertyUtils.stringProvider
 import static org.kordamp.gradle.StringUtils.isBlank
 
 /**
@@ -37,21 +39,23 @@ import static org.kordamp.gradle.StringUtils.isBlank
  */
 @CompileStatic
 trait AvailabilityDomainAwareTrait implements PathAware, ProjectAware {
-    private final Property<String> availabilityDomain = stringProperty(
-        'OCI_AVAILABILITY_DOMAIN', 'oci.availability.domain', project.objects.property(String))
+    @Internal
+    final Property<String> availabilityDomain = project.objects.property(String)
+
+    @Input
+    final Provider<String> resolvedAvailabilityDomain = stringProvider(
+        'OCI_AVAILABILITY_DOMAIN',
+        'oci.availability.domain',
+        availabilityDomain,
+        project)
 
     @Option(option = 'availability-domain', description = 'The AvailabilityDomain (REQUIRED).')
     void setAvailabilityDomain(String availabilityDomain) {
         this.availabilityDomain.set(availabilityDomain)
     }
 
-    @Input
-    Property<String> getAvailabilityDomain() {
-        this.@availabilityDomain
-    }
-
     void validateAvailabilityDomain() {
-        if (isBlank(getAvailabilityDomain().orNull)) {
+        if (isBlank(getResolvedAvailabilityDomain().orNull)) {
             throw new IllegalStateException("Missing value for 'availabilityDomain' in $path")
         }
     }
@@ -60,8 +64,8 @@ trait AvailabilityDomainAwareTrait implements PathAware, ProjectAware {
         ListAvailabilityDomainsResponse response = identityClient.listAvailabilityDomains(ListAvailabilityDomainsRequest.builder()
             .compartmentId(compartmentId)
             .build())
-        AvailabilityDomain ad = response.items.find { AvailabilityDomain ad -> ad.name == getAvailabilityDomain().get() }
-        if (!ad) throw new IllegalStateException("Invalid availability domain ${getAvailabilityDomain().get()}")
+        AvailabilityDomain ad = response.items.find { AvailabilityDomain ad -> ad.name == getResolvedAvailabilityDomain().get() }
+        if (!ad) throw new IllegalStateException("Invalid availability domain ${getResolvedAvailabilityDomain().get()}")
         ad
     }
 }

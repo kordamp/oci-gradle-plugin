@@ -50,7 +50,7 @@ class TerminateInstanceTask extends AbstractOCITask implements CompartmentIdAwar
     protected void doExecuteTask() {
         validateInstanceId()
 
-        if (isBlank(getInstanceId().orNull) && isBlank(getInstanceName().orNull)) {
+        if (isBlank(getResolvedInstanceId().orNull) && isBlank(getResolvedInstanceName().orNull)) {
             throw new IllegalStateException("Missing value for either 'instanceId' or 'instanceName' in $path")
         }
 
@@ -59,9 +59,9 @@ class TerminateInstanceTask extends AbstractOCITask implements CompartmentIdAwar
         // TODO: check if instance exists
         // TODO: check is instance is in a 'deletable' state
 
-        if (isNotBlank(getInstanceId().orNull)) {
+        if (isNotBlank(getResolvedInstanceId().orNull)) {
             Instance instance = client.getInstance(GetInstanceRequest.builder()
-                .instanceId(getInstanceId().get())
+                .instanceId(getResolvedInstanceId().get())
                 .build())
                 .instance
 
@@ -73,8 +73,8 @@ class TerminateInstanceTask extends AbstractOCITask implements CompartmentIdAwar
             validateCompartmentId()
 
             client.listInstances(ListInstancesRequest.builder()
-                .compartmentId(getCompartmentId().get())
-                .displayName(getInstanceName().get())
+                .compartmentId(getResolvedCompartmentId().get())
+                .displayName(getResolvedInstanceName().get())
                 .build())
                 .items.each { instance ->
                 setInstanceId(instance.id)
@@ -89,7 +89,7 @@ class TerminateInstanceTask extends AbstractOCITask implements CompartmentIdAwar
             .instanceId(instance.id)
             .build())
 
-        if (isWaitForCompletion().get()) {
+        if (getResolvedWaitForCompletion().get()) {
             println("Waiting for Instance to be ${state('Terminated')}")
             client.waiters
                 .forInstance(GetInstanceRequest.builder()

@@ -52,7 +52,7 @@ class DeleteInternetGatewayTask extends AbstractOCITask implements CompartmentId
     protected void doExecuteTask() {
         validateInternetGatewayId()
 
-        if (isBlank(getInternetGatewayId().orNull) && isBlank(getInternetGatewayName().orNull)) {
+        if (isBlank(getResolvedInternetGatewayId().orNull) && isBlank(getResolvedInternetGatewayName().orNull)) {
             throw new IllegalStateException("Missing value for either 'internetGatewayId' or 'internetGatewayName' in $path")
         }
 
@@ -61,9 +61,9 @@ class DeleteInternetGatewayTask extends AbstractOCITask implements CompartmentId
         // TODO: check if gateway exists
         // TODO: check is gateway is in a 'deletable' state
 
-        if (isNotBlank(getInternetGatewayId().orNull)) {
+        if (isNotBlank(getResolvedInternetGatewayId().orNull)) {
             InternetGateway internetGateway = client.getInternetGateway(GetInternetGatewayRequest.builder()
-                .igId(getInternetGatewayId().get())
+                .igId(getResolvedInternetGatewayId().get())
                 .build())
                 .internetGateway
 
@@ -76,9 +76,9 @@ class DeleteInternetGatewayTask extends AbstractOCITask implements CompartmentId
             validateVcnId()
 
             client.listInternetGateways(ListInternetGatewaysRequest.builder()
-                .compartmentId(getCompartmentId().get())
-                .vcnId(getVcnId().get())
-                .displayName(getInternetGatewayName().get())
+                .compartmentId(getResolvedCompartmentId().get())
+                .vcnId(getResolvedVcnId().get())
+                .displayName(getResolvedInternetGatewayName().get())
                 .build())
                 .items.each { internetGateway ->
                 setInternetGatewayId(internetGateway.id)
@@ -94,7 +94,7 @@ class DeleteInternetGatewayTask extends AbstractOCITask implements CompartmentId
             .igId(internetGateway.id)
             .build())
 
-        if (isWaitForCompletion().get()) {
+        if (getResolvedWaitForCompletion().get()) {
             println("Waiting for InternetGateway to be ${state('Terminated')}")
             client.waiters
                 .forInternetGateway(GetInternetGatewayRequest.builder()

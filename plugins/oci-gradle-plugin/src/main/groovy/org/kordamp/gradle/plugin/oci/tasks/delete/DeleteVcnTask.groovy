@@ -50,7 +50,7 @@ class DeleteVcnTask extends AbstractOCITask implements CompartmentIdAwareTrait,
     protected void doExecuteTask() {
         validateVcnId()
 
-        if (isBlank(getVcnId().orNull) && isBlank(getVcnName().orNull)) {
+        if (isBlank(getResolvedVcnId().orNull) && isBlank(getResolvedVcnName().orNull)) {
             throw new IllegalStateException("Missing value for either 'vcnId' or 'vcnName' in $path")
         }
 
@@ -59,9 +59,9 @@ class DeleteVcnTask extends AbstractOCITask implements CompartmentIdAwareTrait,
         // TODO: check if vcn exists
         // TODO: check is vcn is in a 'deletable' state
 
-        if (isNotBlank(getVcnId().orNull)) {
+        if (isNotBlank(getResolvedVcnId().orNull)) {
             Vcn vcn = client.getVcn(GetVcnRequest.builder()
-                .vcnId(getVcnId().get())
+                .vcnId(getResolvedVcnId().get())
                 .build())
                 .vcn
 
@@ -73,8 +73,8 @@ class DeleteVcnTask extends AbstractOCITask implements CompartmentIdAwareTrait,
             validateCompartmentId()
 
             client.listVcns(ListVcnsRequest.builder()
-                .compartmentId(getCompartmentId().get())
-                .displayName(getVcnName().get())
+                .compartmentId(getResolvedCompartmentId().get())
+                .displayName(getResolvedVcnName().get())
                 .build())
                 .items.each { vcn ->
                 setVcnId(vcn.id)
@@ -89,7 +89,7 @@ class DeleteVcnTask extends AbstractOCITask implements CompartmentIdAwareTrait,
             .vcnId(vcn.id)
             .build())
 
-        if (isWaitForCompletion().get()) {
+        if (getResolvedWaitForCompletion().get()) {
             println("Waiting for Vcn to be ${state('Terminated')}")
             client.waiters
                 .forVcn(GetVcnRequest.builder().vcnId(vcn.id).build(),

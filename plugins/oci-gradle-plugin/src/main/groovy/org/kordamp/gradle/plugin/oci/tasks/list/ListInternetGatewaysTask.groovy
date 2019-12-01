@@ -47,15 +47,15 @@ class ListInternetGatewaysTask extends AbstractOCITask implements CompartmentIdA
 
         VirtualNetworkClient client = createVirtualNetworkClient()
         ListInternetGatewaysResponse response = client.listInternetGateways(ListInternetGatewaysRequest.builder()
-            .compartmentId(getCompartmentId().get())
-            .vcnId(getVcnId().get())
+            .compartmentId(getResolvedCompartmentId().get())
+            .vcnId(getResolvedVcnId().get())
             .build())
 
         println('Total InternetGateways: ' + console.cyan(response.items.size().toString()))
         println(' ')
         for (InternetGateway internetGateway : response.items) {
-            println(internetGateway.displayName + (isVerbose().get() ? ':' : ''))
-            if (isVerbose().get()) {
+            println(internetGateway.displayName + (getResolvedVerbose().get() ? ':' : ''))
+            if (getResolvedVerbose().get()) {
                 printInternetGateway(this, internetGateway, 0)
             }
         }

@@ -30,17 +30,18 @@ import com.oracle.bmc.identity.IdentityClient
 import com.oracle.bmc.resourcesearch.ResourceSearchClient
 import groovy.transform.CompileStatic
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.options.Option
 import org.kordamp.gradle.AnsiConsole
+import org.kordamp.gradle.plugin.base.tasks.AbstractReportingTask
 import org.kordamp.gradle.plugin.oci.OCIConfigExtension
 import org.kordamp.gradle.plugin.oci.tasks.interfaces.OCITask
-import org.kordamp.gradle.plugin.base.tasks.AbstractReportingTask
 
-import static org.kordamp.gradle.PropertyUtils.stringProperty
+import static org.kordamp.gradle.PropertyUtils.stringProvider
 import static org.kordamp.gradle.StringUtils.isNotBlank
 
 /**
@@ -55,33 +56,41 @@ abstract class AbstractOCITask extends AbstractReportingTask implements OCITask 
     protected final List<AutoCloseable> closeables = []
     private AuthenticationDetailsProvider authenticationDetailsProvider
 
-    private final Property<String> profile = project.objects.property(String)
-    private final Property<String> region = project.objects.property(String)
-
     AbstractOCITask() {
         ociConfig = extensions.create('ociConfig', OCIConfigExtension, project)
     }
+
+    @Internal
+    private final Property<String> profile = project.objects.property(String)
+
+    @Input
+    @Optional
+    final Provider<String> resolvedProfile = stringProvider(
+        'OCI_PROFILE',
+        'oci.profile',
+        profile,
+        project)
+        .orElse('DEFAULT')
+
+    @Internal
+    private final Property<String> region = project.objects.property(String)
+
+    @Input
+    @Optional
+    final Provider<String> resolvedRegion = stringProvider(
+        'OCI_REGION',
+        'oci.region',
+        region,
+        project)
 
     @Option(option = 'oci-profile', description = 'The profile to use. Defaults to DEFAULT (OPTIONAL).')
     void setProfile(String profile) {
         this.profile.set(profile)
     }
 
-    @Input
-    @Optional
-    String getProfile() {
-        stringProperty('OCI_PROFILE', 'oci.profile', this.@profile.getOrElse('DEFAULT'))
-    }
-
     @Option(option = 'region', description = 'The region to use (OPTIONAL).')
     void setRegion(String region) {
         this.region.set(region)
-    }
-
-    @Input
-    @Optional
-    String getRegion() {
-        stringProperty('OCI_REGION', 'oci.region', this.@region.orNull)
     }
 
     @Internal
@@ -108,7 +117,7 @@ abstract class AbstractOCITask extends AbstractReportingTask implements OCITask 
         }
 
         if (ociConfig.empty) {
-            ConfigFileReader.ConfigFile configFile = ConfigFileReader.parse(CONFIG_LOCATION, getProfile())
+            ConfigFileReader.ConfigFile configFile = ConfigFileReader.parse(CONFIG_LOCATION, getResolvedProfile().get())
             return new ConfigFileAuthenticationDetailsProvider(configFile)
         }
 
@@ -152,8 +161,8 @@ abstract class AbstractOCITask extends AbstractReportingTask implements OCITask 
 
     protected IdentityClient createIdentityClient() {
         IdentityClient client = new IdentityClient(resolveAuthenticationDetailsProvider())
-        if (region.present && isNotBlank(getRegion())) {
-            client.setRegion(getRegion())
+        if (region.present && isNotBlank(getResolvedRegion().get())) {
+            client.setRegion(getResolvedRegion().get())
         }
         closeables << client
         client
@@ -161,8 +170,8 @@ abstract class AbstractOCITask extends AbstractReportingTask implements OCITask 
 
     protected ComputeClient createComputeClient() {
         ComputeClient client = new ComputeClient(resolveAuthenticationDetailsProvider())
-        if (region.present && isNotBlank(getRegion())) {
-            client.setRegion(getRegion())
+        if (region.present && isNotBlank(getResolvedRegion().get())) {
+            client.setRegion(getResolvedRegion().get())
         }
         closeables << client
         client
@@ -170,8 +179,8 @@ abstract class AbstractOCITask extends AbstractReportingTask implements OCITask 
 
     protected VirtualNetworkClient createVirtualNetworkClient() {
         VirtualNetworkClient client = new VirtualNetworkClient(resolveAuthenticationDetailsProvider())
-        if (region.present && isNotBlank(getRegion())) {
-            client.setRegion(getRegion())
+        if (region.present && isNotBlank(getResolvedRegion().get())) {
+            client.setRegion(getResolvedRegion().get())
         }
         closeables << client
         client
@@ -179,8 +188,8 @@ abstract class AbstractOCITask extends AbstractReportingTask implements OCITask 
 
     protected BlockstorageClient createBlockstorageClient() {
         BlockstorageClient client = new BlockstorageClient(resolveAuthenticationDetailsProvider())
-        if (region.present && isNotBlank(getRegion())) {
-            client.setRegion(getRegion())
+        if (region.present && isNotBlank(getResolvedRegion().get())) {
+            client.setRegion(getResolvedRegion().get())
         }
         closeables << client
         client
@@ -188,8 +197,8 @@ abstract class AbstractOCITask extends AbstractReportingTask implements OCITask 
 
     protected ResourceSearchClient createResourceSearchClient() {
         ResourceSearchClient client = new ResourceSearchClient(resolveAuthenticationDetailsProvider())
-        if (region.present && isNotBlank(getRegion())) {
-            client.setRegion(getRegion())
+        if (region.present && isNotBlank(getResolvedRegion().get())) {
+            client.setRegion(getResolvedRegion().get())
         }
         closeables << client
         client

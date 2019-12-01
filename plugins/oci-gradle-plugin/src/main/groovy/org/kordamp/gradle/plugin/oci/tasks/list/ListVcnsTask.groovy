@@ -45,14 +45,14 @@ class ListVcnsTask extends AbstractOCITask implements CompartmentIdAwareTrait, V
 
         VirtualNetworkClient client = createVirtualNetworkClient()
         ListVcnsResponse response = client.listVcns(ListVcnsRequest.builder()
-            .compartmentId(getCompartmentId().get())
+            .compartmentId(getResolvedCompartmentId().get())
             .build())
 
         println('Total Vcns: ' + console.cyan(response.items.size().toString()))
         println(' ')
         for (Vcn vcn : response.items) {
-            println(vcn.displayName + (isVerbose().get() ? ':' : ''))
-            if (isVerbose().get()) {
+            println(vcn.displayName + (getResolvedVerbose().get() ? ':' : ''))
+            if (getResolvedVerbose().get()) {
                 printVcn(this, vcn, 0)
             }
         }

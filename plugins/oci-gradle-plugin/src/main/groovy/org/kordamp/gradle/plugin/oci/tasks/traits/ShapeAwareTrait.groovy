@@ -23,12 +23,14 @@ import com.oracle.bmc.core.requests.ListShapesRequest
 import com.oracle.bmc.core.responses.ListShapesResponse
 import groovy.transform.CompileStatic
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.options.Option
 import org.kordamp.gradle.plugin.oci.tasks.interfaces.PathAware
 import org.kordamp.gradle.plugin.oci.tasks.interfaces.ProjectAware
 
-import static org.kordamp.gradle.PropertyUtils.stringProperty
+import static org.kordamp.gradle.PropertyUtils.stringProvider
 import static org.kordamp.gradle.StringUtils.isBlank
 
 /**
@@ -37,21 +39,23 @@ import static org.kordamp.gradle.StringUtils.isBlank
  */
 @CompileStatic
 trait ShapeAwareTrait implements PathAware, ProjectAware {
-    private final Property<String> shape = stringProperty(
-        'OCI_SHAPE', 'oci.shape', project.objects.property(String))
+    @Internal
+    final Property<String> shape = project.objects.property(String)
+
+    @Input
+    final Provider<String> resolvedShape = stringProvider(
+        'OCI_SHAPE',
+        'oci.shape',
+        shape,
+        project)
 
     @Option(option = 'shape', description = 'The Shape of the Instance (REQUIRED).')
     void setShape(String shape) {
         this.shape.set(shape)
     }
 
-    @Input
-    Property<String> getShape() {
-        this.@shape
-    }
-
     void validateShape() {
-        if (isBlank(getShape().orNull)) {
+        if (isBlank(getResolvedShape().orNull)) {
             throw new IllegalStateException("Missing value for 'shape' in $path")
         }
     }
@@ -60,8 +64,8 @@ trait ShapeAwareTrait implements PathAware, ProjectAware {
         ListShapesResponse response = client.listShapes(ListShapesRequest.builder()
             .compartmentId(compartmentId)
             .build())
-        Shape shape = response.items.find { Shape sh -> sh.shape == getShape().get() }
-        if (!shape) throw new IllegalStateException("Invalid shape ${getShape().get()}")
+        Shape shape = response.items.find { Shape sh -> sh.shape == getResolvedShape().get() }
+        if (!shape) throw new IllegalStateException("Invalid shape ${getResolvedShape().get()}")
         shape
     }
 }

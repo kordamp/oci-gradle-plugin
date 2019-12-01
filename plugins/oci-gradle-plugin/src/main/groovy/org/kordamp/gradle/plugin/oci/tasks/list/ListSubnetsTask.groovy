@@ -47,15 +47,15 @@ class ListSubnetsTask extends AbstractOCITask implements CompartmentIdAwareTrait
 
         VirtualNetworkClient client = createVirtualNetworkClient()
         ListSubnetsResponse response = client.listSubnets(ListSubnetsRequest.builder()
-            .compartmentId(getCompartmentId().get())
-            .vcnId(getVcnId().get())
+            .compartmentId(getResolvedCompartmentId().get())
+            .vcnId(getResolvedVcnId().get())
             .build())
 
         println('Total Subnets: ' + console.cyan(response.items.size().toString()))
         println(' ')
         for (Subnet subnet : response.items) {
-            println(subnet.displayName + (isVerbose().get() ? ':' : ''))
-            if (isVerbose().get()) {
+            println(subnet.displayName + (getResolvedVerbose().get() ? ':' : ''))
+            if (getResolvedVerbose().get()) {
                 printSubnet(this, subnet, 0)
             }
         }

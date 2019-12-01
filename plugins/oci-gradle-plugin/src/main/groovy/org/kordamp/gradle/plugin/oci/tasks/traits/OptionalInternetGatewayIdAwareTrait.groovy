@@ -17,17 +17,18 @@
  */
 package org.kordamp.gradle.plugin.oci.tasks.traits
 
-
 import groovy.transform.CompileStatic
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.options.Option
 import org.kordamp.gradle.plugin.oci.tasks.interfaces.PathAware
 import org.kordamp.gradle.plugin.oci.tasks.interfaces.ProjectAware
 
 import static com.oracle.bmc.OCID.isValid
-import static org.kordamp.gradle.PropertyUtils.stringProperty
+import static org.kordamp.gradle.PropertyUtils.stringProvider
 import static org.kordamp.gradle.StringUtils.isNotBlank
 
 /**
@@ -36,23 +37,25 @@ import static org.kordamp.gradle.StringUtils.isNotBlank
  */
 @CompileStatic
 trait OptionalInternetGatewayIdAwareTrait implements PathAware, ProjectAware {
-    private final Property<String> internetGatewayId = stringProperty(
-        'OCI_INTERNET_GATEWAY_ID', 'oci.internet.gateway.id', project.objects.property(String))
+    @Internal
+    final Property<String> internetGatewayId = project.objects.property(String)
+
+    @Input
+    @Optional
+    final Provider<String> resolvedInternetGatewayId = stringProvider(
+        'OCI_INTERNET_GATEWAY_ID',
+        'oci.internet.gateway.id',
+        internetGatewayId,
+        project)
 
     @Option(option = 'internet-gateway-id', description = 'The id of the InternetGateway (OPTIONAL).')
     void setInternetGatewayId(String internetGatewayId) {
         this.internetGatewayId.set(internetGatewayId)
     }
 
-    @Input
-    @Optional
-    Property<String> getInternetGatewayId() {
-        this.@internetGatewayId
-    }
-
     void validateInternetGatewayId() {
-        if (isNotBlank(getInternetGatewayId().orNull) && !isValid(getInternetGatewayId().get())) {
-            throw new IllegalStateException("InternetGateway id '${getInternetGatewayId().get()}' is invalid")
+        if (isNotBlank(getResolvedInternetGatewayId().orNull) && !isValid(getResolvedInternetGatewayId().get())) {
+            throw new IllegalStateException("InternetGateway id '${getResolvedInternetGatewayId().get()}' is invalid")
         }
     }
 }

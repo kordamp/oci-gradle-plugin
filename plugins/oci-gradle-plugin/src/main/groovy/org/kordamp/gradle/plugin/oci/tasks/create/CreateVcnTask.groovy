@@ -60,19 +60,19 @@ class CreateVcnTask extends AbstractOCITask implements CompartmentIdAwareTrait,
     @Override
     void doExecuteTask() {
         validateCompartmentId()
-        validateDnsLabel(getCompartmentId().get())
+        validateDnsLabel(getResolvedCompartmentId().get())
         validateVcnName()
 
         VirtualNetworkClient client = createVirtualNetworkClient()
 
         Vcn vcn = maybeCreateVcn(this,
             client,
-            getCompartmentId().get(),
-            getVcnName().get(),
-            getDnsLabel().get(),
+            getResolvedCompartmentId().get(),
+            getResolvedVcnName().get(),
+            getResolvedDnsLabel().get(),
             '10.0.0.0/16',
-            isWaitForCompletion().get(),
-            isVerbose().get())
+            getResolvedWaitForCompletion().get(),
+            getResolvedVerbose().get())
         createdVcnId.set(vcn.id)
     }
 

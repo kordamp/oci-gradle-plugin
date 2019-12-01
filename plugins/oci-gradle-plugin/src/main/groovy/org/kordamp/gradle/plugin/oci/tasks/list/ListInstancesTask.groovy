@@ -46,15 +46,15 @@ class ListInstancesTask extends AbstractOCITask implements CompartmentIdAwareTra
 
         ComputeClient client = createComputeClient()
         ListInstancesResponse response = client.listInstances(ListInstancesRequest.builder()
-            .compartmentId(getCompartmentId().get())
-            .availabilityDomain(getAvailabilityDomain().get())
+            .compartmentId(getResolvedCompartmentId().get())
+            .availabilityDomain(getResolvedAvailabilityDomain().get())
             .build())
 
         println('Total Instances: ' + console.cyan(response.items.size().toString()))
         println(' ')
         for (Instance instance : response.items) {
-            println(instance.displayName + (isVerbose().get() ? ':' : ''))
-            if (isVerbose().get()) {
+            println(instance.displayName + (getResolvedVerbose().get() ? ':' : ''))
+            if (getResolvedVerbose().get()) {
                 printInstance(this, instance, 0)
             }
         }

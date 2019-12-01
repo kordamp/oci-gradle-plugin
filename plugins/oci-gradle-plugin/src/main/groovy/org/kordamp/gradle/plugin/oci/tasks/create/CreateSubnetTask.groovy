@@ -69,23 +69,23 @@ class CreateSubnetTask extends AbstractOCITask implements CompartmentIdAwareTrai
         validateVcnId()
         validateAvailabilityDomain()
         validateSubnetName()
-        validateDnsLabel(getVcnId().get())
+        validateDnsLabel(getResolvedVcnId().get())
 
         VirtualNetworkClient client = createVirtualNetworkClient()
         IdentityClient identityClient = createIdentityClient()
 
-        AvailabilityDomain _availabilityDomain = validateAvailabilityDomain(identityClient, getCompartmentId().get())
+        AvailabilityDomain _availabilityDomain = validateAvailabilityDomain(identityClient, getResolvedCompartmentId().get())
 
         Subnet subnet = maybeCreateSubnet(this,
             client,
-            getCompartmentId().get(),
-            getVcnId().get(),
-            getDnsLabel().get(),
+            getResolvedCompartmentId().get(),
+            getResolvedVcnId().get(),
+            getResolvedDnsLabel().get(),
             _availabilityDomain.name,
-            getSubnetName().get(),
+            getResolvedSubnetName().get(),
             '10.0.0.0/24',
-            isWaitForCompletion().get(),
-            isVerbose().get())
+            getResolvedWaitForCompletion().get(),
+            getResolvedVerbose().get())
         createdSubnetId.set(subnet.id)
     }
 

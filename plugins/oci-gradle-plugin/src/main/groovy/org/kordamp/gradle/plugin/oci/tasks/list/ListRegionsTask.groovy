@@ -47,8 +47,8 @@ class ListRegionsTask extends AbstractOCITask implements VerboseAwareTrait {
         println('Total Regions: ' + console.cyan(response.items.size().toString()))
         println(' ')
         for (Region region : response.items) {
-            println(region.name + (isVerbose().get() ? ':' : ''))
-            if (isVerbose().get()) {
+            println(region.name + (getResolvedVerbose().get() ? ':' : ''))
+            if (getResolvedVerbose().get()) {
                 printRegion(this, region, 0)
             }
         }

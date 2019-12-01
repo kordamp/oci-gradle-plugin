@@ -42,7 +42,7 @@ class ListShapesTask extends AbstractOCITask implements CompartmentIdAwareTrait 
 
         ComputeClient client = createComputeClient()
         ListShapesResponse response = client.listShapes(ListShapesRequest.builder()
-            .compartmentId(getCompartmentId().get())
+            .compartmentId(getResolvedCompartmentId().get())
             .build())
 
         List<Shape> shapes = response.items.unique().sort { it.shape }

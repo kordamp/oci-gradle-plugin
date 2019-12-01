@@ -44,7 +44,7 @@ class GetInstanceTask extends AbstractOCITask implements InstanceIdAwareTrait {
         ComputeClient client = createComputeClient()
 
         Instance instance = client.getInstance(GetInstanceRequest.builder()
-            .instanceId(getInstanceId().get())
+            .instanceId(getResolvedInstanceId().get())
             .build())
             .instance
 
@@ -52,7 +52,7 @@ class GetInstanceTask extends AbstractOCITask implements InstanceIdAwareTrait {
             println(instance.displayName + ':')
             printInstance(this, instance, 0)
         } else {
-            println("Instance with id ${getInstanceId().get()} was not found")
+            println("Instance with id ${getResolvedInstanceId().get()} was not found")
         }
     }
 }

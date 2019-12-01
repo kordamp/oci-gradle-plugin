@@ -48,14 +48,14 @@ class DeleteInstanceConsoleConnectionTask extends AbstractOCITask implements Ins
         // TODO: check is connection is in a 'deletable' state
 
         client.deleteInstanceConsoleConnection(DeleteInstanceConsoleConnectionRequest.builder()
-            .instanceConsoleConnectionId(getInstanceConsoleConnectionId().get())
+            .instanceConsoleConnectionId(getResolvedInstanceConsoleConnectionId().get())
             .build())
 
-        if (isWaitForCompletion().get()) {
+        if (getResolvedWaitForCompletion().get()) {
             println("Waiting for InstanceConsoleConnection to be ${state('Deleted')}")
             client.waiters
                 .forInstanceConsoleConnection(GetInstanceConsoleConnectionRequest.builder()
-                    .instanceConsoleConnectionId(getInstanceConsoleConnectionId().get()).build(),
+                    .instanceConsoleConnectionId(getResolvedInstanceConsoleConnectionId().get()).build(),
                     InstanceConsoleConnection.LifecycleState.Deleted)
                 .execute()
         }

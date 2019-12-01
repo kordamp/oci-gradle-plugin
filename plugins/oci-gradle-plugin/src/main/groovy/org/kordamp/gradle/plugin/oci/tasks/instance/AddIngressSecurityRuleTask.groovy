@@ -27,8 +27,10 @@ import com.oracle.bmc.core.model.UpdateSecurityListDetails
 import com.oracle.bmc.core.requests.GetSecurityListRequest
 import com.oracle.bmc.core.requests.UpdateSecurityListRequest
 import groovy.transform.CompileStatic
+import groovy.transform.Internal
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.options.Option
@@ -42,7 +44,8 @@ import org.kordamp.jipsy.TypeProviderFor
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
-import static org.kordamp.gradle.PropertyUtils.stringProperty
+import static org.kordamp.gradle.StringUtils.isBlank
+import static org.kordamp.gradle.StringUtils.isNotBlank
 
 /**
  * @author Andres Almiray
@@ -58,7 +61,8 @@ class AddIngressSecurityRuleTask extends AbstractOCITask implements SecurityList
         TCP, UDP
     }
 
-    private final Property<PortType> portType = project.objects.property(PortType)
+    @Internal
+    final Property<PortType> portType = project.objects.property(PortType)
     private final ListProperty<String> sourcePorts = project.objects.listProperty(String)
     private final ListProperty<String> destinationPorts = project.objects.listProperty(String)
 
@@ -69,8 +73,12 @@ class AddIngressSecurityRuleTask extends AbstractOCITask implements SecurityList
 
     @Input
     @Optional
-    PortType getPortType() {
-        PortType.valueOf(stringProperty('OCI_PORT_TYPE', 'oci.port.type', (this.@portType.getOrElse(PortType.TCP)).name()).toUpperCase())
+    Provider<PortType> getResolvedPortType() {
+        project.providers.provider {
+            String value = System.getenv('OCI_PORT_TYPE')
+            if (isBlank(value)) value = System.getProperty('oci.port.type')
+            isNotBlank(value) ? PortType.valueOf(value) : portType.getOrElse(PortType.TCP)
+        }
     }
 
     @OptionValues("portType")
@@ -149,8 +157,8 @@ class AddIngressSecurityRuleTask extends AbstractOCITask implements SecurityList
 
         SecurityList securityList = addIngressSecurityRules(this,
             client,
-            getSecurityListId().get(),
-            getPortType(),
+            getResolvedSecurityListId().get(),
+            getResolvedPortType().get(),
             (List<String>) getSourcePorts().getOrElse([]),
             (List<String>) getDestinationPorts().getOrElse([]))
 

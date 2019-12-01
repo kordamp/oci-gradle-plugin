@@ -49,15 +49,15 @@ class ListSecurityListsTask extends AbstractOCITask implements CompartmentIdAwar
 
         VirtualNetworkClient client = createVirtualNetworkClient()
         ListSecurityListsResponse response = client.listSecurityLists(ListSecurityListsRequest.builder()
-            .compartmentId(getCompartmentId().get())
-            .vcnId(getVcnId().get())
+            .compartmentId(getResolvedCompartmentId().get())
+            .vcnId(getResolvedVcnId().get())
             .build())
 
         println('Total SecurityLists: ' + console.cyan(response.items.size().toString()))
         println(' ')
         for (SecurityList securityList : response.items) {
-            println(securityList.displayName + (isVerbose().get() ? ':' : ''))
-            if (isVerbose().get()) {
+            println(securityList.displayName + (getResolvedVerbose().get() ? ':' : ''))
+            if (getResolvedVerbose().get()) {
                 printSecurityList(this, securityList, 0)
             }
         }

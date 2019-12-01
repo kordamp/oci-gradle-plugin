@@ -19,11 +19,13 @@ package org.kordamp.gradle.plugin.oci.tasks.traits
 
 import groovy.transform.CompileStatic
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.options.Option
 import org.kordamp.gradle.plugin.oci.tasks.interfaces.ProjectAware
 
-import static org.kordamp.gradle.PropertyUtils.booleanProperty
+import static org.kordamp.gradle.PropertyUtils.booleanProvider
 
 /**
  * @author Andres Almiray
@@ -31,16 +33,18 @@ import static org.kordamp.gradle.PropertyUtils.booleanProperty
  */
 @CompileStatic
 trait VerboseAwareTrait implements ProjectAware {
-    private final Property<Boolean> verbose = booleanProperty(
-        'OCI_VERBOSE', 'oci.verbose', project.objects.property(Boolean))
+    @Internal
+    final Property<Boolean> verbose = project.objects.property(Boolean)
+
+    @Input
+    final Provider<Boolean> resolvedVerbose = booleanProvider(
+        'OCI_VERBOSE',
+        'oci.verbose',
+        verbose,
+        project)
 
     @Option(option = 'verbose', description = 'Display additional information (OPTIONAL).')
     void setVerbose(boolean verbose) {
         this.verbose.set(verbose)
-    }
-
-    @Input
-    Property<Boolean> isVerbose() {
-        this.@verbose
     }
 }

@@ -19,12 +19,14 @@ package org.kordamp.gradle.plugin.oci.tasks.traits
 
 import groovy.transform.CompileStatic
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.options.Option
 import org.kordamp.gradle.plugin.oci.tasks.interfaces.PathAware
 import org.kordamp.gradle.plugin.oci.tasks.interfaces.ProjectAware
 
-import static org.kordamp.gradle.PropertyUtils.stringProperty
+import static org.kordamp.gradle.PropertyUtils.stringProvider
 import static org.kordamp.gradle.StringUtils.isBlank
 
 /**
@@ -33,21 +35,23 @@ import static org.kordamp.gradle.StringUtils.isBlank
  */
 @CompileStatic
 trait CompartmentDescriptionAwareTrait implements PathAware, ProjectAware {
-    private final Property<String> compartmentDescription = stringProperty(
-        'OCI_COMPARTMENT_DESCRIPTION', 'oci.compartment.description', project.objects.property(String))
+    @Internal
+    final Property<String> compartmentDescription = project.objects.property(String)
+
+    @Input
+    final Provider<String> resolvedCompartmentDescription = stringProvider(
+        'OCI_COMPARTMENT_DESCRIPTION',
+        'compartment.description',
+        compartmentDescription,
+        project)
 
     @Option(option = 'compartment-description', description = 'The Compartment description to use (REQUIRED).')
     void setCompartmentDescription(String compartmentDescription) {
         this.compartmentDescription.set(compartmentDescription)
     }
 
-    @Input
-    Property<String> getCompartmentDescription() {
-        this.@compartmentDescription
-    }
-
     void validateCompartmentDescription() {
-        if (isBlank(getCompartmentDescription().orNull)) {
+        if (isBlank(getResolvedCompartmentDescription().orNull)) {
             throw new IllegalStateException("Missing value for 'compartmentDescription' in $path")
         }
     }

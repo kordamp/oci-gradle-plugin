@@ -95,18 +95,18 @@ class CreateInstanceTask extends AbstractOCITask implements CompartmentIdAwareTr
 
         ComputeClient computeClient = createComputeClient()
 
-        Image _image = validateImage(computeClient, getCompartmentId().get())
-        Shape _shape = validateShape(computeClient, getCompartmentId().get())
+        Image _image = validateImage(computeClient, getResolvedCompartmentId().get())
+        Shape _shape = validateShape(computeClient, getResolvedCompartmentId().get())
 
-        File publicKeyFile = getPublicKeyFile()?.asFile
-        File userDataFile = getUserDataFile()?.asFile
+        File publicKeyFile = getResolvedPublicKeyFile().get().asFile
+        File userDataFile = getResolvedUserDataFile().get()?.asFile
         String kmsKeyId = ''
 
         VirtualNetworkClient vcnClient = createVirtualNetworkClient()
         BlockstorageClient blockstorageClient = createBlockstorageClient()
 
         Subnet subnet = vcnClient.getSubnet(GetSubnetRequest.builder()
-            .subnetId(getSubnetId().get())
+            .subnetId(getResolvedSubnetId().get())
             .build())
             .subnet
 
@@ -114,15 +114,15 @@ class CreateInstanceTask extends AbstractOCITask implements CompartmentIdAwareTr
             computeClient,
             vcnClient,
             blockstorageClient,
-            getCompartmentId().get(),
-            getInstanceName().get(),
+            getResolvedCompartmentId().get(),
+            getResolvedInstanceName().get(),
             _image,
             _shape,
             subnet,
             publicKeyFile,
             userDataFile,
             kmsKeyId,
-            isVerbose().get())
+            getResolvedVerbose().get())
         createdInstanceId.set(instance.id)
     }
 

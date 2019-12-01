@@ -45,14 +45,14 @@ class ListImagesTask extends AbstractOCITask implements CompartmentIdAwareTrait,
 
         ComputeClient client = createComputeClient()
         ListImagesResponse response = client.listImages(ListImagesRequest.builder()
-            .compartmentId(getCompartmentId().get())
+            .compartmentId(getResolvedCompartmentId().get())
             .build())
 
         println('Total Images: ' + console.cyan(response.items.size().toString()))
         println(' ')
         for (Image image : response.items) {
-            println(image.displayName + (isVerbose().get() ? ':' : ''))
-            if (isVerbose().get()) {
+            println(image.displayName + (getResolvedVerbose().get() ? ':' : ''))
+            if (getResolvedVerbose().get()) {
                 printImage(this, image, 0)
             }
         }

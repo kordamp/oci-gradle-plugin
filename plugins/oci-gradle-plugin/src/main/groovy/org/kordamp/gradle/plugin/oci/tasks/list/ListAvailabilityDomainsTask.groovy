@@ -45,14 +45,14 @@ class ListAvailabilityDomainsTask extends AbstractOCITask implements Compartment
 
         IdentityClient client = createIdentityClient()
         ListAvailabilityDomainsResponse response = client.listAvailabilityDomains(ListAvailabilityDomainsRequest.builder()
-            .compartmentId(getCompartmentId().get())
+            .compartmentId(getResolvedCompartmentId().get())
             .build())
 
         println('Total AvailabilityDomains: ' + console.cyan(response.items.size().toString()))
         println(' ')
         for (AvailabilityDomain domain : response.items) {
-            println(domain.name + (isVerbose().get() ? ':' : ''))
-            if (isVerbose().get()) {
+            println(domain.name + (getResolvedVerbose().get() ? ':' : ''))
+            if (getResolvedVerbose().get()) {
                 printAvailabilityDomain(this, domain, 0)
             }
         }

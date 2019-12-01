@@ -52,7 +52,7 @@ class DeleteSubnetTask extends AbstractOCITask implements CompartmentIdAwareTrai
     protected void doExecuteTask() {
         validateSubnetId()
 
-        if (isBlank(getSubnetId().orNull) && isBlank(getSubnetName().orNull)) {
+        if (isBlank(getResolvedSubnetId().orNull) && isBlank(getResolvedSubnetName().orNull)) {
             throw new IllegalStateException("Missing value for either 'subnetId' or 'subnetName' in $path")
         }
 
@@ -61,9 +61,9 @@ class DeleteSubnetTask extends AbstractOCITask implements CompartmentIdAwareTrai
         // TODO: check if subnet exists
         // TODO: check is subnet is in a 'deletable' state
 
-        if (isNotBlank(getSubnetId().orNull)) {
+        if (isNotBlank(getResolvedSubnetId().orNull)) {
             Subnet subnet = client.getSubnet(GetSubnetRequest.builder()
-                .subnetId(getSubnetId().get())
+                .subnetId(getResolvedSubnetId().get())
                 .build())
                 .subnet
 
@@ -76,9 +76,9 @@ class DeleteSubnetTask extends AbstractOCITask implements CompartmentIdAwareTrai
             validateVcnId()
 
             client.listSubnets(ListSubnetsRequest.builder()
-                .compartmentId(getCompartmentId().get())
-                .vcnId(getVcnId().get())
-                .displayName(getSubnetName().get())
+                .compartmentId(getResolvedCompartmentId().get())
+                .vcnId(getResolvedVcnId().get())
+                .displayName(getResolvedSubnetName().get())
                 .build())
                 .items.each { subnet ->
                 setSubnetId(subnet.id)
@@ -94,7 +94,7 @@ class DeleteSubnetTask extends AbstractOCITask implements CompartmentIdAwareTrai
             .subnetId(subnet.id)
             .build())
 
-        if (isWaitForCompletion().get()) {
+        if (getResolvedWaitForCompletion().get()) {
             println("Waiting for Subnet to be ${state('Terminated')}")
             client.waiters
                 .forSubnet(GetSubnetRequest.builder().subnetId(subnet.id).build(),

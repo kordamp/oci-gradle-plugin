@@ -17,16 +17,17 @@
  */
 package org.kordamp.gradle.plugin.oci.tasks.traits
 
-
 import groovy.transform.CompileStatic
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.options.Option
 import org.kordamp.gradle.plugin.oci.tasks.interfaces.PathAware
 import org.kordamp.gradle.plugin.oci.tasks.interfaces.ProjectAware
 
 import static com.oracle.bmc.OCID.isValid
-import static org.kordamp.gradle.PropertyUtils.stringProperty
+import static org.kordamp.gradle.PropertyUtils.stringProvider
 import static org.kordamp.gradle.StringUtils.isBlank
 
 /**
@@ -35,25 +36,27 @@ import static org.kordamp.gradle.StringUtils.isBlank
  */
 @CompileStatic
 trait InstanceConsoleConnectionIdAwareTrait implements PathAware, ProjectAware {
-    private final Property<String> instanceConsoleConnectionId = stringProperty(
-        'OCI_INSTANCE_CONSOLE_CONNECTION_ID', 'oci.instance.console.connection.id', project.objects.property(String))
+    @Internal
+    final Property<String> instanceConsoleConnectionId = project.objects.property(String)
+
+    @Input
+    final Provider<String> resolvedInstanceConsoleConnectionId = stringProvider(
+        'OCI_INSTANCE_CONSOLE_CONNECTION_ID',
+        'oci.instance.console.connection.id',
+        instanceConsoleConnectionId,
+        project)
 
     @Option(option = 'instance-console-connection-id', description = 'The id of the InstanceConsoleConnection (REQUIRED).')
     void setInstanceConsoleConnectionId(String connectionId) {
         this.instanceConsoleConnectionId.set(connectionId)
     }
 
-    @Input
-    Property<String> getInstanceConsoleConnectionId() {
-        this.@instanceConsoleConnectionId
-    }
-
     void validateInstanceConsoleConnectionId() {
-        if (isBlank(getInstanceConsoleConnectionId().orNull)) {
+        if (isBlank(getResolvedInstanceConsoleConnectionId().orNull)) {
             throw new IllegalStateException("Missing value for 'connectionId' in $path")
         }
-        if (!isValid(getInstanceConsoleConnectionId().get())) {
-            throw new IllegalStateException("InstanceConsoleConnection id '${getInstanceConsoleConnectionId().get()}' is invalid")
+        if (!isValid(getResolvedInstanceConsoleConnectionId().get())) {
+            throw new IllegalStateException("InstanceConsoleConnection id '${getResolvedInstanceConsoleConnectionId().get()}' is invalid")
         }
     }
 }

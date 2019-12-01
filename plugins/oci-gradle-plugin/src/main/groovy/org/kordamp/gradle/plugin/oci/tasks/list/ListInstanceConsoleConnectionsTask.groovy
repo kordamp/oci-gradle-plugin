@@ -46,8 +46,8 @@ class ListInstanceConsoleConnectionsTask extends AbstractOCITask implements Comp
 
         ComputeClient client = createComputeClient()
         ListInstanceConsoleConnectionsResponse response = client.listInstanceConsoleConnections(ListInstanceConsoleConnectionsRequest.builder()
-            .compartmentId(getCompartmentId().get())
-            .instanceId(getInstanceId().get())
+            .compartmentId(getResolvedCompartmentId().get())
+            .instanceId(getResolvedInstanceId().get())
             .build())
 
         println('Total InstanceConsoleConnections: ' + console.cyan(response.items.size().toString()))

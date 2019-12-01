@@ -19,14 +19,16 @@ package org.kordamp.gradle.plugin.oci.tasks.traits
 
 import groovy.transform.CompileStatic
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.options.Option
 import org.gradle.internal.hash.HashUtil
 import org.kordamp.gradle.plugin.oci.tasks.interfaces.PathAware
 import org.kordamp.gradle.plugin.oci.tasks.interfaces.ProjectAware
 
-import static org.kordamp.gradle.PropertyUtils.stringProperty
+import static org.kordamp.gradle.PropertyUtils.stringProvider
 import static org.kordamp.gradle.StringUtils.isBlank
 
 /**
@@ -35,8 +37,16 @@ import static org.kordamp.gradle.StringUtils.isBlank
  */
 @CompileStatic
 trait OptionalDnsLabelAwareTrait implements PathAware, ProjectAware {
-    private final Property<String> dnsLabel = stringProperty(
-        'OCI_DNS_LABEL', 'oci.dns.label', project.objects.property(String))
+    @Internal
+    final Property<String> dnsLabel = project.objects.property(String)
+
+    @Input
+    @Optional
+    final Provider<String> resolvedDnsLabel = stringProvider(
+        'OCI_DNS_LABEL',
+        'oci.dns.label',
+        dnsLabel,
+        project)
 
     @Option(option = 'dns-label', description = 'The DNS label to use (OPTIONAL).')
     void setDnsLabel(String dnsLabel) {
@@ -45,16 +55,10 @@ trait OptionalDnsLabelAwareTrait implements PathAware, ProjectAware {
         this.dnsLabel.set(label)
     }
 
-    @Input
-    @Optional
-    Property<String> getDnsLabel() {
-        this.@dnsLabel
-    }
-
     void validateDnsLabel(String seed) {
-        if (isBlank(getDnsLabel().orNull)) {
+        if (isBlank(getResolvedDnsLabel().orNull)) {
             setDnsLabel('dns' + HashUtil.sha1(seed.bytes).asHexString()[0..11])
-            project.logger.warn("Missing value for 'dnsLabel' in $path. Value set to ${getDnsLabel().get()}")
+            project.logger.warn("Missing value for 'dnsLabel' in $path. Value set to ${getResolvedDnsLabel().get()}")
         }
     }
 }

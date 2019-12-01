@@ -44,7 +44,7 @@ class GetSubnetTask extends AbstractOCITask implements SubnetIdAwareTrait {
         VirtualNetworkClient client = createVirtualNetworkClient()
 
         Subnet subnet = client.getSubnet(GetSubnetRequest.builder()
-            .subnetId(getSubnetId().get())
+            .subnetId(getResolvedSubnetId().get())
             .build())
             .subnet
 
@@ -52,7 +52,7 @@ class GetSubnetTask extends AbstractOCITask implements SubnetIdAwareTrait {
             println(subnet.displayName + ':')
             printSubnet(this, subnet, 0)
         } else {
-            println("Subnet with id ${getSubnetId().get()} was not found")
+            println("Subnet with id ${getResolvedSubnetId().get()} was not found")
         }
     }
 }

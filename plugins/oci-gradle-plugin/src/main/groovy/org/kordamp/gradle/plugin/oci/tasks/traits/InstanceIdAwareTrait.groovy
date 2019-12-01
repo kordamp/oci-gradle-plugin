@@ -25,9 +25,9 @@ import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.options.Option
 import org.kordamp.gradle.plugin.oci.tasks.interfaces.PathAware
 import org.kordamp.gradle.plugin.oci.tasks.interfaces.ProjectAware
+import org.kordamp.gradle.plugin.oci.tasks.traits.states.StringState
 
 import static com.oracle.bmc.OCID.isValid
-import static org.kordamp.gradle.PropertyUtils.stringProvider
 import static org.kordamp.gradle.StringUtils.isBlank
 
 /**
@@ -36,19 +36,21 @@ import static org.kordamp.gradle.StringUtils.isBlank
  */
 @CompileStatic
 trait InstanceIdAwareTrait implements PathAware, ProjectAware {
+    private final StringState state = new StringState(project, 'OCI_INSTANCE_ID', 'oci.instance.id')
+
     @Internal
-    final Property<String> instanceId = project.objects.property(String)
+    Property<String> getInstanceId() {
+        state.property
+    }
 
     @Input
-    final Provider<String> resolvedInstanceId = stringProvider(
-        'OCI_INSTANCE_ID',
-        'oci.instance.id',
-        instanceId,
-        project)
+    Provider<String> getResolvedInstanceId() {
+        state.provider
+    }
 
     @Option(option = 'instance-id', description = 'The id of the Instance (REQUIRED).')
     void setInstanceId(String instanceId) {
-        this.instanceId.set(instanceId)
+        getInstanceId().set(instanceId)
     }
 
     void validateInstanceId() {

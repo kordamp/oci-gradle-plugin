@@ -15,37 +15,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kordamp.gradle.plugin.oci.tasks.traits
+package org.kordamp.gradle.plugin.oci.tasks.traits.states
 
 import groovy.transform.CompileStatic
+import org.gradle.api.Project
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
-import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.Internal
-import org.gradle.api.tasks.options.Option
-import org.kordamp.gradle.plugin.oci.tasks.interfaces.ProjectAware
-import org.kordamp.gradle.plugin.oci.tasks.traits.states.BooleanState
+
+import static org.kordamp.gradle.PropertyUtils.stringProvider
 
 /**
  * @author Andres Almiray
- * @since 0.1.0
+ * @since 0.3.0
  */
 @CompileStatic
-trait VerboseAwareTrait implements ProjectAware {
-    private final BooleanState state = new BooleanState(project, 'OCI_VERBOSE', 'oci.verbose')
+class StringState {
+    final Property<String> property
+    final Provider<String> provider
 
-    @Internal
-    Property<Boolean> getVerbose() {
-        state.property
-    }
+    StringState(Project project, String envKey, String propertyKey) {
+        property = project.objects.property(String)
 
-    @Input
-    Provider<Boolean> getResolvedVerbose() {
-        state.provider
-    }
-
-    @Option(option = 'verbose', description = 'Display additional information (OPTIONAL).')
-    void setVerbose(boolean verbose) {
-        getVerbose().set(verbose)
+        provider = stringProvider(
+            envKey,
+            propertyKey,
+            property,
+            project)
     }
 }

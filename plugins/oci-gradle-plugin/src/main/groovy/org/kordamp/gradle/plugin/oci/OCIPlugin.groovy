@@ -17,6 +17,8 @@
  */
 package org.kordamp.gradle.plugin.oci
 
+import groovy.transform.CompileDynamic
+import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.Task
@@ -29,6 +31,7 @@ import org.kordamp.jipsy.util.TypeLoader
  * @author Andres Almiray
  * @since 0.1.0
  */
+@CompileStatic
 class OCIPlugin extends AbstractKordampPlugin {
     static {
         System.setProperty('sun.net.http.allowRestrictedHeaders', 'true')
@@ -56,8 +59,9 @@ class OCIPlugin extends AbstractKordampPlugin {
 
         TypeLoader.load(this.class.classLoader, OCITask, new TypeLoader.LineProcessor() {
             @Override
+            @CompileDynamic
             void process(ClassLoader classLoader, Class<?> clazz, String line) {
-                Class taskType = classLoader.loadClass(line.trim(), true)
+                Class<? extends Task> taskType = classLoader.loadClass(line.trim(), true)
                 String taskName = StringUtils.getPropertyName(taskType.simpleName - 'Task')
                 String group = taskType.package.name.split('\\.')[-1]
 

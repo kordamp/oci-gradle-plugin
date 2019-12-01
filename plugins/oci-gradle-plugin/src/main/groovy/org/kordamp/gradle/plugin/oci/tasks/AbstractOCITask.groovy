@@ -61,7 +61,7 @@ abstract class AbstractOCITask extends AbstractReportingTask implements OCITask 
     }
 
     @Internal
-    private final Property<String> profile = project.objects.property(String)
+    final Property<String> profile = project.objects.property(String)
 
     @Input
     @Optional
@@ -73,7 +73,7 @@ abstract class AbstractOCITask extends AbstractReportingTask implements OCITask 
         .orElse('DEFAULT')
 
     @Internal
-    private final Property<String> region = project.objects.property(String)
+    final Property<String> region = project.objects.property(String)
 
     @Input
     @Optional

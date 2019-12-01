@@ -25,8 +25,8 @@ import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.options.Option
 import org.kordamp.gradle.plugin.oci.tasks.interfaces.PathAware
 import org.kordamp.gradle.plugin.oci.tasks.interfaces.ProjectAware
+import org.kordamp.gradle.plugin.oci.tasks.traits.states.StringState
 
-import static org.kordamp.gradle.PropertyUtils.stringProvider
 import static org.kordamp.gradle.StringUtils.isBlank
 
 /**
@@ -35,19 +35,21 @@ import static org.kordamp.gradle.StringUtils.isBlank
  */
 @CompileStatic
 trait CompartmentNameAwareTrait implements PathAware, ProjectAware {
+    private final StringState state = new StringState(project, 'OCI_COMPARTMENT_NAME', 'oci.compartment.name')
+
     @Internal
-    final Property<String> compartmentName = project.objects.property(String)
+    Property<String> getCompartmentName() {
+        state.property
+    }
 
     @Input
-    final Provider<String> resolvedCompartmentName = stringProvider(
-        'OCI_COMPARTMENT_NAME',
-        'oci.compartment.name',
-        compartmentName,
-        project)
+    Provider<String> getResolvedCompartmentName() {
+        state.provider
+    }
 
     @Option(option = 'compartment-name', description = 'The name of the Compartment (REQUIRED).')
     void setCompartmentName(String compartmentName) {
-        this.compartmentName.set(compartmentName)
+        getCompartmentName().set(compartmentName)
     }
 
     void validateCompartmentName() {

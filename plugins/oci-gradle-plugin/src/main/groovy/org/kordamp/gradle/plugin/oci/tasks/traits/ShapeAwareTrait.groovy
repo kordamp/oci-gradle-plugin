@@ -29,8 +29,8 @@ import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.options.Option
 import org.kordamp.gradle.plugin.oci.tasks.interfaces.PathAware
 import org.kordamp.gradle.plugin.oci.tasks.interfaces.ProjectAware
+import org.kordamp.gradle.plugin.oci.tasks.traits.states.StringState
 
-import static org.kordamp.gradle.PropertyUtils.stringProvider
 import static org.kordamp.gradle.StringUtils.isBlank
 
 /**
@@ -39,19 +39,21 @@ import static org.kordamp.gradle.StringUtils.isBlank
  */
 @CompileStatic
 trait ShapeAwareTrait implements PathAware, ProjectAware {
+    private final StringState state = new StringState(project, 'OCI_SHAPE', 'oci.shape')
+
     @Internal
-    final Property<String> shape = project.objects.property(String)
+    Property<String> getShape() {
+        state.property
+    }
 
     @Input
-    final Provider<String> resolvedShape = stringProvider(
-        'OCI_SHAPE',
-        'oci.shape',
-        shape,
-        project)
+    Provider<String> getResolvedShape() {
+        state.provider
+    }
 
     @Option(option = 'shape', description = 'The Shape of the Instance (REQUIRED).')
     void setShape(String shape) {
-        this.shape.set(shape)
+        getShape().set(shape)
     }
 
     void validateShape() {

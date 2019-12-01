@@ -26,9 +26,9 @@ import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.options.Option
 import org.kordamp.gradle.plugin.oci.tasks.interfaces.PathAware
 import org.kordamp.gradle.plugin.oci.tasks.interfaces.ProjectAware
+import org.kordamp.gradle.plugin.oci.tasks.traits.states.StringState
 
 import static com.oracle.bmc.OCID.isValid
-import static org.kordamp.gradle.PropertyUtils.stringProvider
 import static org.kordamp.gradle.StringUtils.isNotBlank
 
 /**
@@ -37,20 +37,22 @@ import static org.kordamp.gradle.StringUtils.isNotBlank
  */
 @CompileStatic
 trait OptionalSubnetIdAwareTrait implements PathAware, ProjectAware {
+    private final StringState state = new StringState(project, 'OCI_SUBNET_ID', 'oci.subnet.id')
+
     @Internal
-    final Property<String> subnetId = project.objects.property(String)
+    Property<String> getSubnetId() {
+        state.property
+    }
 
     @Input
     @Optional
-    final Provider<String> resolvedSubnetId = stringProvider(
-        'OCI_SUBNET_ID',
-        'oci.subnet.id',
-        subnetId,
-        project)
+    Provider<String> getResolvedSubnetId() {
+        state.provider
+    }
 
     @Option(option = 'subnet-id', description = 'The id of the Subnet (OPTIONAL).')
     void setSubnetId(String subnetId) {
-        this.subnetId.set(subnetId)
+        getSubnetId().set(subnetId)
     }
 
     void validateSubnetId() {

@@ -23,10 +23,10 @@ import com.oracle.bmc.core.requests.GetInstanceRequest
 import com.oracle.bmc.core.requests.InstanceActionRequest
 import com.oracle.bmc.core.requests.ListInstancesRequest
 import groovy.transform.CompileStatic
-import groovy.transform.Internal
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.options.Option
 import org.gradle.api.tasks.options.OptionValues
 import org.kordamp.gradle.plugin.oci.tasks.AbstractOCITask
@@ -75,7 +75,7 @@ class InstanceActionTask extends AbstractOCITask implements CompartmentIdAwareTr
 
     @Option(option = 'action', description = 'The action to be executed (REQUIRED).')
     void setAction(InstanceAction action) {
-        this.action.set(action)
+        getAction().set(action)
     }
 
     @Input

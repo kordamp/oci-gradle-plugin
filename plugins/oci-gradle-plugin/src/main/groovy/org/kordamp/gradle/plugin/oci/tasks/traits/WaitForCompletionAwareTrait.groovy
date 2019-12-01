@@ -24,8 +24,7 @@ import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.options.Option
 import org.kordamp.gradle.plugin.oci.tasks.interfaces.ProjectAware
-
-import static org.kordamp.gradle.PropertyUtils.booleanProvider
+import org.kordamp.gradle.plugin.oci.tasks.traits.states.BooleanState
 
 /**
  * @author Andres Almiray
@@ -33,18 +32,20 @@ import static org.kordamp.gradle.PropertyUtils.booleanProvider
  */
 @CompileStatic
 trait WaitForCompletionAwareTrait implements ProjectAware {
+    private final BooleanState state = new BooleanState(project, 'OCI_WAIT_FOR_COMPLETION', 'oci.wait.for.completion')
+
     @Internal
-    final Property<Boolean> waitForCompletion = project.objects.property(Boolean)
+    Property<Boolean> getWaitForCompletion() {
+        state.property
+    }
 
     @Input
-    final Provider<Boolean> resolvedWaitForCompletion = booleanProvider(
-        'OCI_WAIT_FOR_COMPLETION',
-        'oci.wait.for.completion',
-        waitForCompletion,
-        project)
+    Provider<Boolean> getResolvedWaitForCompletion() {
+        state.provider
+    }
 
     @Option(option = 'wait-for-completion', description = 'Wait for operation to finish.')
     void setWaitForCompletion(boolean waitForCompletion) {
-        this.waitForCompletion.set(waitForCompletion)
+        getWaitForCompletion().set(waitForCompletion)
     }
 }

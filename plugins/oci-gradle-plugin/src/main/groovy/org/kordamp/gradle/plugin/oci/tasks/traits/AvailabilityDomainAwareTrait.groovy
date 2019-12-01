@@ -29,8 +29,8 @@ import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.options.Option
 import org.kordamp.gradle.plugin.oci.tasks.interfaces.PathAware
 import org.kordamp.gradle.plugin.oci.tasks.interfaces.ProjectAware
+import org.kordamp.gradle.plugin.oci.tasks.traits.states.StringState
 
-import static org.kordamp.gradle.PropertyUtils.stringProvider
 import static org.kordamp.gradle.StringUtils.isBlank
 
 /**
@@ -39,19 +39,21 @@ import static org.kordamp.gradle.StringUtils.isBlank
  */
 @CompileStatic
 trait AvailabilityDomainAwareTrait implements PathAware, ProjectAware {
+    private final StringState state = new StringState(project, 'OCI_AVAILABILITY_DOMAIN', 'oci.availability.domain')
+
     @Internal
-    final Property<String> availabilityDomain = project.objects.property(String)
+    Property<String> getAvailabilityDomain() {
+        state.property
+    }
 
     @Input
-    final Provider<String> resolvedAvailabilityDomain = stringProvider(
-        'OCI_AVAILABILITY_DOMAIN',
-        'oci.availability.domain',
-        availabilityDomain,
-        project)
+    Provider<String> getResolvedAvailabilityDomain() {
+        state.provider
+    }
 
     @Option(option = 'availability-domain', description = 'The AvailabilityDomain (REQUIRED).')
     void setAvailabilityDomain(String availabilityDomain) {
-        this.availabilityDomain.set(availabilityDomain)
+        getAvailabilityDomain().set(availabilityDomain)
     }
 
     void validateAvailabilityDomain() {

@@ -26,8 +26,8 @@ import org.gradle.api.tasks.options.Option
 import org.gradle.internal.hash.HashUtil
 import org.kordamp.gradle.plugin.oci.tasks.interfaces.PathAware
 import org.kordamp.gradle.plugin.oci.tasks.interfaces.ProjectAware
+import org.kordamp.gradle.plugin.oci.tasks.traits.states.StringState
 
-import static org.kordamp.gradle.PropertyUtils.stringProvider
 import static org.kordamp.gradle.StringUtils.isBlank
 
 /**
@@ -36,21 +36,23 @@ import static org.kordamp.gradle.StringUtils.isBlank
  */
 @CompileStatic
 trait DnsLabelAwareTrait implements PathAware, ProjectAware {
+    private final StringState state = new StringState(project, 'OCI_DNS_LABEL', 'oci.dns.label')
+
     @Internal
-    final Property<String> dnsLabel = project.objects.property(String)
+    Property<String> getDnsLabel() {
+        state.property
+    }
 
     @Input
-    final Provider<String> resolvedDnsLabel = stringProvider(
-        'OCI_DNS_LABEL',
-        'oci.dns.label',
-        dnsLabel,
-        project)
+    Provider<String> getResolvedDnsLabel() {
+        state.provider
+    }
 
     @Option(option = 'dns-label', description = 'The DNS label to use (REQUIRED).')
     void setDnsLabel(String dnsLabel) {
         String label = dnsLabel?.replace('.', '')?.replace('-', '')
         if (label?.length() > 15) label = label?.substring(0, 14)
-        this.dnsLabel.set(label)
+        getDnsLabel().set(label)
     }
 
     void validateDnsLabel(String seed) {

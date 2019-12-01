@@ -26,8 +26,7 @@ import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.options.Option
 import org.kordamp.gradle.plugin.oci.tasks.interfaces.PathAware
 import org.kordamp.gradle.plugin.oci.tasks.interfaces.ProjectAware
-
-import static org.kordamp.gradle.PropertyUtils.fileProvider
+import org.kordamp.gradle.plugin.oci.tasks.traits.states.RegularFileState
 
 /**
  * @author Andres Almiray
@@ -35,15 +34,17 @@ import static org.kordamp.gradle.PropertyUtils.fileProvider
  */
 @CompileStatic
 trait PublicKeyFileAwareTrait implements PathAware, ProjectAware {
+    private final RegularFileState state = new RegularFileState(project, 'OCI_PUBLIC_KEY_FILE', 'oci.public.key.file')
+
     @Internal
-    final RegularFileProperty publicKeyFile = project.objects.fileProperty()
+    RegularFileProperty getPublicKeyFile() {
+        state.property
+    }
 
     @InputFile
-    final Provider<RegularFile> resolvedPublicKeyFile = fileProvider(
-        'OCI_PUBLIC_KEY_FILE',
-        'oci.public.key.file',
-        publicKeyFile,
-        project)
+    Provider<RegularFile> getResolvedPublicKeyFile() {
+        state.provider
+    }
 
     @Option(option = 'public-key-file', description = 'Location of SSH public key file (REQUIRED).')
     void setPublicKeyFile(String publicKeyFile) {
@@ -51,11 +52,11 @@ trait PublicKeyFileAwareTrait implements PathAware, ProjectAware {
     }
 
     void setPublicKeyFile(File publicKeyFile) {
-        this.publicKeyFile.set(publicKeyFile)
+        getPublicKeyFile().set(publicKeyFile)
     }
 
     void validatePublicKeyFile() {
-        if (!publicKeyFile.present) {
+        if (!getPublicKeyFile().present) {
             throw new IllegalStateException("Missing value for 'publicKeyFile' in $path")
         }
     }

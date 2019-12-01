@@ -27,11 +27,11 @@ import com.oracle.bmc.core.model.UpdateSecurityListDetails
 import com.oracle.bmc.core.requests.GetSecurityListRequest
 import com.oracle.bmc.core.requests.UpdateSecurityListRequest
 import groovy.transform.CompileStatic
-import groovy.transform.Internal
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.options.Option
 import org.gradle.api.tasks.options.OptionValues
@@ -63,12 +63,18 @@ class AddIngressSecurityRuleTask extends AbstractOCITask implements SecurityList
 
     @Internal
     final Property<PortType> portType = project.objects.property(PortType)
-    private final ListProperty<String> sourcePorts = project.objects.listProperty(String)
-    private final ListProperty<String> destinationPorts = project.objects.listProperty(String)
+
+    @Input
+    @Optional
+    final ListProperty<String> sourcePorts = project.objects.listProperty(String)
+
+    @Input
+    @Optional
+    final ListProperty<String> destinationPorts = project.objects.listProperty(String)
 
     @Option(option = 'port-type', description = 'The port type to use. Defaults to TCP (OPTIONAL).')
     void setPortType(PortType portType) {
-        this.portType.set(portType)
+        getPortType().set(portType)
     }
 
     @Input
@@ -105,11 +111,6 @@ class AddIngressSecurityRuleTask extends AbstractOCITask implements SecurityList
         this.sourcePorts.add(port)
     }
 
-    @Input
-    ListProperty<String> getSourcePorts() {
-        this.@sourcePorts
-    }
-
     @Option(option = 'destination-port', description = 'The destination port type to add. May be defined multiple times (REQUIRED).')
     void setDestinationPort(List<String> destinationPorts) {
         for (String port : destinationPorts) {
@@ -127,11 +128,6 @@ class AddIngressSecurityRuleTask extends AbstractOCITask implements SecurityList
     void setDestinationPort(String port) {
         checkPort(port)
         this.destinationPorts.add(port)
-    }
-
-    @Input
-    ListProperty<String> getDestinationPorts() {
-        this.@destinationPorts
     }
 
     private void checkPort(String port) {

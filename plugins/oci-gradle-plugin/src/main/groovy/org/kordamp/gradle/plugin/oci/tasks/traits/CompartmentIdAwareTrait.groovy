@@ -25,9 +25,9 @@ import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.options.Option
 import org.kordamp.gradle.plugin.oci.tasks.interfaces.PathAware
 import org.kordamp.gradle.plugin.oci.tasks.interfaces.ProjectAware
+import org.kordamp.gradle.plugin.oci.tasks.traits.states.StringState
 
 import static com.oracle.bmc.OCID.isValid
-import static org.kordamp.gradle.PropertyUtils.stringProvider
 import static org.kordamp.gradle.StringUtils.isBlank
 
 /**
@@ -36,19 +36,21 @@ import static org.kordamp.gradle.StringUtils.isBlank
  */
 @CompileStatic
 trait CompartmentIdAwareTrait implements PathAware, ProjectAware {
+    private final StringState state = new StringState(project, 'OCI_COMPARTMENT_ID', 'oci.compartment.id')
+
     @Internal
-    final Property<String> compartmentId = project.objects.property(String)
+    Property<String> getCompartmentId() {
+        state.property
+    }
 
     @Input
-    final Provider<String> resolvedCompartmentId = stringProvider(
-        'OCI_COMPARTMENT_ID',
-        'oci.compartment.id',
-        compartmentId,
-        project)
+    Provider<String> getResolvedCompartmentId() {
+        state.provider
+    }
 
     @Option(option = 'compartment-id', description = 'The id of the Compartment (REQUIRED).')
     void setCompartmentId(String compartmentId) {
-        this.compartmentId.set(compartmentId)
+        getCompartmentId().set(compartmentId)
     }
 
     void validateCompartmentId() {

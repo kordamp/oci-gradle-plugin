@@ -25,8 +25,7 @@ import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.options.Option
 import org.kordamp.gradle.plugin.oci.tasks.interfaces.PathAware
 import org.kordamp.gradle.plugin.oci.tasks.interfaces.ProjectAware
-
-import static org.kordamp.gradle.PropertyUtils.stringProvider
+import org.kordamp.gradle.plugin.oci.tasks.traits.states.StringState
 
 /**
  * @author Andres Almiray
@@ -34,18 +33,20 @@ import static org.kordamp.gradle.PropertyUtils.stringProvider
  */
 @CompileStatic
 trait InstanceNameAwareTrait implements PathAware, ProjectAware {
+    private final StringState state = new StringState(project, 'OCI_INSTANCE_NAME', 'oci.instance.name')
+
     @Internal
-    final Property<String> instanceName = project.objects.property(String)
+    Property<String> getInstanceName() {
+        state.property
+    }
 
     @Input
-    final Provider<String> resolvedInstanceName = stringProvider(
-        'OCI_INSTANCE_NAME',
-        'oci.instance.name',
-        instanceName,
-        project)
+    Provider<String> getResolvedInstanceName() {
+        state.provider
+    }
 
     @Option(option = 'instance-name', description = 'The name of the Instance (REQUIRED).')
     void setInstanceName(String instanceName) {
-        this.instanceName.set(instanceName)
+        getInstanceName().set(instanceName)
     }
 }

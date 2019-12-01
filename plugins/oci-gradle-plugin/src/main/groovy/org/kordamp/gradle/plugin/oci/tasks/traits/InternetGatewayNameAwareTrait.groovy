@@ -25,8 +25,8 @@ import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.options.Option
 import org.kordamp.gradle.plugin.oci.tasks.interfaces.PathAware
 import org.kordamp.gradle.plugin.oci.tasks.interfaces.ProjectAware
+import org.kordamp.gradle.plugin.oci.tasks.traits.states.StringState
 
-import static org.kordamp.gradle.PropertyUtils.stringProvider
 import static org.kordamp.gradle.StringUtils.isBlank
 
 /**
@@ -35,19 +35,21 @@ import static org.kordamp.gradle.StringUtils.isBlank
  */
 @CompileStatic
 trait InternetGatewayNameAwareTrait implements PathAware, ProjectAware {
+    private final StringState state = new StringState(project, 'OCI_INTERNET_GATEWAY_NAME', 'oci.internet.gateway.name')
+
     @Internal
-    final Property<String> internetGatewayName = project.objects.property(String)
+    Property<String> getInternetGatewayName() {
+        state.property
+    }
 
     @Input
-    final Provider<String> resolvedInternetGatewayName = stringProvider(
-        'OCI_INTERNET_GATEWAY_NAME',
-        'oci.internet.gateway.name',
-        internetGatewayName,
-        project)
+    Provider<String> getResolvedInternetGatewayName() {
+        state.provider
+    }
 
     @Option(option = 'internet-gateway-name', description = 'The name of the InternetGateway (REQUIRED).')
     void setInternetGatewayName(String internetGatewayName) {
-        this.internetGatewayName.set(internetGatewayName)
+        getInternetGatewayName().set(internetGatewayName)
     }
 
     void validateInternetGatewayName() {

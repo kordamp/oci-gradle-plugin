@@ -25,9 +25,9 @@ import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.options.Option
 import org.kordamp.gradle.plugin.oci.tasks.interfaces.PathAware
 import org.kordamp.gradle.plugin.oci.tasks.interfaces.ProjectAware
+import org.kordamp.gradle.plugin.oci.tasks.traits.states.StringState
 
 import static com.oracle.bmc.OCID.isValid
-import static org.kordamp.gradle.PropertyUtils.stringProvider
 import static org.kordamp.gradle.StringUtils.isBlank
 
 /**
@@ -36,19 +36,21 @@ import static org.kordamp.gradle.StringUtils.isBlank
  */
 @CompileStatic
 trait SecurityListIdAwareTrait implements PathAware, ProjectAware {
+    private final StringState state = new StringState(project, 'OCI_SECURITY_LIST_ID', 'oci.security.list.id')
+
     @Internal
-    final Property<String> securityListId = project.objects.property(String)
+    Property<String> getSecurityListId() {
+        state.property
+    }
 
     @Input
-    final Provider<String> resolvedSecurityListId = stringProvider(
-        'OCI_SECURITY_LIST_ID',
-        'oci.security.list.id',
-        securityListId,
-        project)
+    Provider<String> getResolvedSecurityListId() {
+        state.provider
+    }
 
     @Option(option = 'security-list-id', description = 'The id of the SecurityList (REQUIRED).')
     void setSecurityListId(String securityListId) {
-        this.securityListId.set(securityListId)
+        getSecurityListId().set(securityListId)
     }
 
     void validateSecurityListId() {

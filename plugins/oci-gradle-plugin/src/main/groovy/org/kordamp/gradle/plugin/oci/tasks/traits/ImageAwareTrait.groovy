@@ -29,8 +29,8 @@ import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.options.Option
 import org.kordamp.gradle.plugin.oci.tasks.interfaces.PathAware
 import org.kordamp.gradle.plugin.oci.tasks.interfaces.ProjectAware
+import org.kordamp.gradle.plugin.oci.tasks.traits.states.StringState
 
-import static org.kordamp.gradle.PropertyUtils.stringProvider
 import static org.kordamp.gradle.StringUtils.isBlank
 
 /**
@@ -39,19 +39,21 @@ import static org.kordamp.gradle.StringUtils.isBlank
  */
 @CompileStatic
 trait ImageAwareTrait implements PathAware, ProjectAware {
+    private final StringState state = new StringState(project, 'OCI_IMAGE', 'oci.image')
+
     @Internal
-    final Property<String> image = project.objects.property(String)
+    Property<String> getImage() {
+        state.property
+    }
 
     @Input
-    final Provider<String> resolvedImage = stringProvider(
-        'OCI_IMAGE',
-        'oci.image',
-        image,
-        project)
+    Provider<String> getResolvedImage() {
+        state.provider
+    }
 
     @Option(option = 'image', description = 'The Image of the Instance (REQUIRED).')
     void setImage(String image) {
-        this.image.set(image)
+        getImage().set(image)
     }
 
     void validateImage() {

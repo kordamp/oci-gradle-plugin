@@ -48,19 +48,19 @@ class SearchResourcesTask extends AbstractOCITask {
     static final String TASK_DESCRIPTION = 'Lists information on resource types.'
 
     @Internal
-    private final Property<String> resourceType = project.objects.property(String)
+    final Property<String> resourceType = project.objects.property(String)
 
     @Input
     @Optional
     final Provider<String> resolvedResourceType = stringProvider(
         'OCI_RESOURCE_TYPE',
         'oci.resource.type',
-        resourceType,
+        getResourceType(),
         project)
 
     @Option(option = 'resource-type', description = 'The type to search (OPTIONAL).')
     void setResourceType(String resourceType) {
-        this.resourceType.set(resourceType)
+        getResourceType().set(resourceType)
     }
 
     @Override

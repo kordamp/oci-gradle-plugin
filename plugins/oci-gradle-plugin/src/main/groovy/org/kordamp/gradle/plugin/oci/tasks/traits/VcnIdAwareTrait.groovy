@@ -25,9 +25,9 @@ import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.options.Option
 import org.kordamp.gradle.plugin.oci.tasks.interfaces.PathAware
 import org.kordamp.gradle.plugin.oci.tasks.interfaces.ProjectAware
+import org.kordamp.gradle.plugin.oci.tasks.traits.states.StringState
 
 import static com.oracle.bmc.OCID.isValid
-import static org.kordamp.gradle.PropertyUtils.stringProvider
 import static org.kordamp.gradle.StringUtils.isBlank
 
 /**
@@ -36,19 +36,21 @@ import static org.kordamp.gradle.StringUtils.isBlank
  */
 @CompileStatic
 trait VcnIdAwareTrait implements PathAware, ProjectAware {
+    private final StringState state = new StringState(project, 'OCI_VCN_ID', 'oci.vcn.id')
+
     @Internal
-    final Property<String> vcnId = project.objects.property(String)
+    Property<String> getVcnId() {
+        state.property
+    }
 
     @Input
-    final Provider<String> resolvedVcnId = stringProvider(
-        'OCI_VCN_ID',
-        'oci.vcn.id',
-        vcnId,
-        project)
+    Provider<String> getResolvedVcnId() {
+        state.provider
+    }
 
     @Option(option = 'vcn-id', description = 'The id of the Vcn (REQUIRED).')
     void setVcnId(String vcnId) {
-        this.vcnId.set(vcnId)
+        getVcnId().set(vcnId)
     }
 
     void validateVcnId() {

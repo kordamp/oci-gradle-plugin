@@ -26,9 +26,9 @@ import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.options.Option
 import org.kordamp.gradle.plugin.oci.tasks.interfaces.PathAware
 import org.kordamp.gradle.plugin.oci.tasks.interfaces.ProjectAware
+import org.kordamp.gradle.plugin.oci.tasks.traits.states.StringState
 
 import static com.oracle.bmc.OCID.isValid
-import static org.kordamp.gradle.PropertyUtils.stringProvider
 import static org.kordamp.gradle.StringUtils.isNotBlank
 
 /**
@@ -37,20 +37,22 @@ import static org.kordamp.gradle.StringUtils.isNotBlank
  */
 @CompileStatic
 trait OptionalInternetGatewayIdAwareTrait implements PathAware, ProjectAware {
+    private final StringState state = new StringState(project, 'OCI_INTERNET_GATEWAY_ID', 'oci.internet.gateway.id')
+
     @Internal
-    final Property<String> internetGatewayId = project.objects.property(String)
+    Property<String> getInternetGatewayId() {
+        state.property
+    }
 
     @Input
     @Optional
-    final Provider<String> resolvedInternetGatewayId = stringProvider(
-        'OCI_INTERNET_GATEWAY_ID',
-        'oci.internet.gateway.id',
-        internetGatewayId,
-        project)
+    Provider<String> getResolvedInternetGatewayId() {
+        state.provider
+    }
 
     @Option(option = 'internet-gateway-id', description = 'The id of the InternetGateway (OPTIONAL).')
     void setInternetGatewayId(String internetGatewayId) {
-        this.internetGatewayId.set(internetGatewayId)
+        getInternetGatewayId().set(internetGatewayId)
     }
 
     void validateInternetGatewayId() {

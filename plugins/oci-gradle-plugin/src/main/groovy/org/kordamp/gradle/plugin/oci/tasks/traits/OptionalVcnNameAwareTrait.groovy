@@ -26,8 +26,7 @@ import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.options.Option
 import org.kordamp.gradle.plugin.oci.tasks.interfaces.PathAware
 import org.kordamp.gradle.plugin.oci.tasks.interfaces.ProjectAware
-
-import static org.kordamp.gradle.PropertyUtils.stringProvider
+import org.kordamp.gradle.plugin.oci.tasks.traits.states.StringState
 
 /**
  * @author Andres Almiray
@@ -35,19 +34,21 @@ import static org.kordamp.gradle.PropertyUtils.stringProvider
  */
 @CompileStatic
 trait OptionalVcnNameAwareTrait implements PathAware, ProjectAware {
+    private final StringState state = new StringState(project, 'OCI_VCN_NAME', 'oci.vcn.name')
+
     @Internal
-    final Property<String> vcnName = project.objects.property(String)
+    Property<String> getVcnName() {
+        state.property
+    }
 
     @Input
     @Optional
-    final Provider<String> resolvedVcnName = stringProvider(
-        'OCI_VCN_NAME',
-        'oci.vcn.name',
-        vcnName,
-        project)
+    Provider<String> getResolvedVcnName() {
+        state.provider
+    }
 
     @Option(option = 'vcn-name', description = 'The name of the Vcn (OPTIONAL).')
     void setVcnName(String vcnName) {
-        this.vcnName.set(vcnName)
+        getVcnName().set(vcnName)
     }
 }

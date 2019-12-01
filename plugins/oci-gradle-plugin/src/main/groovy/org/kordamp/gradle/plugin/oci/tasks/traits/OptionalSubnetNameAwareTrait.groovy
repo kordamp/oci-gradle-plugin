@@ -26,8 +26,7 @@ import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.options.Option
 import org.kordamp.gradle.plugin.oci.tasks.interfaces.PathAware
 import org.kordamp.gradle.plugin.oci.tasks.interfaces.ProjectAware
-
-import static org.kordamp.gradle.PropertyUtils.stringProvider
+import org.kordamp.gradle.plugin.oci.tasks.traits.states.StringState
 
 /**
  * @author Andres Almiray
@@ -35,19 +34,21 @@ import static org.kordamp.gradle.PropertyUtils.stringProvider
  */
 @CompileStatic
 trait OptionalSubnetNameAwareTrait implements PathAware, ProjectAware {
+    private final StringState state = new StringState(project, 'OCI_SUBNET_NAME', 'oci.subnet.name')
+
     @Internal
-    final Property<String> subnetName = project.objects.property(String)
+    Property<String> getSubnetName() {
+        state.property
+    }
 
     @Input
     @Optional
-    final Provider<String> resolvedSubnetName = stringProvider(
-        'OCI_SUBNET_NAME',
-        'oci.subnet.name',
-        subnetName,
-        project)
+    Provider<String> getResolvedSubnetName() {
+        state.provider
+    }
 
     @Option(option = 'subnet-name', description = 'The name of the Subnet (OPTIONAL).')
     void setSubnetName(String subnetName) {
-        this.subnetName.set(subnetName)
+        getSubnetName().set(subnetName)
     }
 }

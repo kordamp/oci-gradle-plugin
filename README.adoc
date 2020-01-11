@@ -5,7 +5,7 @@
 :project-name:    kordamp-parentpom
 :project-name:    oci-gradle-plugin
 :project-group:   org.kordamp.gradle
-:project-version: 0.2.0
+:project-version: 0.3.0
 
 image:http://img.shields.io/travis/{project-owner}/{project-name}/master.svg["Build Status (travis)", link="https://travis-ci.org/{project-owner}/{project-name}"]
 image:http://img.shields.io/badge/license-ASL2-blue.svg["ASL2 Licensed", link="http://opensource.org/licenses/ASL2"]
@@ -45,7 +45,7 @@ plugins {
 }
 ----
 
-Refer to the link:http://{projecy-owner}.github.io/{project-name}[guide, window="_blank"] for further information on configuration
+Refer to the link:http://{project-owner}.github.io/{project-name}[guide, window="_blank"] for further information on configuration
 and usage.
 
 == Requirements

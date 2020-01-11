@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: Apache-2.0
  *
- * Copyright 2019 Andres Almiray.
+ * Copyright 2019-2020 Andres Almiray.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,14 +18,29 @@
 plugins {
     id 'java-library'
     id 'groovy'
+	id 'org.kordamp.gradle.plugin'
+}
+
+config {
+    bintray {
+        enabled = true
+    }
+
+    plugin {
+        enabled             = true
+        id                  = project.pluginId
+        implementationClass = project.pluginImplementationClass
+    }
 }
 
 dependencies {
+    compileOnly gradleApi()
+	
     api         "org.kordamp.jipsy:jipsy-util:$jipsyVersion"
     compileOnly "org.kordamp.jipsy:jipsy-annotations:$jipsyVersion"
     compileOnly "org.kordamp.gipsy:gipsy:$jipsyVersion"
 
-    api 'org.kordamp.gradle:base-gradle-plugin:0.30.3'
+    api "org.kordamp.gradle:base-gradle-plugin:$kordampPluginVersion"
 
     api "com.oracle.oci.sdk:oci-java-sdk-common:$ociJavaSdkVersion"
     api "com.oracle.oci.sdk:oci-java-sdk-audit:$ociJavaSdkVersion"
@@ -58,6 +73,7 @@ dependencies {
 }
 
 processResources {
+    inputs.property('version', project.version)
     filesMatching(['**/*.properties']) {
         expand(
             'version': project.version,

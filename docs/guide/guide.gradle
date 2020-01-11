@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: Apache-2.0
  *
- * Copyright 2019 Andres Almiray.
+ * Copyright 2019-2020 Andres Almiray.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,8 @@
  * limitations under the License.
  */
 plugins {
-    id 'org.kordamp.gradle.guide'   version '0.30.4-SNAPSHOT'
-    id 'org.ajoberstar.git-publish' version '0.3.2'
+    id 'org.kordamp.gradle.guide'
+    id 'org.ajoberstar.git-publish'
 }
 
 configurations {
@@ -39,19 +39,4 @@ asciidoctor {
         'source-highlighter'  : 'prettify',
         'oci-java-sdk-version': project.ociJavaSdkVersion
     ]
-}
-
-afterEvaluate {
-    project.tasks.findByName('createGuide')
-
-    gitPublish {
-        repoUri = rootProject.extensions.findByName('config').info.links.scm
-        branch  = 'gh-pages'
-        contents {
-            from project.tasks.findByName('createGuide').outputs.files
-        }
-        commitMessage = "Publish guide for $version"
-    }
-
-    gitPublishCommit.dependsOn(project.tasks.findByName('createGuide'))
 }

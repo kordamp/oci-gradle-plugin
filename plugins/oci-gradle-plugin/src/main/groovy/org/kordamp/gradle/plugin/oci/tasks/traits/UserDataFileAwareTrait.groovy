@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: Apache-2.0
  *
- * Copyright 2019 Andres Almiray.
+ * Copyright 2019-2020 Andres Almiray.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -56,7 +56,7 @@ trait UserDataFileAwareTrait implements PathAware, ProjectAware {
     }
 
     void validateUserDataFile() {
-        if (!getUserDataFile().present) {
+        if (!getResolvedUserDataFile().present) {
             throw new IllegalStateException("Missing value for 'userDataFile' in $path")
         }
     }

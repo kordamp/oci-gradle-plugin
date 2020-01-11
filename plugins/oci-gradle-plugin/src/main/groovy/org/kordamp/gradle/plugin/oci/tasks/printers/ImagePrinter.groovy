@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: Apache-2.0
  *
- * Copyright 2019 Andres Almiray.
+ * Copyright 2019-2020 Andres Almiray.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,6 +35,7 @@ class ImagePrinter {
         printer.printKeyValue('Operating System', image.operatingSystem, offset + 1)
         printer.printKeyValue('Operating System Version', image.operatingSystemVersion, offset + 1)
         printer.printKeyValue('Lifecycle State', printer.state(image.lifecycleState.name()), offset + 1)
+        printer.printMap('Defined Tags', image.definedTags, offset + 1)
         printer.printMap('Freeform Tags', image.freeformTags, offset + 1)
     }
 }

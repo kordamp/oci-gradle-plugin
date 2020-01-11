@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: Apache-2.0
  *
- * Copyright 2019 Andres Almiray.
+ * Copyright 2019-2020 Andres Almiray.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,6 +27,8 @@ import com.oracle.bmc.core.BlockstorageClient
 import com.oracle.bmc.core.ComputeClient
 import com.oracle.bmc.core.VirtualNetworkClient
 import com.oracle.bmc.identity.IdentityClient
+import com.oracle.bmc.objectstorage.ObjectStorageAsyncClient
+import com.oracle.bmc.objectstorage.ObjectStorageClient
 import com.oracle.bmc.resourcesearch.ResourceSearchClient
 import groovy.transform.CompileStatic
 import org.gradle.api.provider.Property
@@ -41,6 +43,8 @@ import org.kordamp.gradle.plugin.base.tasks.AbstractReportingTask
 import org.kordamp.gradle.plugin.oci.OCIConfigExtension
 import org.kordamp.gradle.plugin.oci.tasks.interfaces.OCITask
 
+import java.text.SimpleDateFormat
+
 import static org.kordamp.gradle.PropertyUtils.stringProvider
 import static org.kordamp.gradle.StringUtils.isNotBlank
 
@@ -51,6 +55,7 @@ import static org.kordamp.gradle.StringUtils.isNotBlank
 @CompileStatic
 abstract class AbstractOCITask extends AbstractReportingTask implements OCITask {
     protected static final String CONFIG_LOCATION = '~/.oci/config'
+    protected static final String TIMESTAMP_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
 
     protected final OCIConfigExtension ociConfig
     protected final List<AutoCloseable> closeables = []
@@ -118,7 +123,9 @@ abstract class AbstractOCITask extends AbstractReportingTask implements OCITask 
 
         if (ociConfig.empty) {
             ConfigFileReader.ConfigFile configFile = ConfigFileReader.parse(CONFIG_LOCATION, getResolvedProfile().get())
-            return new ConfigFileAuthenticationDetailsProvider(configFile)
+            ConfigFileAuthenticationDetailsProvider provider = new ConfigFileAuthenticationDetailsProvider(configFile)
+            setRegion(provider.region.regionId)
+            return provider
         }
 
         List<String> errors = []
@@ -159,51 +166,6 @@ abstract class AbstractOCITask extends AbstractReportingTask implements OCITask 
         authenticationDetailsProvider
     }
 
-    protected IdentityClient createIdentityClient() {
-        IdentityClient client = new IdentityClient(resolveAuthenticationDetailsProvider())
-        if (region.present && isNotBlank(getResolvedRegion().get())) {
-            client.setRegion(getResolvedRegion().get())
-        }
-        closeables << client
-        client
-    }
-
-    protected ComputeClient createComputeClient() {
-        ComputeClient client = new ComputeClient(resolveAuthenticationDetailsProvider())
-        if (region.present && isNotBlank(getResolvedRegion().get())) {
-            client.setRegion(getResolvedRegion().get())
-        }
-        closeables << client
-        client
-    }
-
-    protected VirtualNetworkClient createVirtualNetworkClient() {
-        VirtualNetworkClient client = new VirtualNetworkClient(resolveAuthenticationDetailsProvider())
-        if (region.present && isNotBlank(getResolvedRegion().get())) {
-            client.setRegion(getResolvedRegion().get())
-        }
-        closeables << client
-        client
-    }
-
-    protected BlockstorageClient createBlockstorageClient() {
-        BlockstorageClient client = new BlockstorageClient(resolveAuthenticationDetailsProvider())
-        if (region.present && isNotBlank(getResolvedRegion().get())) {
-            client.setRegion(getResolvedRegion().get())
-        }
-        closeables << client
-        client
-    }
-
-    protected ResourceSearchClient createResourceSearchClient() {
-        ResourceSearchClient client = new ResourceSearchClient(resolveAuthenticationDetailsProvider())
-        if (region.present && isNotBlank(getResolvedRegion().get())) {
-            client.setRegion(getResolvedRegion().get())
-        }
-        closeables << client
-        client
-    }
-
     @Override
     protected void doPrintMapEntry(String key, value, int offset) {
         if (value instanceof CharSequence) {
@@ -222,7 +184,7 @@ abstract class AbstractOCITask extends AbstractReportingTask implements OCITask 
 
     @Override
     void printMap(String key, Map<String, ?> map, int offset) {
-        if (!map.isEmpty()) {
+        if (map && !map.isEmpty()) {
             println(('    ' * offset) + key + ':')
             doPrintMap(map, offset + 1)
         }
@@ -230,7 +192,7 @@ abstract class AbstractOCITask extends AbstractReportingTask implements OCITask 
 
     @Override
     void printCollection(String key, Collection<?> collection, int offset) {
-        if (!collection.isEmpty()) {
+        if (collection && !collection.isEmpty()) {
             println(('    ' * offset) + key + ':')
             doPrintCollection(collection, offset + 1)
         }
@@ -247,25 +209,97 @@ abstract class AbstractOCITask extends AbstractReportingTask implements OCITask 
                 case 'Exporting':
                 case 'Starting':
                 case 'CreatingImage':
+                case 'InProgress':
+                case 'Canceling':
+                case 'Deleting':
+                case 'Terminating':
                     return console.yellow(state)
                 case 'Available':
                 case 'Running':
                 case 'Active':
+                case 'Completed':
                     return console.green(state)
                 case 'Inactive':
                 case 'Stopping':
                 case 'Stopped':
+                case 'Accepted':
                     return console.cyan(state)
                 case 'Disabled':
-                case 'Deleting':
                 case 'Deleted':
-                case 'Terminating':
                 case 'Terminated':
                 case 'Faulty':
                 case 'Failed':
+                case 'Canceled':
                     return console.red(state)
             }
         }
         state
+    }
+
+    static String format(Date date) {
+        return new SimpleDateFormat(TIMESTAMP_FORMAT).format(date)
+    }
+
+    protected IdentityClient createIdentityClient() {
+        IdentityClient client = new IdentityClient(resolveAuthenticationDetailsProvider())
+        if (isNotBlank(getResolvedRegion().orNull)) {
+            client.setRegion(getResolvedRegion().get())
+        }
+        closeables << client
+        client
+    }
+
+    protected ComputeClient createComputeClient() {
+        ComputeClient client = new ComputeClient(resolveAuthenticationDetailsProvider())
+        if (isNotBlank(getResolvedRegion().orNull)) {
+            client.setRegion(getResolvedRegion().get())
+        }
+        closeables << client
+        client
+    }
+
+    protected VirtualNetworkClient createVirtualNetworkClient() {
+        VirtualNetworkClient client = new VirtualNetworkClient(resolveAuthenticationDetailsProvider())
+        if (isNotBlank(getResolvedRegion().orNull)) {
+            client.setRegion(getResolvedRegion().get())
+        }
+        closeables << client
+        client
+    }
+
+    protected BlockstorageClient createBlockstorageClient() {
+        BlockstorageClient client = new BlockstorageClient(resolveAuthenticationDetailsProvider())
+        if (isNotBlank(getResolvedRegion().orNull)) {
+            client.setRegion(getResolvedRegion().get())
+        }
+        closeables << client
+        client
+    }
+
+    protected ResourceSearchClient createResourceSearchClient() {
+        ResourceSearchClient client = new ResourceSearchClient(resolveAuthenticationDetailsProvider())
+        if (isNotBlank(getResolvedRegion().orNull)) {
+            client.setRegion(getResolvedRegion().get())
+        }
+        closeables << client
+        client
+    }
+
+    protected ObjectStorageClient createObjectStorageClient() {
+        ObjectStorageClient client = new ObjectStorageClient(resolveAuthenticationDetailsProvider())
+        if (isNotBlank(getResolvedRegion().orNull)) {
+            client.setRegion(getResolvedRegion().get())
+        }
+        closeables << client
+        client
+    }
+
+    protected ObjectStorageAsyncClient createObjectStorageAsyncClient() {
+        ObjectStorageAsyncClient client = new ObjectStorageAsyncClient(resolveAuthenticationDetailsProvider())
+        if (isNotBlank(getResolvedRegion().orNull)) {
+            client.setRegion(getResolvedRegion().get())
+        }
+        closeables << client
+        client
     }
 }

@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: Apache-2.0
  *
- * Copyright 2019 Andres Almiray.
+ * Copyright 2019-2020 Andres Almiray.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +16,9 @@
  * limitations under the License.
  */
 plugins {
-    id 'org.kordamp.gradle.kordamp-parentpom' version '1.9.1'
-    id 'org.kordamp.gradle.groovy-project'    version '0.30.4-SNAPSHOT'
-    id 'org.kordamp.gradle.bintray'           version '0.30.4-SNAPSHOT'
-    id 'org.kordamp.gradle.plugin'            version '0.30.4-SNAPSHOT' apply false
+    id 'org.kordamp.gradle.kordamp-parentpom'
+    id 'org.kordamp.gradle.groovy-project'
+    id 'org.kordamp.gradle.bintray'
 }
 
 config {
@@ -28,18 +27,6 @@ config {
         description   = 'OCI Java SDK Gradle Plugin'
         inceptionYear = '2019'
         tags          = ['project', 'oci', 'sdk']
-
-        links {
-            website      = 'https://github.com/aalmiray/oci-gradle-plugin'
-            issueTracker = 'https://github.com/aalmiray/oci-gradle-plugin/issues'
-            scm          = 'https://github.com/aalmiray/oci-gradle-plugin.git'
-        }
-
-        scm {
-            url                 = 'https://github.com/aalmiray/oci-gradle-plugin'
-            connection          = 'scm:git:https://github.com/aalmiray/oci-gradle-plugin.git'
-            developerConnection = 'scm:git:git@github.com:aalmiray/oci-gradle-plugin.git'
-        }
 
         specification {
             enabled = false
@@ -50,20 +37,18 @@ config {
         }
     }
 
-    javadoc {
-        enabled = false
-    }
-
-    groovydoc {
-        enabled        = true
-        replaceJavadoc = true
-        options {
-            link 'https://docs.gradle.org/5.0/javadoc/', 'org.gradle.'
+    docs {
+        javadoc {
+            enabled = false
         }
-    }
 
-    bintray {
-        name = 'oci-gradle-plugin'
+        groovydoc {
+            enabled        = true
+            replaceJavadoc = true
+            options {
+                link 'https://docs.gradle.org/5.0/javadoc/', 'org.gradle.'
+            }
+        }
     }
 }
 
@@ -74,25 +59,9 @@ allprojects {
 }
 
 subprojects {
-    if (project.name.endsWith('-plugin')) {
-        apply plugin: 'java-library'
-        apply plugin: 'groovy'
-        apply plugin: 'org.kordamp.gradle.plugin'
-
-        config {
-            bintray { enabled = true }
-
-            plugin {
-                enabled             = true
-                id                  = project.pluginId
-                implementationClass = project.pluginImplementationClass
-            }
-        }
-
-        dependencies {
-            compileOnly gradleApi()
-        }
-
-        task publishRelease(dependsOn: [bintrayUpload, publishPlugins]) {}
+    configurations.all {
+        resolutionStrategy.force "com.fasterxml.jackson.core:jackson-annotations:$jacksonVersion",
+            "com.fasterxml.jackson.core:jackson-core:$jacksonVersion",
+            "com.fasterxml.jackson.core:jackson-databind:$jacksonVersion"
     }
 }

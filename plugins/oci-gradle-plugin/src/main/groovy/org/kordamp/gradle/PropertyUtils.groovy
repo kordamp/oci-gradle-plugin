@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: Apache-2.0
  *
- * Copyright 2019 Andres Almiray.
+ * Copyright 2019-2020 Andres Almiray.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,8 @@ package org.kordamp.gradle
 
 import groovy.transform.CompileStatic
 import org.gradle.api.Project
+import org.gradle.api.file.Directory
+import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFile
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
@@ -71,6 +73,19 @@ class PropertyUtils {
             if (isBlank(value)) value = System.getProperty(propertyKey)
             if (isNotBlank(value)) {
                 RegularFileProperty p = project.objects.fileProperty()
+                p.set(Paths.get(value).toFile())
+                return p.get()
+            }
+            property.orNull
+        }
+    }
+
+    static Provider<Directory> directoryProvider(String envKey, String propertyKey, DirectoryProperty property, Project project) {
+        project.providers.provider {
+            String value = System.getenv(envKey)
+            if (isBlank(value)) value = System.getProperty(propertyKey)
+            if (isNotBlank(value)) {
+                DirectoryProperty p = project.objects.directoryProperty()
                 p.set(Paths.get(value).toFile())
                 return p.get()
             }

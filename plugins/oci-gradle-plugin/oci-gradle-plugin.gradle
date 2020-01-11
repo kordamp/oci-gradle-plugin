@@ -23,7 +23,8 @@ plugins {
 
 config {
     bintray {
-        enabled = true
+        enabled       = true
+        skipMavenSync = true
     }
 
     plugin {

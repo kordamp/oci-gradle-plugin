@@ -30,34 +30,34 @@ import org.kordamp.gradle.plugin.oci.tasks.traits.states.RegularFileState
 
 /**
  * @author Andres Almiray
- * @since 0.1.0
+ * @since 0.3.0
  */
 @CompileStatic
-trait UserDataFileAwareTrait implements PathAware, ProjectAware {
-    private final RegularFileState state = new RegularFileState(project, 'OCI_USER_DATA_FILE', 'oci.user.data.file')
+trait FileAwareTrait implements PathAware, ProjectAware {
+    private final RegularFileState state = new RegularFileState(project, 'OCI_FILE', 'oci.file')
 
     @Internal
-    RegularFileProperty getUserDataFile() {
+    private RegularFileProperty getFile() {
         state.property
     }
 
     @InputFile
-    Provider<RegularFile> getResolvedUserDataFile() {
+    Provider<RegularFile> getResolvedFile() {
         state.provider
     }
 
-    @Option(option = 'user-data-file', description = 'Location of cloud init file (REQUIRED).')
-    void setUserDataFile(String userDataFile) {
-        setUserDataFile(project.file(userDataFile))
+    @Option(option = 'file', description = 'Location of the file to use (REQUIRED).')
+    void setFile(String file) {
+        setFile(project.file(file))
     }
 
-    void setUserDataFile(File userDataFile) {
-        getUserDataFile().set(userDataFile)
+    void setFile(File file) {
+        getFile().set(file)
     }
 
-    void validateUserDataFile() {
-        if (!getResolvedUserDataFile().present) {
-            throw new IllegalStateException("Missing value for 'userDataFile' in $path")
+    void validateFile() {
+        if (!getResolvedFile().present) {
+            throw new IllegalStateException("Missing value for 'file' in $path")
         }
     }
 }

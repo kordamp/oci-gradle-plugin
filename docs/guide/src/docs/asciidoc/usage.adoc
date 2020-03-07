@@ -2,7 +2,7 @@
 [[_usage]]
 = Usage
 
-There are two choices for applying any of the plugins described in this document
+There are two choices for applying the plugin described in this document
 
 Option #1
 [source,groovy]
@@ -107,10 +107,10 @@ found on the config file
 ----
 listInstances {
     ociConfig {
-        userId.set('ocid1.user.oc1...'
+        userId.set('ocid1.user.oc1...')
         tenantId.set('ocid1.tenancy.oc1...')
         region.set('eu-frankfurt-1')
-        keyfile.set(project.file('/.oci/oci_api_key.pem'))
+        keyfile.set(~'/.oci/oci_api_key.pem')
         passphrase.set('<secret>')
         fingerprint.set('f9:14:d0:...')
     }
@@ -149,12 +149,25 @@ Environment > System System > Option > Property
 === OCI Create
 
 [horizontal]
+<<createBucket>>:: Creates a Bucket.
 <<createCompartment>>:: Creates a Compartment.
 <<createInstanceConsoleConnection>>:: Creates an InstanceConsoleConnection.
 <<createInstance>>:: Creates an Instance.
 <<createInternetGateway>>:: Creates a InternetGateway.
 <<createSubnet>>:: Creates a Subnet.
 <<createVcn>>:: Creates a Vcn.
+
+[[createBucket]]
+.createBucket
+[options="header", cols="6*<,^"]
+|===
+| Property      | Type    | Option         | System             | Environment        | Default | Required
+| compartmentId | String  | compartment-id | oci.compartment.id | OCI_COMPARTMENT_ID |         | icon:check[role="green"]
+| bucketName    | String  | bucket-name    | oci.bucket.name    | OCI_BUCKET_NAME    |         | icon:check[role="green"]
+| namespaceName | String  | namespace-name | oci.namespace.name | OCI_NAMESPACE_NAME |         | icon:check[role="green"]
+| verbose       | boolean | verbose        | oci.verbose        | OCI_VERBOSE        | false   | icon:times[role="red"]
+|===
+<<_oci_create_,icon:arrow-up[] top>>
 
 [[createCompartment]]
 .createCompartment
@@ -242,11 +255,24 @@ Environment > System System > Option > Property
 === OCI Delete
 
 [horizontal]
+<<deleteBucket>>:: Deletes a Bucket.
 <<deleteCompartment>>:: Deletes a Compartment.
 <<deleteInstanceConsoleConnection>>:: Deletes an InstanceConsoleConnection.
 <<deleteInternetGateway>>:: Deletes a InternetGateway.
+<<deleteObject>>:: Deletes an Object.
 <<deleteSubnet>>:: Deletes a Subnet.
 <<deleteVcn>>:: Deletes a Vcn.
+
+[[deleteBucket]]
+.deleteBucket
+[options="header", cols="6*<,^"]
+|===
+| Property          | Type    | Option              | System                  | Environment             | Default | Required
+| bucketName        | String  | bucket-name         | oci.bucket.name         | OCI_BUCKET_NAME         |         | icon:check[role="green"]
+| namespaceName     | String  | namespace-name      | oci.namespace.name      | OCI_NAMESPACE_NAME      |         | icon:check[role="green"]
+| waitForCompletion | boolean | wait-for-completion | oci.wait.for.completion | OCI_WAIT_FOR_COMPLETION | false   | icon:times[role="red"]
+|===
+<<_oci_delete_,icon:arrow-up[] top>>
 
 [[deleteCompartment]]
 .deleteCompartment
@@ -284,6 +310,18 @@ NOTE: Either `internetGatewayId` or `internetGatewayName` must be specified.
 
 <<_oci_delete_,icon:arrow-up[] top>>
 
+[[deleteObject]]
+.deleteObject
+[options="header", cols="6*<,^"]
+|===
+| Property          | Type    | Option              | System                  | Environment             | Default | Required
+| bucketName        | String  | bucket-name         | oci.bucket.name         | OCI_BUCKET_NAME         |         | icon:check[role="green"]
+| objectName        | String  | object-name         | oci.object.name         | OCI_OBJECT_NAME         |         | icon:check[role="green"]
+| namespaceName     | String  | namespace-name      | oci.namespace.name      | OCI_NAMESPACE_NAME      |         | icon:check[role="green"]
+| waitForCompletion | boolean | wait-for-completion | oci.wait.for.completion | OCI_WAIT_FOR_COMPLETION | false   | icon:times[role="red"]
+|===
+<<_oci_delete_,icon:arrow-up[] top>>
+
 [[deleteSubnet]]
 .deleteSubnet
 [options="header", cols="6*<,^"]
@@ -319,15 +357,28 @@ NOTE: Either `vcnId` or `vcnName` must be specified.
 === OCI Get
 
 [horizontal]
+<<getBucket>>:: Displays information for an specific Bucket.
 <<getCompartment>>:: Displays information for an specific Compartment.
 <<getInstanceConsoleConnection>>:: Displays information for an specific InstanceConsoleConnection.
 <<getInstancePublicIp>>:: Displays public Ip addresses for a particular Instance.
 <<getInstance>>:: Displays information for an specific Instance.
 <<getInternetGateway>>:: Displays information for an specific InternetGateway.
+<<getNamespace>>:: Displays information for an specific Namespace.
+<<getObject>>:: Displays information for an specific Object.
 <<getRouteTable>>:: Displays information for an specific RouteTable.
 <<getSecurityList>>:: Displays information for an specific SecurityList.
 <<getSubnet>>:: Displays information for an specific Subnet.
 <<getVcn>>:: Displays information for an specific Vcn.
+
+[[getBucket]]
+.getBucket
+[options="header", cols="6*<,^"]
+|===
+| Property      | Type    | Option         | System             | Environment        | Default | Required
+| bucketName    | String  | bucket-name    | oci.bucket.name    | OCI_BUCKET_NAME    |         | icon:check[role="green"]
+| namespaceName | String  | namespace-name | oci.namespace.name | OCI_NAMESPACE_NAME |         | icon:check[role="green"]
+|===
+<<_oci_get_,icon:arrow-up[] top>>
 
 [[getCompartment]]
 .getCompartment
@@ -372,6 +423,26 @@ NOTE: Either `vcnId` or `vcnName` must be specified.
 |===
 | Property          | Type   | Option              | System                  | Environment             | Default | Required
 | internetGatewayId | String | internet-gateway-id | oci.internet.gateway.id | OCI_INTERNET_GATEWAY_ID |         | icon:check[role="green"]
+|===
+<<_oci_get_,icon:arrow-up[] top>>
+
+[[getNamespace]]
+.getNamespace
+[options="header", cols="6*<,^"]
+|===
+| Property      | Type   | Option         | System             | Environment        | Default | Required
+| compartmentId | String | compartment-id | oci.compartment.id | OCI_COMPARTMENT_ID |         | icon:check[role="green"]
+|===
+<<_oci_get_,icon:arrow-up[] top>>
+
+[[getObject]]
+.getObject
+[options="header", cols="6*<,^"]
+|===
+| Property      | Type    | Option         | System             | Environment        | Default | Required
+| bucketName    | String  | bucket-name    | oci.bucket.name    | OCI_BUCKET_NAME    |         | icon:check[role="green"]
+| objectName    | String  | object-name    | oci.object.name    | OCI_OBJECT_NAME    |         | icon:check[role="green"]
+| namespaceName | String  | namespace-name | oci.namespace.name | OCI_NAMESPACE_NAME |         | icon:check[role="green"]
 |===
 <<_oci_get_,icon:arrow-up[] top>>
 
@@ -491,11 +562,13 @@ NOTE: Either `instanceId` or `instanceName` must be specified.
 
 [horizontal]
 <<listAvailabilityDomains>>:: Lists AvailabilityDomains available on a Compartment.
+<<listBuckets>>:: Lists available Buckets.
 <<listCompartments>>:: Lists available Compartments.
 <<listImages>>:: Lists Images available on a Compartment.
 <<listInstanceConsoleConnections>>:: Lists available InstanceConsoleConnection on an Instance.
 <<listInstances>>:: Lists available Instances.
 <<listInternetGateways>>:: Lists InternetGateways available on a Vcn.
+<<listObjects>>:: Lists available Objects in a Bucket.
 <<listRegions>>:: Lists available Regions.
 <<listRouteTables>>:: Lists RouteTables available on a Vcn.
 <<listSecurityLists>>:: Lists SecurityLists available on a Vcn.
@@ -510,6 +583,19 @@ NOTE: Either `instanceId` or `instanceName` must be specified.
 |===
 | Property      | Type    | Option         | System             | Environment        | Default | Required
 | compartmentId | String  | compartment-id | oci.compartment.id | OCI_COMPARTMENT_ID |         | icon:check[role="green"]
+| verbose       | boolean | verbose        | oci.verbose        | OCI_VERBOSE        | false   | icon:times[role="red"]
+|===
+<<_oci_list_,icon:arrow-up[] top>>
+
+[[listBuckets]]
+.listBuckets
+[options="header", cols="6*<,^"]
+|===
+| Property      | Type    | Option         | System             | Environment        | Default | Required
+| compartmentId | String  | compartment-id | oci.compartment.id | OCI_COMPARTMENT_ID |         | icon:check[role="green"]
+| namespaceName | String  | namespace-name | oci.namespace.name | OCI_NAMESPACE_NAME |         | icon:check[role="green"]
+| limit         | Integer | limit          | oci.limit          | OCI_LIMIT          | 1000    | icon:times[role="red"]
+| page          | String  | page           | oci.page           | OCI_PAGE           |         | icon:times[role="red"]
 | verbose       | boolean | verbose        | oci.verbose        | OCI_VERBOSE        | false   | icon:times[role="red"]
 |===
 <<_oci_list_,icon:arrow-up[] top>>
@@ -562,6 +648,24 @@ NOTE: Either `instanceId` or `instanceName` must be specified.
 | Property      | Type    | Option         | System             | Environment        | Default | Required
 | compartmentId | String  | compartment-id | oci.compartment.id | OCI_COMPARTMENT_ID |         | icon:check[role="green"]
 | vcnId         | String  | vcn-id         | oci.vcn.id         | OCI_VCN_ID         |         | icon:check[role="green"]
+| verbose       | boolean | verbose        | oci.verbose        | OCI_VERBOSE        | false   | icon:times[role="red"]
+|===
+<<_oci_list_,icon:arrow-up[] top>>
+
+[[listObjects]]
+.listObjects
+[options="header", cols="6*<,^"]
+|===
+| Property      | Type    | Option         | System             | Environment        | Default | Required
+| compartmentId | String  | compartment-id | oci.compartment.id | OCI_COMPARTMENT_ID |         | icon:check[role="green"]
+| bucketName    | String  | bucket-name    | oci.bucket.name    | OCI_BUCKET_NAME    |         | icon:check[role="green"]
+| namespaceName | String  | namespace-name | oci.namespace.name | OCI_NAMESPACE_NAME |         | icon:check[role="green"]
+| limit         | Integer | limit          | oci.limit          | OCI_LIMIT          | 1000    | icon:times[role="red"]
+| delimiter     | String  | delimiter      | oci.delimiter      | OCI_DELIMITER      |         | icon:times[role="red"]
+| prefix        | String  | prefix         | oci.prefix         | OCI_PREFIX         |         | icon:times[role="red"]
+| start         | String  | start          | oci.start          | OCI_START          |         | icon:times[role="red"]
+| end           | String  | end            | oci.end            | OCI_END            |         | icon:times[role="red"]
+| fields        | String  | fields         | oci.fields         | OCI_FIELDS         |         | icon:times[role="red"]
 | verbose       | boolean | verbose        | oci.verbose        | OCI_VERBOSE        | false   | icon:times[role="red"]
 |===
 <<_oci_list_,icon:arrow-up[] top>>
@@ -636,6 +740,92 @@ NOTE: Either `instanceId` or `instanceName` must be specified.
 | verbose       | boolean | verbose        | oci.verbose        | OCI_VERBOSE        | false   | icon:times[role="red"]
 |===
 <<_oci_list_,icon:arrow-up[] top>>
+
+[[_oci_object_]]
+=== OCI Object
+
+[horizontal]
+<<clearBucket>>:: Clears a Bucket.
+<<copyObject>>:: Copies an Object.
+<<downloadObject>>:: Downloads an Object to an specific location.
+<<headBucket>>:: Heads an specific Bucket.
+<<headObject>>:: Heads an specific Object.
+<<putObject>>:: Puts an Object on a Bucket.
+
+[[clearBucket]]
+.clearBucket
+[options="header", cols="6*<,^"]
+|===
+| Property      | Type    | Option         | System             | Environment        | Default | Required
+| bucketName    | String  | bucket-name    | oci.bucket.name    | OCI_BUCKET_NAME    |         | icon:check[role="green"]
+| namespaceName | String  | namespace-name | oci.namespace.name | OCI_NAMESPACE_NAME |         | icon:check[role="green"]
+| async         | boolean | async          | oci.async          | OCI_ASYNC          | false   | icon:times[role="red"]
+|===
+<<_oci_object_,icon:arrow-up[] top>>
+
+[[copyObject]]
+.copyObject
+[options="header", cols="6*<,^"]
+|===
+| Property                 | Type   | Option                     | System                         | Environment                    | Default | Required
+| bucketName               | String | bucket-name                | oci.bucket.name                | OCI_BUCKET_NAME                |         | icon:check[role="green"]
+| objectName               | String | object-name                | oci.object.name                | OCI_OBJECT_NAME                |         | icon:check[role="green"]
+| namespaceName            | String | namespace-name             | oci.namespace.name             | OCI_NAMESPACE_NAME             |         | icon:check[role="green"]
+| destinationRegion        | String | destination-region         | oci.destination.region         | OCI_DESTINATION_REGION         |         | icon:times[role="red"]
+| destinationBucketName    | String | destination-bucket-name    | oci.destination.bucket.name    | OCI_DESTINATION_BUCKET_NAME    |         | icon:times[role="red"]
+| destinationNamespaceName | String | destination-namespace-name | oci.destination.namespace.name | OCI_DESTINATION_NAMESPACE_NAME |         | icon:times[role="red"]
+| destinationObjectName    | String | destination-object-name    | oci.destination.object.name    | OCI_DESTINATION_OBJECT_NAME    |         | icon:check[role="green"]
+|===
+<<_oci_object_,icon:arrow-up[] top>>
+
+[[downloadObject]]
+.downloadObject
+[options="header", cols="6*<,^"]
+|===
+| Property       | Type      | Option          | System              | Environment         | Default | Required
+| bucketName     | String    | bucket-name     | oci.bucket.name     | OCI_BUCKET_NAME     |         | icon:check[role="green"]
+| objectName     | String    | object-name     | oci.object.name     | OCI_OBJECT_NAME     |         | icon:check[role="green"]
+| namespaceName  | String    | namespace-name  | oci.namespace.name  | OCI_NAMESPACE_NAME  |         | icon:check[role="green"]
+| destinationDir | Directory | destination-dir | oci.destination.dir | OCI_DESTINATION_DIR |         | icon:check[role="green"]
+|===
+<<_oci_object_,icon:arrow-up[] top>>
+
+[[headBucket]]
+.headBucket
+[options="header", cols="6*<,^"]
+|===
+| Property   | Type   | Option      | System          | Environment     | Default | Required
+| bucketName | String | bucket-name | oci.bucket.name | OCI_BUCKET_NAME |         | icon:check[role="green"]
+| objectName | String | object-name | oci.object.name | OCI_OBJECT_NAME |         | icon:check[role="green"]
+|===
+<<_oci_object_,icon:arrow-up[] top>>
+
+[[headObject]]
+.headObject
+[options="header", cols="6*<,^"]
+|===
+| Property      | Type   | Option         | System             | Environment        | Default | Required
+| bucketName    | String | bucket-name    | oci.bucket.name    | OCI_BUCKET_NAME    |         | icon:check[role="green"]
+| objectName    | String | object-name    | oci.object.name    | OCI_OBJECT_NAME    |         | icon:check[role="green"]
+| namespaceName | String | namespace-name | oci.namespace.name | OCI_NAMESPACE_NAME |         | icon:check[role="green"]
+|===
+<<_oci_object_,icon:arrow-up[] top>>
+
+[[putObject]]
+.putObject
+[options="header", cols="6*<,^"]
+|===
+| Property         | Type   | Option           | System               | Environment          | Default | Required
+| bucketName       | String | bucket-name      | oci.bucket.name      | OCI_BUCKET_NAME      |         | icon:check[role="green"]
+| objectName       | String | object-name      | oci.object.name      | OCI_OBJECT_NAME      |         | icon:check[role="green"]
+| namespaceName    | String | namespace-name   | oci.namespace.name   | OCI_NAMESPACE_NAME   |         | icon:check[role="green"]
+| file             | File   | file             | oci.file             | OCI_FILE             |         | icon:check[role="green"]
+| content-type     | String | content-type     | oci.content.type     | OCI_CONTENT_TYPE     |         | icon:times[role="red"]
+| content-encoding | String | content-encoding | oci.content.encoding | OCI_CONTENT_ENCODING |         | icon:times[role="red"]
+| content-language | String | content-language | oci.content.language | OCI_CONTENT_LANGUAGE |         | icon:times[role="red"]
+| content-md5      | String | content-md5      | oci.content.md5      | OCI_CONTENT_MD5      |         | icon:times[role="red"]
+|===
+<<_oci_object_,icon:arrow-up[] top>>
 
 [[_oci_query_]]
 === OCI Query

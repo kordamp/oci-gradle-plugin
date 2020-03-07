@@ -15,28 +15,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-plugins {
-    id 'org.kordamp.gradle.guide'
-    id 'org.ajoberstar.git-publish'
-}
+package org.kordamp.gradle.plugin.oci.tasks.printers
 
-configurations {
-    asciidoctorExtensions
-}
+import com.oracle.bmc.objectstorage.model.ObjectSummary
+import groovy.transform.CompileStatic
+import org.kordamp.gradle.plugin.oci.tasks.interfaces.ValuePrinter
 
-dependencies {
-    asciidoctorExtensions 'com.bmuschko:asciidoctorj-tabbed-code-extension:0.2'
-}
-
-guide {
-    groovydocApiDir = 'api'
-}
-
-asciidoctor {
-    configurations 'asciidoctorExtensions'
-    attributes = [
-        'gradle-version'      : project.gradle.gradleVersion,
-        'source-highlighter'  : 'prettify',
-        'oci-java-sdk-version': project.ociJavaSdkVersion
-    ]
+/**
+ * @author Andres Almiray
+ * @since 0.3.0
+ */
+@CompileStatic
+class ObjectSummaryPrinter {
+    static void printObjectSummary(ValuePrinter printer, ObjectSummary objectSummary, int offset) {
+        printer.printKeyValue('Size', objectSummary.size, offset + 1)
+        printer.printKeyValue('MD5', objectSummary.md5, offset + 1)
+        printer.printKeyValue('Time Created', objectSummary.timeCreated, offset + 1)
+    }
 }

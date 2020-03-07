@@ -18,46 +18,41 @@
 package org.kordamp.gradle.plugin.oci.tasks.traits
 
 import groovy.transform.CompileStatic
-import org.gradle.api.file.RegularFile
-import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
-import org.gradle.api.tasks.InputFile
+import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
+import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.options.Option
 import org.kordamp.gradle.plugin.oci.tasks.interfaces.PathAware
 import org.kordamp.gradle.plugin.oci.tasks.interfaces.ProjectAware
-import org.kordamp.gradle.plugin.oci.tasks.traits.states.RegularFileState
+import org.kordamp.gradle.plugin.oci.tasks.traits.states.IntegerState
+
+import static org.kordamp.gradle.StringUtils.isNotBlank
 
 /**
  * @author Andres Almiray
- * @since 0.1.0
+ * @since 0.3.0
  */
 @CompileStatic
-trait UserDataFileAwareTrait implements PathAware, ProjectAware {
-    private final RegularFileState state = new RegularFileState(project, 'OCI_USER_DATA_FILE', 'oci.user.data.file')
+trait OptionalLimitAwareTrait implements PathAware, ProjectAware {
+    private final IntegerState state = new IntegerState(project, 'OCI_LIMIT', 'oci.limit')
 
     @Internal
-    RegularFileProperty getUserDataFile() {
+    Property<Integer> getLimit() {
         state.property
     }
 
-    @InputFile
-    Provider<RegularFile> getResolvedUserDataFile() {
+    @Input
+    @Optional
+    Provider<Integer> getResolvedLimit() {
         state.provider
     }
 
-    @Option(option = 'user-data-file', description = 'Location of cloud init file (REQUIRED).')
-    void setUserDataFile(String userDataFile) {
-        setUserDataFile(project.file(userDataFile))
-    }
-
-    void setUserDataFile(File userDataFile) {
-        getUserDataFile().set(userDataFile)
-    }
-
-    void validateUserDataFile() {
-        if (!getResolvedUserDataFile().present) {
-            throw new IllegalStateException("Missing value for 'userDataFile' in $path")
+    @Option(option = 'limit', description = 'The limit parameter (OPTIONAL).')
+    void setLimit(String limit) {
+        if (isNotBlank(limit)) {
+            getLimit().set(Integer.parseInt(limit))
         }
     }
 }

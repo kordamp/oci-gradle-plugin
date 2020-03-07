@@ -56,7 +56,7 @@ trait PublicKeyFileAwareTrait implements PathAware, ProjectAware {
     }
 
     void validatePublicKeyFile() {
-        if (!getPublicKeyFile().present) {
+        if (!getResolvedPublicKeyFile().present) {
             throw new IllegalStateException("Missing value for 'publicKeyFile' in $path")
         }
     }

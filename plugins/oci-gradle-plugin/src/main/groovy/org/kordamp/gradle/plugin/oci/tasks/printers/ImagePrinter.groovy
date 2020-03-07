@@ -35,6 +35,7 @@ class ImagePrinter {
         printer.printKeyValue('Operating System', image.operatingSystem, offset + 1)
         printer.printKeyValue('Operating System Version', image.operatingSystemVersion, offset + 1)
         printer.printKeyValue('Lifecycle State', printer.state(image.lifecycleState.name()), offset + 1)
+        printer.printMap('Defined Tags', image.definedTags, offset + 1)
         printer.printMap('Freeform Tags', image.freeformTags, offset + 1)
     }
 }

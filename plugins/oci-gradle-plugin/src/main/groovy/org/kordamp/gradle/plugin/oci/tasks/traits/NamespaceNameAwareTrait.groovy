@@ -18,46 +18,43 @@
 package org.kordamp.gradle.plugin.oci.tasks.traits
 
 import groovy.transform.CompileStatic
-import org.gradle.api.file.RegularFile
-import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
-import org.gradle.api.tasks.InputFile
+import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.options.Option
 import org.kordamp.gradle.plugin.oci.tasks.interfaces.PathAware
 import org.kordamp.gradle.plugin.oci.tasks.interfaces.ProjectAware
-import org.kordamp.gradle.plugin.oci.tasks.traits.states.RegularFileState
+import org.kordamp.gradle.plugin.oci.tasks.traits.states.StringState
+
+import static org.kordamp.gradle.StringUtils.isBlank
 
 /**
  * @author Andres Almiray
- * @since 0.1.0
+ * @since 0.3.0
  */
 @CompileStatic
-trait UserDataFileAwareTrait implements PathAware, ProjectAware {
-    private final RegularFileState state = new RegularFileState(project, 'OCI_USER_DATA_FILE', 'oci.user.data.file')
+trait NamespaceNameAwareTrait implements PathAware, ProjectAware {
+    private final StringState state = new StringState(project, 'OCI_NAMESPACE_NAME', 'oci.namespace.name')
 
     @Internal
-    RegularFileProperty getUserDataFile() {
+    Property<String> getNamespaceName() {
         state.property
     }
 
-    @InputFile
-    Provider<RegularFile> getResolvedUserDataFile() {
+    @Input
+    Provider<String> getResolvedNamespaceName() {
         state.provider
     }
 
-    @Option(option = 'user-data-file', description = 'Location of cloud init file (REQUIRED).')
-    void setUserDataFile(String userDataFile) {
-        setUserDataFile(project.file(userDataFile))
+    @Option(option = 'namespace-name', description = 'The name of the Namespace (REQUIRED).')
+    void setNamespaceName(String namespaceName) {
+        getNamespaceName().set(namespaceName)
     }
 
-    void setUserDataFile(File userDataFile) {
-        getUserDataFile().set(userDataFile)
-    }
-
-    void validateUserDataFile() {
-        if (!getResolvedUserDataFile().present) {
-            throw new IllegalStateException("Missing value for 'userDataFile' in $path")
+    void validateNamespaceName() {
+        if (isBlank(getResolvedNamespaceName().orNull)) {
+            throw new IllegalStateException("Missing value for 'namespaceName' in $path")
         }
     }
 }

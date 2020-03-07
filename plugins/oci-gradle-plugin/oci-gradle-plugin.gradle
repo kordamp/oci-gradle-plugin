@@ -18,9 +18,25 @@
 plugins {
     id 'java-library'
     id 'groovy'
+	id 'org.kordamp.gradle.plugin'
+}
+
+config {
+    bintray {
+        enabled       = true
+        skipMavenSync = true
+    }
+
+    plugin {
+        enabled             = true
+        id                  = project.pluginId
+        implementationClass = project.pluginImplementationClass
+    }
 }
 
 dependencies {
+    compileOnly gradleApi()
+	
     api         "org.kordamp.jipsy:jipsy-util:$jipsyVersion"
     compileOnly "org.kordamp.jipsy:jipsy-annotations:$jipsyVersion"
     compileOnly "org.kordamp.gipsy:gipsy:$jipsyVersion"
@@ -58,6 +74,7 @@ dependencies {
 }
 
 processResources {
+    inputs.property('version', project.version)
     filesMatching(['**/*.properties']) {
         expand(
             'version': project.version,
@@ -65,10 +82,4 @@ processResources {
             'name': 'OCI Gradle plugins'
         )
     }
-}
-
-configurations.all {
-    resolutionStrategy.force "com.fasterxml.jackson.core:jackson-annotations:$jacksonVersion",
-        "com.fasterxml.jackson.core:jackson-core:$jacksonVersion",
-        "com.fasterxml.jackson.core:jackson-databind:$jacksonVersion"
 }

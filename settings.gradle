@@ -19,16 +19,15 @@ pluginManagement {
     repositories {
         jcenter()
         gradlePluginPortal()
-        mavenLocal()
+		mavenLocal()
     }
-
     plugins {
-        id 'org.kordamp.gradle.kordamp-parentpom' version '1.11.0'
+        id 'org.kordamp.gradle.kordamp-parentpom' version kordampPomVersion
         id 'org.kordamp.gradle.groovy-project'    version kordampPluginVersion
+        id 'org.kordamp.gradle.guide'             version kordampPluginVersion
         id 'org.kordamp.gradle.bintray'           version kordampPluginVersion
         id 'org.kordamp.gradle.plugin'            version kordampPluginVersion
-        id 'org.kordamp.gradle.guide'             version kordampPluginVersion
-        id 'org.ajoberstar.git-publish'           version '0.3.2'
+        id 'org.ajoberstar.git-publish'           version gitPluginVersion
     }
 }
 
@@ -38,12 +37,12 @@ buildscript {
         mavenLocal()
     }
     dependencies {
-        classpath 'org.kordamp.gradle:settings-gradle-plugin:0.32.0'
+        classpath "org.kordamp.gradle:settings-gradle-plugin:$kordampPluginVersion"
     }
 }
 apply plugin: 'org.kordamp.gradle.settings'
 
-rootProject.name = 'oci-gradle'
+rootProject.name = 'oci-gradle-plugin'
 
 projects {
     directories = ['docs', 'plugins']

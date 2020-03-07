@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: Apache-2.0
  *
- * Copyright 2019 Andres Almiray.
+ * Copyright 2019-2020 Andres Almiray.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,8 @@
  * limitations under the License.
  */
 plugins {
-    id 'org.kordamp.gradle.guide'   version '0.30.4-SNAPSHOT'
-    id 'org.ajoberstar.git-publish' version '0.3.2'
+    id 'org.kordamp.gradle.guide'
+    id 'org.ajoberstar.git-publish'
 }
 
 configurations {

@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: Apache-2.0
  *
- * Copyright 2019 Andres Almiray.
+ * Copyright 2019-2020 Andres Almiray.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ dependencies {
     compileOnly "org.kordamp.jipsy:jipsy-annotations:$jipsyVersion"
     compileOnly "org.kordamp.gipsy:gipsy:$jipsyVersion"
 
-    api 'org.kordamp.gradle:base-gradle-plugin:0.30.3'
+    api "org.kordamp.gradle:base-gradle-plugin:$kordampPluginVersion"
 
     api "com.oracle.oci.sdk:oci-java-sdk-common:$ociJavaSdkVersion"
     api "com.oracle.oci.sdk:oci-java-sdk-audit:$ociJavaSdkVersion"
@@ -65,4 +65,10 @@ processResources {
             'name': 'OCI Gradle plugins'
         )
     }
+}
+
+configurations.all {
+    resolutionStrategy.force "com.fasterxml.jackson.core:jackson-annotations:$jacksonVersion",
+        "com.fasterxml.jackson.core:jackson-core:$jacksonVersion",
+        "com.fasterxml.jackson.core:jackson-databind:$jacksonVersion"
 }

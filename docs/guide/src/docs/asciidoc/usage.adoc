@@ -206,7 +206,8 @@ Environment > System System > Option > Property
 | publicKeyFile     | File    | public-key-file     | oci.public.key.file     | OCI_PUBLIC_KEY_FILE     |         | icon:check[role="green"]
 | shape             | String  | shape               | oci.shape               | OCI_SHAPE               |         | icon:check[role="green"]
 | subnetId          | String  | subnet-id           | oci.subnet.id           | OCI_SUBNET_ID           |         | icon:check[role="green"]
-| userDataFile      | File    | user-data-file      | oci.user.data.file      | OCI_USER_DATA_FILE      |         | icon:check[role="green"]
+| dnsLabel          | String  | dns-label           | oci.dns.label           | OCI_DNS_LABEL           |         | icon:times[role="red"]
+| userDataFile      | File    | user-data-file      | oci.user.data.file      | OCI_USER_DATA_FILE      |         | icon:times[role="red"]
 | verbose           | boolean | verbose             | oci.verbose             | OCI_VERBOSE             | false   | icon:times[role="red"]
 | waitForCompletion | boolean | wait-for-completion | oci.wait.for.completion | OCI_WAIT_FOR_COMPLETION | false   | icon:times[role="red"]
 |===

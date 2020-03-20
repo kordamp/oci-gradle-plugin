@@ -52,9 +52,13 @@ trait OptionalDnsLabelAwareTrait implements PathAware, ProjectAware {
 
     @Option(option = 'dns-label', description = 'The DNS label to use (OPTIONAL).')
     void setDnsLabel(String dnsLabel) {
+        getDnsLabel().set(normalizeDnsLabel(dnsLabel))
+    }
+
+    private String normalizeDnsLabel(String dnsLabel) {
         String label = dnsLabel?.replace('.', '')?.replace('-', '')
         if (label?.length() > 15) label = label?.substring(0, 14)
-        getDnsLabel().set(label)
+        label
     }
 
     void validateDnsLabel(String seed) {

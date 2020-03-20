@@ -42,12 +42,14 @@ import org.kordamp.gradle.plugin.oci.tasks.interfaces.OCITask
 import org.kordamp.gradle.plugin.oci.tasks.traits.CompartmentIdAwareTrait
 import org.kordamp.gradle.plugin.oci.tasks.traits.ImageAwareTrait
 import org.kordamp.gradle.plugin.oci.tasks.traits.InstanceNameAwareTrait
+import org.kordamp.gradle.plugin.oci.tasks.traits.OptionalDnsLabelAwareTrait
 import org.kordamp.gradle.plugin.oci.tasks.traits.PublicKeyFileAwareTrait
 import org.kordamp.gradle.plugin.oci.tasks.traits.ShapeAwareTrait
 import org.kordamp.gradle.plugin.oci.tasks.traits.OptionalUserDataFileAwareTrait
 import org.kordamp.gradle.plugin.oci.tasks.traits.VerboseAwareTrait
 import org.kordamp.jipsy.TypeProviderFor
 
+import static org.kordamp.gradle.StringUtils.isNotBlank
 import static org.kordamp.gradle.plugin.oci.tasks.create.CreateInstanceTask.maybeCreateInstance
 import static org.kordamp.gradle.plugin.oci.tasks.create.CreateInternetGatewayTask.maybeCreateInternetGateway
 import static org.kordamp.gradle.plugin.oci.tasks.create.CreateSubnetTask.maybeCreateSubnet
@@ -66,6 +68,7 @@ class SetupInstanceTask extends AbstractOCITask implements CompartmentIdAwareTra
     ShapeAwareTrait,
     PublicKeyFileAwareTrait,
     OptionalUserDataFileAwareTrait,
+    OptionalDnsLabelAwareTrait,
     VerboseAwareTrait {
     static final String TASK_DESCRIPTION = 'Setups an Instance with Vcn, InternetGateway, Subnets, InstanceConsoleConnection, and Volume.'
 
@@ -118,7 +121,7 @@ class SetupInstanceTask extends AbstractOCITask implements CompartmentIdAwareTra
         File publicKeyFile = getResolvedPublicKeyFile().get().asFile
         File userDataFile = getResolvedUserDataFile()?.get()?.asFile
         String vcnDisplayName = getResolvedInstanceName().get() + '-vcn'
-        String dnsLabel = getResolvedInstanceName().get()
+        String dnsLabel = normalizeDnsLabel(isNotBlank(getResolvedDnsLabel()?.get()) ? getResolvedDnsLabel().get() : getResolvedInstanceName().get())
         String internetGatewayDisplayName = getResolvedInstanceName().get() + '-internet-gateway'
         String kmsKeyId = ''
 
@@ -208,5 +211,11 @@ class SetupInstanceTask extends AbstractOCITask implements CompartmentIdAwareTra
 
         props.store(new FileWriter(getOutput().get().asFile), '')
         println("Result stored at ${console.yellow(getOutput().get().asFile.absolutePath)}")
+    }
+
+    private String normalizeDnsLabel(String dnsLabel) {
+        String label = dnsLabel?.replace('.', '')?.replace('-', '')
+        if (label?.length() > 15) label = HashUtil.sha1(dnsLabel.bytes).asHexString()[0..14]
+        label
     }
 }

@@ -180,6 +180,7 @@ class SetupInstanceTask extends AbstractOCITask implements CompartmentIdAwareTra
             computeClient,
             vcnClient,
             blockstorageClient,
+            identityClient,
             getResolvedCompartmentId().get(),
             getResolvedInstanceName().get(),
             _image,

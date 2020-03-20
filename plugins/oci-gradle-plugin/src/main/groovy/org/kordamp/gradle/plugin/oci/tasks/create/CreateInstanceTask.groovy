@@ -40,6 +40,10 @@ import com.oracle.bmc.core.requests.GetSubnetRequest
 import com.oracle.bmc.core.requests.LaunchInstanceRequest
 import com.oracle.bmc.core.requests.ListBootVolumesRequest
 import com.oracle.bmc.core.requests.ListInstancesRequest
+import com.oracle.bmc.core.requests.ListShapesRequest
+import com.oracle.bmc.identity.IdentityClient
+import com.oracle.bmc.identity.model.AvailabilityDomain
+import com.oracle.bmc.identity.requests.ListAvailabilityDomainsRequest
 import groovy.transform.CompileStatic
 import org.apache.commons.codec.binary.Base64
 import org.gradle.api.provider.Property
@@ -104,6 +108,7 @@ class CreateInstanceTask extends AbstractOCITask implements CompartmentIdAwareTr
 
         VirtualNetworkClient vcnClient = createVirtualNetworkClient()
         BlockstorageClient blockstorageClient = createBlockstorageClient()
+        IdentityClient identityClient = createIdentityClient()
 
         Subnet subnet = vcnClient.getSubnet(GetSubnetRequest.builder()
             .subnetId(getResolvedSubnetId().get())
@@ -114,6 +119,7 @@ class CreateInstanceTask extends AbstractOCITask implements CompartmentIdAwareTr
             computeClient,
             vcnClient,
             blockstorageClient,
+            identityClient,
             getResolvedCompartmentId().get(),
             getResolvedInstanceName().get(),
             _image,
@@ -130,6 +136,7 @@ class CreateInstanceTask extends AbstractOCITask implements CompartmentIdAwareTr
                                         ComputeClient computeClient,
                                         VirtualNetworkClient vcnClient,
                                         BlockstorageClient blockstorageClient,
+                                        IdentityClient identityClient,
                                         String compartmentId,
                                         String instanceName,
                                         Image image,
@@ -139,12 +146,19 @@ class CreateInstanceTask extends AbstractOCITask implements CompartmentIdAwareTr
                                         File userDataFile,
                                         String kmsKeyId,
                                         boolean verbose) {
+        AvailabilityDomain availabilityDomain = findMatchingAvailabilityDomain(
+            owner,
+            computeClient,
+            identityClient,
+            compartmentId,
+            shape.shape)
+
         Instance instance = doMaybeCreateInstance(owner,
             computeClient,
             vcnClient,
             compartmentId,
             instanceName,
-            subnet.availabilityDomain,
+            availabilityDomain?.name ?: subnet.availabilityDomain,
             image.id,
             shape.shape,
             subnet.id,
@@ -164,13 +178,34 @@ class CreateInstanceTask extends AbstractOCITask implements CompartmentIdAwareTr
         maybeCreateBootVolume(owner,
             blockstorageClient,
             compartmentId,
-            subnet.availabilityDomain,
+            availabilityDomain?.name ?: subnet.availabilityDomain,
             instance.imageId,
             instance.displayName + '-boot-volume',
             kmsKeyId,
             verbose)
 
         instance
+    }
+
+    private static AvailabilityDomain findMatchingAvailabilityDomain(OCITask owner,
+                                                                     ComputeClient computeClient,
+                                                                     IdentityClient identityClient,
+                                                                     String compartmentId,
+                                                                     String shapeName) {
+        for (AvailabilityDomain availabilityDomain : identityClient.listAvailabilityDomains(ListAvailabilityDomainsRequest.builder()
+            .compartmentId(compartmentId)
+            .build()).items) {
+            for (Shape shape : computeClient.listShapes(ListShapesRequest.builder()
+                .compartmentId(compartmentId)
+                .availabilityDomain(availabilityDomain.name)
+                .build()).items) {
+                if (shape.shape == shapeName) {
+                    return availabilityDomain
+                }
+            }
+        }
+
+        null
     }
 
     private static Instance doMaybeCreateInstance(OCITask owner,

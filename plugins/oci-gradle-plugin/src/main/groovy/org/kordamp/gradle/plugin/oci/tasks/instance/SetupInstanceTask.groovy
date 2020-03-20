@@ -44,7 +44,7 @@ import org.kordamp.gradle.plugin.oci.tasks.traits.ImageAwareTrait
 import org.kordamp.gradle.plugin.oci.tasks.traits.InstanceNameAwareTrait
 import org.kordamp.gradle.plugin.oci.tasks.traits.PublicKeyFileAwareTrait
 import org.kordamp.gradle.plugin.oci.tasks.traits.ShapeAwareTrait
-import org.kordamp.gradle.plugin.oci.tasks.traits.UserDataFileAwareTrait
+import org.kordamp.gradle.plugin.oci.tasks.traits.OptionalUserDataFileAwareTrait
 import org.kordamp.gradle.plugin.oci.tasks.traits.VerboseAwareTrait
 import org.kordamp.jipsy.TypeProviderFor
 
@@ -65,7 +65,7 @@ class SetupInstanceTask extends AbstractOCITask implements CompartmentIdAwareTra
     ImageAwareTrait,
     ShapeAwareTrait,
     PublicKeyFileAwareTrait,
-    UserDataFileAwareTrait,
+    OptionalUserDataFileAwareTrait,
     VerboseAwareTrait {
     static final String TASK_DESCRIPTION = 'Setups an Instance with Vcn, InternetGateway, Subnets, InstanceConsoleConnection, and Volume.'
 
@@ -116,7 +116,7 @@ class SetupInstanceTask extends AbstractOCITask implements CompartmentIdAwareTra
 
         String networkCidrBlock = '10.0.0.0/16'
         File publicKeyFile = getResolvedPublicKeyFile().get().asFile
-        File userDataFile = getResolvedUserDataFile().get()?.asFile
+        File userDataFile = getResolvedUserDataFile()?.get()?.asFile
         String vcnDisplayName = getResolvedInstanceName().get() + '-vcn'
         String dnsLabel = getResolvedInstanceName().get()
         String internetGatewayDisplayName = getResolvedInstanceName().get() + '-internet-gateway'

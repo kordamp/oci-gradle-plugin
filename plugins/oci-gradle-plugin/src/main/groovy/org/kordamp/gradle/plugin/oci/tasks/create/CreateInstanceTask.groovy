@@ -56,7 +56,7 @@ import org.kordamp.gradle.plugin.oci.tasks.traits.InstanceNameAwareTrait
 import org.kordamp.gradle.plugin.oci.tasks.traits.PublicKeyFileAwareTrait
 import org.kordamp.gradle.plugin.oci.tasks.traits.ShapeAwareTrait
 import org.kordamp.gradle.plugin.oci.tasks.traits.SubnetIdAwareTrait
-import org.kordamp.gradle.plugin.oci.tasks.traits.UserDataFileAwareTrait
+import org.kordamp.gradle.plugin.oci.tasks.traits.OptionalUserDataFileAwareTrait
 import org.kordamp.gradle.plugin.oci.tasks.traits.VerboseAwareTrait
 import org.kordamp.jipsy.TypeProviderFor
 
@@ -78,7 +78,7 @@ class CreateInstanceTask extends AbstractOCITask implements CompartmentIdAwareTr
     ImageAwareTrait,
     ShapeAwareTrait,
     PublicKeyFileAwareTrait,
-    UserDataFileAwareTrait,
+    OptionalUserDataFileAwareTrait,
     VerboseAwareTrait {
     static final String TASK_DESCRIPTION = 'Creates an Instance.'
 
@@ -103,7 +103,7 @@ class CreateInstanceTask extends AbstractOCITask implements CompartmentIdAwareTr
         Shape _shape = validateShape(computeClient, getResolvedCompartmentId().get())
 
         File publicKeyFile = getResolvedPublicKeyFile().get().asFile
-        File userDataFile = getResolvedUserDataFile().get()?.asFile
+        File userDataFile = getResolvedUserDataFile()?.get()?.asFile
         String kmsKeyId = ''
 
         VirtualNetworkClient vcnClient = createVirtualNetworkClient()
@@ -238,7 +238,7 @@ class CreateInstanceTask extends AbstractOCITask implements CompartmentIdAwareTr
 
         Map<String, String> metadata = new HashMap<>('ssh_authorized_keys': publicKeyFile.text)
         owner.printKeyValue("Public key file", publicKeyFile.absolutePath, 0)
-        if (userDataFile && userDataFile.exists() && isNotBlank(userDataFile.text)) {
+        if (userDataFile && userDataFile?.exists() && isNotBlank(userDataFile?.text)) {
             owner.printKeyValue("Cloud init script", userDataFile.absolutePath, 0)
             metadata.put("user_data", Base64.encodeBase64String(userDataFile.getBytes()))
         }

@@ -18,42 +18,34 @@
 package org.kordamp.gradle.plugin.oci.tasks.traits
 
 import groovy.transform.CompileStatic
-import org.gradle.api.file.RegularFile
-import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
-import org.gradle.api.tasks.InputFile
+import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
-import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.options.Option
-import org.kordamp.gradle.plugin.oci.tasks.interfaces.PathAware
 import org.kordamp.gradle.plugin.oci.tasks.interfaces.ProjectAware
-import org.kordamp.gradle.plugin.oci.tasks.traits.states.RegularFileState
+import org.kordamp.gradle.plugin.oci.tasks.traits.states.BooleanState
 
 /**
  * @author Andres Almiray
- * @since 0.1.0
+ * @since 0.4.0
  */
 @CompileStatic
-trait OptionalUserDataFileAwareTrait implements PathAware, ProjectAware {
-    private final RegularFileState state = new RegularFileState(project, 'OCI_USER_DATA_FILE', 'oci.user.data.file')
+trait RegexAwareTrait implements ProjectAware {
+    private final BooleanState state = new BooleanState(project, 'OCI_REGEX', 'oci.regex')
 
     @Internal
-    RegularFileProperty getUserDataFile() {
+    Property<Boolean> getRegex() {
         state.property
     }
 
-    @InputFile
-    @Optional
-    Provider<RegularFile> getResolvedUserDataFile() {
+    @Input
+    Provider<Boolean> getResolvedRegex() {
         state.provider
     }
 
-    @Option(option = 'user-data-file', description = 'Location of cloud init file (OPTIONAL).')
-    void setUserDataFile(String userDataFile) {
-        setUserDataFile(project.file(userDataFile))
-    }
-
-    void setUserDataFile(File userDataFile) {
-        getUserDataFile().set(userDataFile)
+    @Option(option = 'regex', description = 'If input should be treated as regex (OPTIONAL).')
+    void setRegex(boolean regex) {
+        getRegex().set(regex)
     }
 }

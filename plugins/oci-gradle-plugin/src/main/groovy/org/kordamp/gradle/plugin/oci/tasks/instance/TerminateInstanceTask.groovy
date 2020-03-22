@@ -28,6 +28,7 @@ import org.kordamp.gradle.plugin.oci.tasks.interfaces.OCITask
 import org.kordamp.gradle.plugin.oci.tasks.traits.CompartmentIdAwareTrait
 import org.kordamp.gradle.plugin.oci.tasks.traits.OptionalInstanceIdAwareTrait
 import org.kordamp.gradle.plugin.oci.tasks.traits.OptionalInstanceNameAwareTrait
+import org.kordamp.gradle.plugin.oci.tasks.traits.RegexAwareTrait
 import org.kordamp.gradle.plugin.oci.tasks.traits.WaitForCompletionAwareTrait
 import org.kordamp.jipsy.TypeProviderFor
 
@@ -43,6 +44,7 @@ import static org.kordamp.gradle.StringUtils.isNotBlank
 class TerminateInstanceTask extends AbstractOCITask implements CompartmentIdAwareTrait,
     OptionalInstanceIdAwareTrait,
     OptionalInstanceNameAwareTrait,
+    RegexAwareTrait,
     WaitForCompletionAwareTrait {
     static final String TASK_DESCRIPTION = 'Terminates an Instance.'
 
@@ -72,13 +74,26 @@ class TerminateInstanceTask extends AbstractOCITask implements CompartmentIdAwar
         } else {
             validateCompartmentId()
 
-            client.listInstances(ListInstancesRequest.builder()
-                .compartmentId(getResolvedCompartmentId().get())
-                .displayName(getResolvedInstanceName().get())
-                .build())
-                .items.each { instance ->
-                setInstanceId(instance.id)
-                terminateInstance(client, instance)
+            if (getResolvedRegex().getOrElse(false)) {
+                client.listInstances(ListInstancesRequest.builder()
+                    .compartmentId(getResolvedCompartmentId().get())
+                    .displayName(getResolvedInstanceName().get())
+                    .build())
+                    .items.each { instance ->
+                    setInstanceId(instance.id)
+                    terminateInstance(client, instance)
+                }
+            } else {
+                final String instanceNameRegex = getResolvedInstanceName().get()
+                client.listInstances(ListInstancesRequest.builder()
+                    .compartmentId(getResolvedCompartmentId().get())
+                    .build())
+                    .items.each { instance ->
+                    if (instance.displayName.matches(instanceNameRegex)) {
+                        setInstanceId(instance.id)
+                        terminateInstance(client, instance)
+                    }
+                }
             }
         }
     }

@@ -121,7 +121,7 @@ class SetupInstanceTask extends AbstractOCITask implements CompartmentIdAwareTra
         File publicKeyFile = getResolvedPublicKeyFile().get().asFile
         File userDataFile = getResolvedUserDataFile()?.get()?.asFile
         String vcnDisplayName = getResolvedInstanceName().get() + '-vcn'
-        String dnsLabel = normalizeDnsLabel(isNotBlank(getResolvedDnsLabel()?.get()) ? getResolvedDnsLabel().get() : getResolvedInstanceName().get())
+        String dnsLabel = normalizeDnsLabel(isNotBlank(getResolvedDnsLabel().orNull) ? getResolvedDnsLabel().get() : getResolvedInstanceName().get())
         String internetGatewayDisplayName = getResolvedInstanceName().get() + '-internet-gateway'
         String kmsKeyId = ''
 

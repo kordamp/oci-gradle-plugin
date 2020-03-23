@@ -36,7 +36,7 @@ import static org.kordamp.gradle.StringUtils.isBlank
  */
 @CompileStatic
 trait InternetGatewayIdAwareTrait implements PathAware, ProjectAware {
-    private final StringState state = new StringState(project, 'OCI_INTERNET_GATEWAY_ID', 'oci.internet.gateway.id')
+    private final StringState state = new StringState(project, this, 'OCI_INTERNET_GATEWAY_ID', 'oci.internet.gateway.id')
 
     @Internal
     Property<String> getInternetGatewayId() {

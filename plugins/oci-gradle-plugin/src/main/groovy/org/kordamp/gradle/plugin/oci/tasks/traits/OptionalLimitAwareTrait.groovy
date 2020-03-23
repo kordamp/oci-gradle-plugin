@@ -36,7 +36,7 @@ import static org.kordamp.gradle.StringUtils.isNotBlank
  */
 @CompileStatic
 trait OptionalLimitAwareTrait implements PathAware, ProjectAware {
-    private final IntegerState state = new IntegerState(project, 'OCI_LIMIT', 'oci.limit')
+    private final IntegerState state = new IntegerState(project, this, 'OCI_LIMIT', 'oci.limit')
 
     @Internal
     Property<Integer> getLimit() {

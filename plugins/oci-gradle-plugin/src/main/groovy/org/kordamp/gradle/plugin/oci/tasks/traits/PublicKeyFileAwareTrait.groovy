@@ -34,7 +34,7 @@ import org.kordamp.gradle.plugin.oci.tasks.traits.states.RegularFileState
  */
 @CompileStatic
 trait PublicKeyFileAwareTrait implements PathAware, ProjectAware {
-    private final RegularFileState state = new RegularFileState(project, 'OCI_PUBLIC_KEY_FILE', 'oci.public.key.file')
+    private final RegularFileState state = new RegularFileState(project, this, 'OCI_PUBLIC_KEY_FILE', 'oci.public.key.file')
 
     @Internal
     RegularFileProperty getPublicKeyFile() {

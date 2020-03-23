@@ -34,7 +34,7 @@ import org.kordamp.gradle.plugin.oci.tasks.traits.states.StringState
  */
 @CompileStatic
 trait OptionalContentEncodingAwareTrait implements PathAware, ProjectAware {
-    private final StringState state = new StringState(project, 'OCI_CONTENT_ENCODING', 'oci.content.encoding')
+    private final StringState state = new StringState(project, this, 'OCI_CONTENT_ENCODING', 'oci.content.encoding')
 
     @Internal
     Property<String> getContentEncoding() {

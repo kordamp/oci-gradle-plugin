@@ -35,7 +35,7 @@ import static org.kordamp.gradle.StringUtils.isBlank
  */
 @CompileStatic
 trait SubnetNameAwareTrait implements PathAware, ProjectAware {
-    private final StringState state = new StringState(project, 'OCI_SUBNET_NAME', 'oci.subnet.name')
+    private final StringState state = new StringState(project, this, 'OCI_SUBNET_NAME', 'oci.subnet.name')
 
     @Internal
     Property<String> getSubnetName() {

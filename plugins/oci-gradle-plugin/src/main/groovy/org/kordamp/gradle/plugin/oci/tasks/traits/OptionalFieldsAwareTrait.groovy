@@ -34,7 +34,7 @@ import org.kordamp.gradle.plugin.oci.tasks.traits.states.StringState
  */
 @CompileStatic
 trait OptionalFieldsAwareTrait implements PathAware, ProjectAware {
-    private final StringState state = new StringState(project, 'OCI_FIELDS', 'oci.fields')
+    private final StringState state = new StringState(project, this, 'OCI_FIELDS', 'oci.fields')
 
     @Internal
     Property<String> getFields() {

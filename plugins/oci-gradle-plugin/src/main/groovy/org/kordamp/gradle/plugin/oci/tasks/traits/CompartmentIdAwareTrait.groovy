@@ -36,7 +36,7 @@ import static org.kordamp.gradle.StringUtils.isBlank
  */
 @CompileStatic
 trait CompartmentIdAwareTrait implements PathAware, ProjectAware {
-    private final StringState state = new StringState(project, 'OCI_COMPARTMENT_ID', 'oci.compartment.id')
+    private final StringState state = new StringState(project, this, 'OCI_COMPARTMENT_ID', 'oci.compartment.id')
 
     @Internal
     Property<String> getCompartmentId() {

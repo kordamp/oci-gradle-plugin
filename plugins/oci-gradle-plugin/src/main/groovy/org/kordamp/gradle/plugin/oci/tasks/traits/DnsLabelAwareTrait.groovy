@@ -36,7 +36,7 @@ import static org.kordamp.gradle.StringUtils.isBlank
  */
 @CompileStatic
 trait DnsLabelAwareTrait implements PathAware, ProjectAware {
-    private final StringState state = new StringState(project, 'OCI_DNS_LABEL', 'oci.dns.label')
+    private final StringState state = new StringState(project, this, 'OCI_DNS_LABEL', 'oci.dns.label')
 
     @Internal
     Property<String> getDnsLabel() {

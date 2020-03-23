@@ -21,6 +21,7 @@ import groovy.transform.CompileStatic
 import org.gradle.api.Project
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
+import org.kordamp.gradle.plugin.oci.tasks.interfaces.PathAware
 
 import static org.kordamp.gradle.PropertyUtils.booleanProvider
 
@@ -33,13 +34,14 @@ class BooleanState {
     final Property<Boolean> property
     final Provider<Boolean> provider
 
-    BooleanState(Project project, String envKey, String propertyKey) {
+    BooleanState(Project project, PathAware pathAware, String envKey, String propertyKey) {
         property = project.objects.property(Boolean)
 
         provider = booleanProvider(
             envKey,
             propertyKey,
             property,
-            project)
+            project,
+            pathAware)
     }
 }

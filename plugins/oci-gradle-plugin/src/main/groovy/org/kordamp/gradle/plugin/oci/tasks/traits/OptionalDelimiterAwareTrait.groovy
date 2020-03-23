@@ -34,7 +34,7 @@ import org.kordamp.gradle.plugin.oci.tasks.traits.states.StringState
  */
 @CompileStatic
 trait OptionalDelimiterAwareTrait implements PathAware, ProjectAware {
-    private final StringState state = new StringState(project, 'OCI_DELIMITER', 'oci.delimiter')
+    private final StringState state = new StringState(project, this, 'OCI_DELIMITER', 'oci.delimiter')
 
     @Internal
     Property<String> getDelimiter() {

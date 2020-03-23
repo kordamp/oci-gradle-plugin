@@ -23,6 +23,7 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.options.Option
+import org.kordamp.gradle.plugin.oci.tasks.interfaces.PathAware
 import org.kordamp.gradle.plugin.oci.tasks.interfaces.ProjectAware
 import org.kordamp.gradle.plugin.oci.tasks.traits.states.BooleanState
 
@@ -31,8 +32,8 @@ import org.kordamp.gradle.plugin.oci.tasks.traits.states.BooleanState
  * @since 0.3.0
  */
 @CompileStatic
-trait AsyncAwareTrait implements ProjectAware {
-    private final BooleanState state = new BooleanState(project, 'OCI_ASYNC', 'oci.async')
+trait AsyncAwareTrait implements PathAware, ProjectAware {
+    private final BooleanState state = new BooleanState(project, this, 'OCI_ASYNC', 'oci.async')
 
     @Internal
     Property<Boolean> getAsync() {

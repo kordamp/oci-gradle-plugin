@@ -34,7 +34,7 @@ import org.kordamp.gradle.plugin.oci.tasks.traits.states.StringState
  */
 @CompileStatic
 trait OptionalInstanceNameAwareTrait implements PathAware, ProjectAware {
-    private final StringState state = new StringState(project, 'OCI_INSTANCE_NAME', 'oci.instance.name')
+    private final StringState state = new StringState(project, this, 'OCI_INSTANCE_NAME', 'oci.instance.name')
 
     @Internal
     Property<String> getInstanceName() {

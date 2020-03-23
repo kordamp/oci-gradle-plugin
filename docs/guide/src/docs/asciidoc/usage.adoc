@@ -135,7 +135,7 @@ Where each column defines
 [horizontal]
 Property:: The name of the task property.
 Type:: The type of the property.
-Option:: The command line flag to set this property's value. Use `--` as prefix, i.e, `--oic-profile=mine`.
+Option:: The command line flag to set this property's value. Use `--` as prefix, i.e, `--oci-profile=mine`.
 System:: The system property to set this property's value. Use `-D` as prefix, i.e, `-Doci.profile=mine`
 Environment:: The environment key to set this property's value. Set as key/value in command shell, i.e, `export OCI_PROFILE=mine`.
 Default:: Default value for this property (if any).
@@ -143,7 +143,25 @@ Required:: Whether this property is required or not.
 
 System values are resolved in the following order
 
-Environment > System System > Option > Property
+[source]
+----
+Environment > System Property > Option > Property
+----
+
+Task paths may be used as prefix for Environment and System properties such that, for a task named `step01` on a subproject
+named `project1` you get the following Environment and System keys for the `profile` property
+
+[source]
+----
+PROJECT1_STEP01_OCI_PROFILE
+project1.step01.oci.profile
+PROJECT1_OCI_PROFILE
+project1.oci.profile
+OCI_PROFILE
+oci.profile
+----
+
+NOTE: Whitespace and hyphen (`-`) characters will be replaced with underscore (`_`).
 
 [[_oci_create_]]
 === OCI Create

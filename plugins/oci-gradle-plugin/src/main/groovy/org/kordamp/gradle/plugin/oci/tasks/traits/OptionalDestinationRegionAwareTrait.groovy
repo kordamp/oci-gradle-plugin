@@ -34,7 +34,7 @@ import org.kordamp.gradle.plugin.oci.tasks.traits.states.StringState
  */
 @CompileStatic
 trait OptionalDestinationRegionAwareTrait implements PathAware, ProjectAware {
-    private final StringState state = new StringState(project, 'OCI_DESTINATION_REGION', 'oci.destination.region')
+    private final StringState state = new StringState(project, this, 'OCI_DESTINATION_REGION', 'oci.destination.region')
 
     @Internal
     Property<String> getDestinationRegion() {

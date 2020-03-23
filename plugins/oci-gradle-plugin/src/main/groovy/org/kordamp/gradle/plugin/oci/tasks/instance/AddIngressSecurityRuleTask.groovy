@@ -44,6 +44,7 @@ import org.kordamp.jipsy.TypeProviderFor
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
+import static org.kordamp.gradle.PropertyUtils.resolveValue
 import static org.kordamp.gradle.StringUtils.isBlank
 import static org.kordamp.gradle.StringUtils.isNotBlank
 
@@ -81,8 +82,7 @@ class AddIngressSecurityRuleTask extends AbstractOCITask implements SecurityList
     @Optional
     Provider<PortType> getResolvedPortType() {
         project.providers.provider {
-            String value = System.getenv('OCI_PORT_TYPE')
-            if (isBlank(value)) value = System.getProperty('oci.port.type')
+            String value = resolveValue('OCI_PORT_TYPE', 'oci.port.type', this, project.name)
             isNotBlank(value) ? PortType.valueOf(value) : portType.getOrElse(PortType.TCP)
         }
     }

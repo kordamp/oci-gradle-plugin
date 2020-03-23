@@ -37,6 +37,7 @@ import org.kordamp.gradle.plugin.oci.tasks.traits.OptionalInstanceNameAwareTrait
 import org.kordamp.gradle.plugin.oci.tasks.traits.WaitForCompletionAwareTrait
 import org.kordamp.jipsy.TypeProviderFor
 
+import static org.kordamp.gradle.PropertyUtils.resolveValue
 import static org.kordamp.gradle.StringUtils.isBlank
 import static org.kordamp.gradle.StringUtils.isNotBlank
 
@@ -81,8 +82,7 @@ class InstanceActionTask extends AbstractOCITask implements CompartmentIdAwareTr
     @Input
     Provider<InstanceAction> getResolvedAction() {
         project.providers.provider {
-            String value = System.getenv('OCI_INSTANCE_ACTION')
-            if (isBlank(value)) value = System.getProperty('oci.instance.action')
+            String value = resolveValue('OCI_INSTANCE_ACTION', 'oci.instance.action', this, project.name)
             isNotBlank(value) ? InstanceAction.valueOf(value) : action.getOrElse(InstanceAction.STOP)
         }
     }

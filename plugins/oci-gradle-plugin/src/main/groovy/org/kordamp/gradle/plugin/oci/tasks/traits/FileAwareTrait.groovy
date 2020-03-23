@@ -34,7 +34,7 @@ import org.kordamp.gradle.plugin.oci.tasks.traits.states.RegularFileState
  */
 @CompileStatic
 trait FileAwareTrait implements PathAware, ProjectAware {
-    private final RegularFileState state = new RegularFileState(project, 'OCI_FILE', 'oci.file')
+    private final RegularFileState state = new RegularFileState(project, this, 'OCI_FILE', 'oci.file')
 
     @Internal
     private RegularFileProperty getFile() {

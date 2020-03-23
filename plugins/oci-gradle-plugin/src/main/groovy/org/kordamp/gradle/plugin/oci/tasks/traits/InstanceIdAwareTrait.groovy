@@ -36,7 +36,7 @@ import static org.kordamp.gradle.StringUtils.isBlank
  */
 @CompileStatic
 trait InstanceIdAwareTrait implements PathAware, ProjectAware {
-    private final StringState state = new StringState(project, 'OCI_INSTANCE_ID', 'oci.instance.id')
+    private final StringState state = new StringState(project, this, 'OCI_INSTANCE_ID', 'oci.instance.id')
 
     @Internal
     Property<String> getInstanceId() {

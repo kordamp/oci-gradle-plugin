@@ -36,7 +36,7 @@ import static org.kordamp.gradle.StringUtils.isBlank
  */
 @CompileStatic
 trait RouteTableIdAwareTrait implements PathAware, ProjectAware {
-    private final StringState state = new StringState(project, 'OCI_ROUTE_TABLE_ID', 'oci.route.table.id')
+    private final StringState state = new StringState(project, this, 'OCI_ROUTE_TABLE_ID', 'oci.route.table.id')
 
     @Internal
     Property<String> getRouteTableId() {

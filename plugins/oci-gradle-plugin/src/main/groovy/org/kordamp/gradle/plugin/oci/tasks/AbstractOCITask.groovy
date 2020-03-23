@@ -74,7 +74,8 @@ abstract class AbstractOCITask extends AbstractReportingTask implements OCITask 
         'OCI_PROFILE',
         'oci.profile',
         profile,
-        project)
+        project,
+        this)
         .orElse('DEFAULT')
 
     @Internal
@@ -86,7 +87,8 @@ abstract class AbstractOCITask extends AbstractReportingTask implements OCITask 
         'OCI_REGION',
         'oci.region',
         region,
-        project)
+        project,
+        this)
 
     @Option(option = 'oci-profile', description = 'The profile to use. Defaults to DEFAULT (OPTIONAL).')
     void setProfile(String profile) {

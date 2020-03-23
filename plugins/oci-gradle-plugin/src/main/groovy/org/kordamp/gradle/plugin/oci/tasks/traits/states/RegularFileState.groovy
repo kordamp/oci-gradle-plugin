@@ -22,6 +22,7 @@ import org.gradle.api.Project
 import org.gradle.api.file.RegularFile
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Provider
+import org.kordamp.gradle.plugin.oci.tasks.interfaces.PathAware
 
 import static org.kordamp.gradle.PropertyUtils.fileProvider
 
@@ -34,13 +35,14 @@ class RegularFileState {
     final RegularFileProperty property
     final Provider<RegularFile> provider
 
-    RegularFileState(Project project, String envKey, String propertyKey) {
+    RegularFileState(Project project, PathAware pathAware, String envKey, String propertyKey) {
         property = project.objects.fileProperty()
 
         provider = fileProvider(
             envKey,
             propertyKey,
             property,
-            project)
+            project,
+            pathAware)
     }
 }

@@ -35,7 +35,7 @@ import static org.kordamp.gradle.StringUtils.isBlank
  */
 @CompileStatic
 trait NamespaceNameAwareTrait implements PathAware, ProjectAware {
-    private final StringState state = new StringState(project, 'OCI_NAMESPACE_NAME', 'oci.namespace.name')
+    private final StringState state = new StringState(project, this, 'OCI_NAMESPACE_NAME', 'oci.namespace.name')
 
     @Internal
     Property<String> getNamespaceName() {

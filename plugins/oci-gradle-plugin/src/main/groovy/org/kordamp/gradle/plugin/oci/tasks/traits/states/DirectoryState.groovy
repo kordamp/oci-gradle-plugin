@@ -22,6 +22,7 @@ import org.gradle.api.Project
 import org.gradle.api.file.Directory
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.provider.Provider
+import org.kordamp.gradle.plugin.oci.tasks.interfaces.PathAware
 
 import static org.kordamp.gradle.PropertyUtils.directoryProvider
 
@@ -34,13 +35,14 @@ class DirectoryState {
     final DirectoryProperty property
     final Provider<Directory> provider
 
-    DirectoryState(Project project, String envKey, String propertyKey) {
+    DirectoryState(Project project, PathAware pathAware, String envKey, String propertyKey) {
         property = project.objects.directoryProperty()
 
         provider = directoryProvider(
             envKey,
             propertyKey,
             property,
-            project)
+            project,
+            pathAware)
     }
 }

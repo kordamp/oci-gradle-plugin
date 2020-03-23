@@ -34,7 +34,7 @@ import org.kordamp.gradle.plugin.oci.tasks.traits.states.StringState
  */
 @CompileStatic
 trait OptionalEndAwareTrait implements PathAware, ProjectAware {
-    private final StringState state = new StringState(project, 'OCI_END', 'oci.end')
+    private final StringState state = new StringState(project, this, 'OCI_END', 'oci.end')
 
     @Internal
     Property<String> getEnd() {

@@ -21,6 +21,7 @@ import groovy.transform.CompileStatic
 import org.gradle.api.Project
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
+import org.kordamp.gradle.plugin.oci.tasks.interfaces.PathAware
 
 import static org.kordamp.gradle.PropertyUtils.integerProvider
 
@@ -33,13 +34,14 @@ class IntegerState {
     final Property<Integer> property
     final Provider<Integer> provider
 
-    IntegerState(Project project, String envKey, String propertyKey) {
+    IntegerState(Project project, PathAware pathAware, String envKey, String propertyKey) {
         property = project.objects.property(Integer)
 
         provider = integerProvider(
             envKey,
             propertyKey,
             property,
-            project)
+            project,
+            pathAware)
     }
 }

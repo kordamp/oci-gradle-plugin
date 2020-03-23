@@ -25,6 +25,7 @@ import org.gradle.api.file.RegularFile
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
+import org.kordamp.gradle.plugin.oci.tasks.interfaces.PathAware
 
 import java.nio.file.Paths
 
@@ -37,18 +38,45 @@ import static org.kordamp.gradle.StringUtils.isNotBlank
  */
 @CompileStatic
 class PropertyUtils {
-    static Provider<String> stringProvider(String envKey, String propertyKey, Property<String> property, Project project) {
+    private static String normalizePath(String path, String delimiter) {
+        if (':' == path) {
+            return ''
+        }
+        return path[1..-1].replace(':', delimiter).replace(' ', '_') + delimiter
+    }
+
+    static String resolveValue(String envKey,
+                               String propertyKey,
+                               PathAware pathAware,
+                               String projectName) {
+        projectName = projectName.replace(' ', '_').replace('-', '_')
+        String value = System.getenv(normalizePath(pathAware.path, '_').toUpperCase() + envKey)
+        if (isBlank(value)) value = System.getProperty(normalizePath(pathAware.path, '.') + propertyKey)
+        if (isBlank(value)) value = System.getenv(projectName.toUpperCase() + '_' + envKey)
+        if (isBlank(value)) value = System.getProperty(projectName + '.' + propertyKey)
+        if (isBlank(value)) value = System.getenv(envKey)
+        if (isBlank(value)) value = System.getProperty(propertyKey)
+        value
+    }
+
+    static Provider<String> stringProvider(String envKey,
+                                           String propertyKey,
+                                           Property<String> property,
+                                           Project project,
+                                           PathAware pathAware) {
         project.providers.provider {
-            String value = System.getenv(envKey)
-            if (isBlank(value)) value = System.getProperty(propertyKey)
+            String value = resolveValue(envKey, propertyKey, pathAware, project.name)
             isNotBlank(value) ? value : property.orNull
         }
     }
 
-    static Provider<Boolean> booleanProvider(String envKey, String propertyKey, Provider<Boolean> property, Project project) {
+    static Provider<Boolean> booleanProvider(String envKey,
+                                             String propertyKey,
+                                             Provider<Boolean> property,
+                                             Project project,
+                                             PathAware pathAware) {
         project.providers.provider {
-            String value = System.getenv(envKey)
-            if (isBlank(value)) value = System.getProperty(propertyKey)
+            String value = resolveValue(envKey, propertyKey, pathAware, project.name)
             if (isNotBlank(value)) {
                 return Boolean.parseBoolean(value)
             }
@@ -56,10 +84,13 @@ class PropertyUtils {
         }
     }
 
-    static Provider<Integer> integerProvider(String envKey, String propertyKey, Provider<Integer> property, Project project) {
+    static Provider<Integer> integerProvider(String envKey,
+                                             String propertyKey,
+                                             Provider<Integer> property,
+                                             Project project,
+                                             PathAware pathAware) {
         project.providers.provider {
-            String value = System.getenv(envKey)
-            if (isBlank(value)) value = System.getProperty(propertyKey)
+            String value = resolveValue(envKey, propertyKey, pathAware, project.name)
             if (isNotBlank(value)) {
                 return Integer.parseInt(value)
             }
@@ -67,10 +98,13 @@ class PropertyUtils {
         }
     }
 
-    static Provider<RegularFile> fileProvider(String envKey, String propertyKey, RegularFileProperty property, Project project) {
+    static Provider<RegularFile> fileProvider(String envKey,
+                                              String propertyKey,
+                                              RegularFileProperty property,
+                                              Project project,
+                                              PathAware pathAware) {
         project.providers.provider {
-            String value = System.getenv(envKey)
-            if (isBlank(value)) value = System.getProperty(propertyKey)
+            String value = resolveValue(envKey, propertyKey, pathAware, project.name)
             if (isNotBlank(value)) {
                 RegularFileProperty p = project.objects.fileProperty()
                 p.set(Paths.get(value).toFile())
@@ -80,10 +114,13 @@ class PropertyUtils {
         }
     }
 
-    static Provider<Directory> directoryProvider(String envKey, String propertyKey, DirectoryProperty property, Project project) {
+    static Provider<Directory> directoryProvider(String envKey,
+                                                 String propertyKey,
+                                                 DirectoryProperty property,
+                                                 Project project,
+                                                 PathAware pathAware) {
         project.providers.provider {
-            String value = System.getenv(envKey)
-            if (isBlank(value)) value = System.getProperty(propertyKey)
+            String value = resolveValue(envKey, propertyKey, pathAware, project.name)
             if (isNotBlank(value)) {
                 DirectoryProperty p = project.objects.directoryProperty()
                 p.set(Paths.get(value).toFile())

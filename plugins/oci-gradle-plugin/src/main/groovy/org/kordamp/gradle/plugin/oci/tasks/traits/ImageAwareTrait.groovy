@@ -39,7 +39,7 @@ import static org.kordamp.gradle.StringUtils.isBlank
  */
 @CompileStatic
 trait ImageAwareTrait implements PathAware, ProjectAware {
-    private final StringState state = new StringState(project, 'OCI_IMAGE', 'oci.image')
+    private final StringState state = new StringState(project, this, 'OCI_IMAGE', 'oci.image')
 
     @Internal
     Property<String> getImage() {

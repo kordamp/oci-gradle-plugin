@@ -34,7 +34,7 @@ import org.kordamp.gradle.plugin.oci.tasks.traits.states.StringState
  */
 @CompileStatic
 trait OptionalPrefixAwareTrait implements PathAware, ProjectAware {
-    private final StringState state = new StringState(project, 'OCI_PREFIX', 'oci.prefix')
+    private final StringState state = new StringState(project, this, 'OCI_PREFIX', 'oci.prefix')
 
     @Internal
     Property<String> getPrefix() {

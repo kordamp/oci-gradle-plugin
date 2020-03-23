@@ -34,7 +34,7 @@ import org.kordamp.gradle.plugin.oci.tasks.traits.states.StringState
  */
 @CompileStatic
 trait OptionalInternetGatewayNameAwareTrait implements PathAware, ProjectAware {
-    private final StringState state = new StringState(project, 'OCI_INTERNET_GATEWAY_NAME', 'oci.internet.gateway.name')
+    private final StringState state = new StringState(project, this, 'OCI_INTERNET_GATEWAY_NAME', 'oci.internet.gateway.name')
 
     @Internal
     Property<String> getInternetGatewayName() {

@@ -56,7 +56,8 @@ class SearchResourcesTask extends AbstractOCITask {
         'OCI_RESOURCE_TYPE',
         'oci.resource.type',
         getResourceType(),
-        project)
+        project,
+        this)
 
     @Option(option = 'resource-type', description = 'The type to search (OPTIONAL).')
     void setResourceType(String resourceType) {

@@ -39,7 +39,7 @@ import static org.kordamp.gradle.StringUtils.isBlank
  */
 @CompileStatic
 trait ShapeAwareTrait implements PathAware, ProjectAware {
-    private final StringState state = new StringState(project, 'OCI_SHAPE', 'oci.shape')
+    private final StringState state = new StringState(project, this, 'OCI_SHAPE', 'oci.shape')
 
     @Internal
     Property<String> getShape() {

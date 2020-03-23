@@ -35,7 +35,7 @@ import org.kordamp.gradle.plugin.oci.tasks.traits.states.RegularFileState
  */
 @CompileStatic
 trait OptionalUserDataFileAwareTrait implements PathAware, ProjectAware {
-    private final RegularFileState state = new RegularFileState(project, 'OCI_USER_DATA_FILE', 'oci.user.data.file')
+    private final RegularFileState state = new RegularFileState(project, this, 'OCI_USER_DATA_FILE', 'oci.user.data.file')
 
     @Internal
     RegularFileProperty getUserDataFile() {

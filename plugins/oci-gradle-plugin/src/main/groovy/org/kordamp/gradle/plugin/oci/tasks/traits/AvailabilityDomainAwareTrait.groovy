@@ -39,7 +39,7 @@ import static org.kordamp.gradle.StringUtils.isBlank
  */
 @CompileStatic
 trait AvailabilityDomainAwareTrait implements PathAware, ProjectAware {
-    private final StringState state = new StringState(project, 'OCI_AVAILABILITY_DOMAIN', 'oci.availability.domain')
+    private final StringState state = new StringState(project, this, 'OCI_AVAILABILITY_DOMAIN', 'oci.availability.domain')
 
     @Internal
     Property<String> getAvailabilityDomain() {

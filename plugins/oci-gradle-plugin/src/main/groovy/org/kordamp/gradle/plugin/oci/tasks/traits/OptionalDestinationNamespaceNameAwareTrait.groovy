@@ -34,7 +34,7 @@ import org.kordamp.gradle.plugin.oci.tasks.traits.states.StringState
  */
 @CompileStatic
 trait OptionalDestinationNamespaceNameAwareTrait implements PathAware, ProjectAware {
-    private final StringState state = new StringState(project, 'OCI_DESTINATION_NAMESPACE_NAME', 'oci.destination.namespace.name')
+    private final StringState state = new StringState(project, this, 'OCI_DESTINATION_NAMESPACE_NAME', 'oci.destination.namespace.name')
 
     @Internal
     Property<String> getDestinationNamespaceName() {

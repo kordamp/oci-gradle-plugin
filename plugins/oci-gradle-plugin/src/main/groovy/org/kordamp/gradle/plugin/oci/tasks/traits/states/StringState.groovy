@@ -21,6 +21,7 @@ import groovy.transform.CompileStatic
 import org.gradle.api.Project
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
+import org.kordamp.gradle.plugin.oci.tasks.interfaces.PathAware
 
 import static org.kordamp.gradle.PropertyUtils.stringProvider
 
@@ -33,13 +34,14 @@ class StringState {
     final Property<String> property
     final Provider<String> provider
 
-    StringState(Project project, String envKey, String propertyKey) {
+    StringState(Project project, PathAware pathAware, String envKey, String propertyKey) {
         property = project.objects.property(String)
 
         provider = stringProvider(
             envKey,
             propertyKey,
             property,
-            project)
+            project,
+            pathAware)
     }
 }

@@ -35,7 +35,7 @@ import static org.kordamp.gradle.StringUtils.isBlank
  */
 @CompileStatic
 trait BucketNameAwareTrait implements PathAware, ProjectAware {
-    private final StringState state = new StringState(project, 'OCI_BUCKET_NAME', 'oci.bucket.name')
+    private final StringState state = new StringState(project, this, 'OCI_BUCKET_NAME', 'oci.bucket.name')
 
     @Internal
     Property<String> getBucketName() {

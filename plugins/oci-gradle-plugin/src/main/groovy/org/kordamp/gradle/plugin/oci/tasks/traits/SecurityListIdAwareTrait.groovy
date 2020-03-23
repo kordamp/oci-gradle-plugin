@@ -36,7 +36,7 @@ import static org.kordamp.gradle.StringUtils.isBlank
  */
 @CompileStatic
 trait SecurityListIdAwareTrait implements PathAware, ProjectAware {
-    private final StringState state = new StringState(project, 'OCI_SECURITY_LIST_ID', 'oci.security.list.id')
+    private final StringState state = new StringState(project, this, 'OCI_SECURITY_LIST_ID', 'oci.security.list.id')
 
     @Internal
     Property<String> getSecurityListId() {

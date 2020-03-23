@@ -37,7 +37,7 @@ import static org.kordamp.gradle.StringUtils.isNotBlank
  */
 @CompileStatic
 trait OptionalVcnIdAwareTrait implements PathAware, ProjectAware {
-    private final StringState state = new StringState(project, 'OCI_VCN_ID', 'oci.vcn.id')
+    private final StringState state = new StringState(project, this, 'OCI_VCN_ID', 'oci.vcn.id')
 
     @Internal
     Property<String> getVcnId() {

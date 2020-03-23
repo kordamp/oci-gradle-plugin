@@ -34,7 +34,7 @@ import org.kordamp.gradle.plugin.oci.tasks.traits.states.DirectoryState
  */
 @CompileStatic
 trait DestinationDirAwareTrait implements PathAware, ProjectAware {
-    private final DirectoryState state = new DirectoryState(project, 'OCI_DESTINATION_DIR', 'oci.destination.dir')
+    private final DirectoryState state = new DirectoryState(project, this, 'OCI_DESTINATION_DIR', 'oci.destination.dir')
 
     @Internal
     private DirectoryProperty getDestinationDir() {

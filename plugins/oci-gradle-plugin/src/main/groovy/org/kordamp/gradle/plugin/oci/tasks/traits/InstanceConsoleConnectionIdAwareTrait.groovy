@@ -36,7 +36,7 @@ import static org.kordamp.gradle.StringUtils.isBlank
  */
 @CompileStatic
 trait InstanceConsoleConnectionIdAwareTrait implements PathAware, ProjectAware {
-    private final StringState state = new StringState(project, 'OCI_INSTANCE_CONSOLE_CONNECTION_ID', 'oci.instance.console.connection.id')
+    private final StringState state = new StringState(project, this, 'OCI_INSTANCE_CONSOLE_CONNECTION_ID', 'oci.instance.console.connection.id')
 
     @Internal
     Property<String> getInstanceConsoleConnectionId() {

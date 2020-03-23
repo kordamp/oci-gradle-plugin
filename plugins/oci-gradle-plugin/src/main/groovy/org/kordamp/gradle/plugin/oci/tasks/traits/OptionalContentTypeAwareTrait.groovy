@@ -34,7 +34,7 @@ import org.kordamp.gradle.plugin.oci.tasks.traits.states.StringState
  */
 @CompileStatic
 trait OptionalContentTypeAwareTrait implements PathAware, ProjectAware {
-    private final StringState state = new StringState(project, 'OCI_CONTENT_TYPE', 'oci.content.type')
+    private final StringState state = new StringState(project, this, 'OCI_CONTENT_TYPE', 'oci.content.type')
 
     @Internal
     Property<String> getContentType() {

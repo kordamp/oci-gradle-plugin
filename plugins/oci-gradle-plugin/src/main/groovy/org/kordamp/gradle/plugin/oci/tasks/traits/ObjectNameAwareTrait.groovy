@@ -35,7 +35,7 @@ import static org.kordamp.gradle.StringUtils.isBlank
  */
 @CompileStatic
 trait ObjectNameAwareTrait implements PathAware, ProjectAware {
-    private final StringState state = new StringState(project, 'OCI_OBJECT_NAME', 'oci.object.name')
+    private final StringState state = new StringState(project, this, 'OCI_OBJECT_NAME', 'oci.object.name')
 
     @Internal
     Property<String> getObjectName() {

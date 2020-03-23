@@ -34,7 +34,7 @@ import org.kordamp.gradle.plugin.oci.tasks.traits.states.StringState
  */
 @CompileStatic
 trait OptionalDestinationBucketNameAwareTrait implements PathAware, ProjectAware {
-    private final StringState state = new StringState(project, 'OCI_DESTINATION_BUCKET_NAME', 'oci.destination.bucket.name')
+    private final StringState state = new StringState(project, this, 'OCI_DESTINATION_BUCKET_NAME', 'oci.destination.bucket.name')
 
     @Internal
     Property<String> getDestinationBucketName() {

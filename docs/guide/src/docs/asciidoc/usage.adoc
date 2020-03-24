@@ -141,7 +141,7 @@ Environment:: The environment key to set this property's value. Set as key/value
 Default:: Default value for this property (if any).
 Required:: Whether this property is required or not.
 
-System values are resolved in the following order
+Property values are resolved in the following order
 
 [source]
 ----

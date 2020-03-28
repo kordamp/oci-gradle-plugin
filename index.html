@@ -2,97 +2,21 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="generator" content="Asciidoctor 1.5.8">
+<meta name="generator" content="Asciidoctor 2.0.10">
 <meta name="author" content="Andres Almiray">
 <title>OCI Java SDK Gradle Plugin</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <link rel="stylesheet" href="./asciidoctor.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-<style>
-.hidden {
-    display: none;
-}
-
-.switch {
-    border-width: 1px 1px 0 1px;
-    border-style: solid;
-    border-color: #7a2518;
-    display: inline-block;
-}
-
-.switch--item {
-    padding: 10px;
-    background-color: #ffffff;
-    color: #7a2518;
-    display: inline-block;
-    cursor: pointer;
-}
-
-.switch--item.selected {
-    background-color: #7a2519;
-    color: #ffffff;
-}
-
-</style>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/zepto/1.2.0/zepto.min.js"></script>
-<script type="text/javascript">
-function addBlockSwitches() {
-    $('.primary').each(function() {
-        primary = $(this);
-        createSwitchItem(primary, createBlockSwitch(primary)).item.addClass("selected");
-        primary.children('.title').remove();
-    });
-    $('.secondary').each(function(idx, node) {
-        secondary = $(node);
-        primary = findPrimary(secondary);
-        switchItem = createSwitchItem(secondary, primary.children('.switch'));
-        switchItem.content.addClass('hidden');
-        findPrimary(secondary).append(switchItem.content);
-        secondary.remove();
-    });
-}
-
-function createBlockSwitch(primary) {
-    blockSwitch = $('<div class="switch"></div>');
-    primary.prepend(blockSwitch);
-    return blockSwitch;
-}
-
-function findPrimary(secondary) {
-    candidate = secondary.prev();
-    while (!candidate.is('.primary')) {
-        candidate = candidate.prev();
-    }
-    return candidate;
-}
-
-function createSwitchItem(block, blockSwitch) {
-    blockName = block.children('.title').text();
-    content = block.children('.content').first().append(block.next('.colist'));
-    item = $('<div class="switch--item">' + blockName + '</div>');
-    item.on('click', '', content, function(e) {
-        $(this).addClass('selected');
-        $(this).siblings().removeClass('selected');
-        e.data.siblings('.content').addClass('hidden');
-        e.data.removeClass('hidden');
-    });
-    blockSwitch.append(item);
-    return {'item': item, 'content': content};
-}
-
-$(addBlockSwitches);
-
-</script>
-
 </head>
 <body class="book toc2 toc-left">
 <div id="header">
 <h1>OCI Java SDK Gradle Plugin</h1>
 <div class="details">
 <span id="author" class="author">Andres Almiray</span><br>
-<span id="revnumber">version 0.3.0</span>
+<span id="revnumber">version 0.4.0</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -136,7 +60,7 @@ $(addBlockSwitches);
 <p>A Gradle plugin for the <a href="http://github.com/oracle/oci-java-sdk">Oracle Cloud Infrastructure Java SDK</a>.</p>
 </div>
 <div class="paragraph">
-<p>Currently supported OCI Java SDK version is <strong><code>1.12.1</code></strong>.</p>
+<p>Currently supported OCI Java SDK version is <strong><code>1.15.2</code></strong>.</p>
 </div>
 <div class="admonitionblock warning">
 <table>
@@ -176,13 +100,13 @@ This plugin is not endorsed by Oracle nor does the company provide any support f
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">buildscript {
+<pre class="prettyprint highlight"><code data-lang="groovy">buildscript {
     repositories {
         jcenter()
         gradlePluginPortal()
     }
     dependencies {
-        classpath 'org.kordamp.gradle:oci-gradle-plugin:0.3.0'
+        classpath 'org.kordamp.gradle:oci-gradle-plugin:0.4.0'
     }
 }
 apply plugin: 'org.kordamp.gradle.oci'</code></pre>
@@ -193,8 +117,8 @@ apply plugin: 'org.kordamp.gradle.oci'</code></pre>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">plugins {
-    id 'org.kordamp.gradle.oci' version '0.3.0'
+<pre class="prettyprint highlight"><code data-lang="groovy">plugins {
+    id 'org.kordamp.gradle.oci' version '0.4.0'
 }</code></pre>
 </div>
 </div>
@@ -211,7 +135,7 @@ is installed and port <code>8080</code> is open</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">gradle setupInstance \
+<pre class="prettyprint highlight"><code data-lang="groovy">gradle setupInstance \
   --compartment-id=ocid1.compartment.oc1... \
   --verbose \
   --instance-name=myInstance \
@@ -289,7 +213,7 @@ found on the config file</p>
 <div class="listingblock">
 <div class="title">build.gradle</div>
 <div class="content">
-<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">listInstances {
+<pre class="prettyprint highlight"><code data-lang="groovy">listInstances {
     ociConfig {
         userId.set('ocid1.user.oc1...')
         tenantId.set('ocid1.tenancy.oc1...')
@@ -386,7 +310,7 @@ Type
 Option
 </td>
 <td class="hdlist2">
-<p>The command line flag to set this property&#8217;s value. Use <code>--</code> as prefix, i.e, <code>--oic-profile=mine</code>.</p>
+<p>The command line flag to set this property&#8217;s value. Use <code>--</code> as prefix, i.e, <code>--oci-profile=mine</code>.</p>
 </td>
 </tr>
 <tr>
@@ -424,10 +348,38 @@ Required
 </table>
 </div>
 <div class="paragraph">
-<p>System values are resolved in the following order</p>
+<p>Property values are resolved in the following order</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code>Environment &gt; System Property &gt; Option &gt; Property</code></pre>
+</div>
 </div>
 <div class="paragraph">
-<p>Environment &gt; System System &gt; Option &gt; Property</p>
+<p>Task paths may be used as prefix for Environment and System properties such that, for a task named <code>step01</code> on a subproject
+named <code>project1</code> you get the following Environment and System keys for the <code>profile</code> property</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code>PROJECT1_STEP01_OCI_PROFILE
+project1.step01.oci.profile
+PROJECT1_OCI_PROFILE
+project1.oci.profile
+OCI_PROFILE
+oci.profile</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Whitespace and hyphen (<code>-</code>) characters will be replaced with underscore (<code>_</code>).
+</td>
+</tr>
+</table>
 </div>
 <div class="sect3">
 <h4 id="_oci_create_"><a class="anchor" href="#_oci_create_"></a>2.3.1. OCI Create</h4>
@@ -779,13 +731,22 @@ Required
 <td class="tableblock halign-center valign-top"><p class="tableblock"><span class="icon green"><i class="fa fa-check"></i></span></p></td>
 </tr>
 <tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">dnsLabel</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">String</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">dns-label</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">oci.dns.label</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OCI_DNS_LABEL</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><span class="icon red"><i class="fa fa-times"></i></span></p></td>
+</tr>
+<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">userDataFile</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">File</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">user-data-file</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">oci.user.data.file</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">OCI_USER_DATA_FILE</p></td>
 <td class="tableblock halign-left valign-top"></td>
-<td class="tableblock halign-center valign-top"><p class="tableblock"><span class="icon green"><i class="fa fa-check"></i></span></p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><span class="icon red"><i class="fa fa-times"></i></span></p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">verbose</p></td>
@@ -2507,6 +2468,15 @@ Valid values for <code>action</code> are: <code>RESET</code>, <code>SOFTRESET</c
 <td class="tableblock halign-center valign-top"><p class="tableblock"><span class="icon green"><i class="fa fa-check"></i></span>*</p></td>
 </tr>
 <tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">regex</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">regex</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">oci.regex</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OCI_REGEX</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><span class="icon red"><i class="fa fa-times"></i></span></p></td>
+</tr>
+<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">waitForCompletion</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">wait-for-completion</p></td>
@@ -2524,7 +2494,7 @@ Valid values for <code>action</code> are: <code>RESET</code>, <code>SOFTRESET</c
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-Either <code>instanceId</code> or <code>instanceName</code> must be specified.
+Either <code>instanceId</code> or <code>instanceName</code> must be specified. If <code>regex</code> is true then <code>instanceName</code> is treated as a regular expression.
 </td>
 </tr>
 </table>
@@ -4011,12 +3981,11 @@ Either <code>instanceId</code> or <code>instanceName</code> must be specified.
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 0.3.0<br>
+Version 0.4.0<br>
 Last updated 2019-09-13 17:33:43 +0200
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.min.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.min.js"></script>
-<script>prettyPrint()</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prettify/r298/run_prettify.min.js"></script>
 </body>
 </html>

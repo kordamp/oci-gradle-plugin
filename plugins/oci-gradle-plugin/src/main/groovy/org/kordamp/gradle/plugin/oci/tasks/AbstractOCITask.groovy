@@ -215,6 +215,7 @@ abstract class AbstractOCITask extends AbstractReportingTask implements OCITask 
                 case 'Canceling':
                 case 'Deleting':
                 case 'Terminating':
+                case 'Moving':
                     return console.yellow(state)
                 case 'Available':
                 case 'Running':

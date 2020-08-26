@@ -24,11 +24,12 @@ import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.options.Option
-import org.kordamp.gradle.plugin.oci.tasks.interfaces.PathAware
 import org.kordamp.gradle.plugin.oci.tasks.interfaces.ProjectAware
-import org.kordamp.gradle.plugin.oci.tasks.traits.states.IntegerState
+import org.kordamp.gradle.property.IntegerState
+import org.kordamp.gradle.property.PathAware
+import org.kordamp.gradle.property.SimpleIntegerState
 
-import static org.kordamp.gradle.StringUtils.isNotBlank
+import static org.kordamp.gradle.util.StringUtils.isNotBlank
 
 /**
  * @author Andres Almiray
@@ -36,7 +37,7 @@ import static org.kordamp.gradle.StringUtils.isNotBlank
  */
 @CompileStatic
 trait OptionalLimitAwareTrait implements PathAware, ProjectAware {
-    private final IntegerState state = new IntegerState(project, this, 'OCI_LIMIT', 'oci.limit')
+    private final IntegerState state = SimpleIntegerState.of(project, this, 'oci.limit')
 
     @Internal
     Property<Integer> getLimit() {

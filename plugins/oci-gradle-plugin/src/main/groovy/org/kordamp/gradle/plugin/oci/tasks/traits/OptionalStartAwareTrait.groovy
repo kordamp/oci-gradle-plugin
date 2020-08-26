@@ -24,9 +24,10 @@ import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.options.Option
-import org.kordamp.gradle.plugin.oci.tasks.interfaces.PathAware
 import org.kordamp.gradle.plugin.oci.tasks.interfaces.ProjectAware
-import org.kordamp.gradle.plugin.oci.tasks.traits.states.StringState
+import org.kordamp.gradle.property.PathAware
+import org.kordamp.gradle.property.SimpleStringState
+import org.kordamp.gradle.property.StringState
 
 /**
  * @author Andres Almiray
@@ -34,7 +35,7 @@ import org.kordamp.gradle.plugin.oci.tasks.traits.states.StringState
  */
 @CompileStatic
 trait OptionalStartAwareTrait implements PathAware, ProjectAware {
-    private final StringState state = new StringState(project, this, 'OCI_START', 'oci.start')
+    private final StringState state = SimpleStringState.of(project, this, 'oci.start')
 
     @Internal
     Property<String> getStart() {

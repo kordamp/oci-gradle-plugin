@@ -38,15 +38,15 @@ import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.options.Option
-import org.kordamp.gradle.AnsiConsole
 import org.kordamp.gradle.plugin.base.tasks.AbstractReportingTask
 import org.kordamp.gradle.plugin.oci.OCIConfigExtension
 import org.kordamp.gradle.plugin.oci.tasks.interfaces.OCITask
+import org.kordamp.gradle.util.AnsiConsole
 
 import java.text.SimpleDateFormat
 
 import static org.kordamp.gradle.PropertyUtils.stringProvider
-import static org.kordamp.gradle.StringUtils.isNotBlank
+import static org.kordamp.gradle.util.StringUtils.isNotBlank
 
 /**
  * @author Andres Almiray

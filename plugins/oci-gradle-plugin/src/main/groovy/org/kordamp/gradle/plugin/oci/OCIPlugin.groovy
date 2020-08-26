@@ -22,7 +22,7 @@ import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.Task
-import org.kordamp.gradle.StringUtils
+import org.kordamp.gradle.util.StringUtils
 import org.kordamp.gradle.plugin.AbstractKordampPlugin
 import org.kordamp.gradle.plugin.oci.tasks.interfaces.OCITask
 import org.kordamp.jipsy.util.TypeLoader

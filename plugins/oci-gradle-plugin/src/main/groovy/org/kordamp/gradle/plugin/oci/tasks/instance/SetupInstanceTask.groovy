@@ -26,6 +26,9 @@ import com.oracle.bmc.core.model.InternetGateway
 import com.oracle.bmc.core.model.Shape
 import com.oracle.bmc.core.model.Subnet
 import com.oracle.bmc.core.model.Vcn
+import com.oracle.bmc.core.requests.GetSubnetRequest
+import com.oracle.bmc.core.requests.GetVcnRequest
+import com.oracle.bmc.core.requests.ListSubnetsRequest
 import com.oracle.bmc.identity.IdentityClient
 import com.oracle.bmc.identity.model.AvailabilityDomain
 import com.oracle.bmc.identity.requests.ListAvailabilityDomainsRequest
@@ -42,19 +45,21 @@ import org.kordamp.gradle.plugin.oci.tasks.interfaces.OCITask
 import org.kordamp.gradle.plugin.oci.tasks.traits.CompartmentIdAwareTrait
 import org.kordamp.gradle.plugin.oci.tasks.traits.ImageAwareTrait
 import org.kordamp.gradle.plugin.oci.tasks.traits.InstanceNameAwareTrait
+import org.kordamp.gradle.plugin.oci.tasks.traits.OptionalAvailabilityDomainAwareTrait
 import org.kordamp.gradle.plugin.oci.tasks.traits.OptionalDnsLabelAwareTrait
+import org.kordamp.gradle.plugin.oci.tasks.traits.OptionalSubnetIdAwareTrait
+import org.kordamp.gradle.plugin.oci.tasks.traits.OptionalUserDataFileAwareTrait
 import org.kordamp.gradle.plugin.oci.tasks.traits.PublicKeyFileAwareTrait
 import org.kordamp.gradle.plugin.oci.tasks.traits.ShapeAwareTrait
-import org.kordamp.gradle.plugin.oci.tasks.traits.OptionalUserDataFileAwareTrait
 import org.kordamp.gradle.plugin.oci.tasks.traits.VerboseAwareTrait
 import org.kordamp.jipsy.TypeProviderFor
 
-import static org.kordamp.gradle.StringUtils.isNotBlank
 import static org.kordamp.gradle.plugin.oci.tasks.create.CreateInstanceTask.maybeCreateInstance
 import static org.kordamp.gradle.plugin.oci.tasks.create.CreateInternetGatewayTask.maybeCreateInternetGateway
 import static org.kordamp.gradle.plugin.oci.tasks.create.CreateSubnetTask.maybeCreateSubnet
 import static org.kordamp.gradle.plugin.oci.tasks.create.CreateVcnTask.maybeCreateVcn
 import static org.kordamp.gradle.plugin.oci.tasks.get.GetInstancePublicIpTask.getInstancePublicIp
+import static org.kordamp.gradle.util.StringUtils.isNotBlank
 
 /**
  * @author Andres Almiray
@@ -69,6 +74,8 @@ class SetupInstanceTask extends AbstractOCITask implements CompartmentIdAwareTra
     PublicKeyFileAwareTrait,
     OptionalUserDataFileAwareTrait,
     OptionalDnsLabelAwareTrait,
+    OptionalAvailabilityDomainAwareTrait,
+    OptionalSubnetIdAwareTrait,
     VerboseAwareTrait {
     static final String TASK_DESCRIPTION = 'Setups an Instance with Vcn, InternetGateway, Subnets, InstanceConsoleConnection, and Volume.'
 
@@ -113,30 +120,61 @@ class SetupInstanceTask extends AbstractOCITask implements CompartmentIdAwareTra
         props.put('compartment.id', getResolvedCompartmentId().get())
 
         ComputeClient computeClient = createComputeClient()
-
-        Image _image = validateImage(computeClient, getResolvedCompartmentId().get())
-        Shape _shape = validateShape(computeClient, getResolvedCompartmentId().get())
-
-        String networkCidrBlock = '10.0.0.0/16'
-        File publicKeyFile = getResolvedPublicKeyFile().get().asFile
-        File userDataFile = getResolvedUserDataFile()?.get()?.asFile
-        String vcnDisplayName = getResolvedInstanceName().get() + '-vcn'
-        String dnsLabel = normalizeDnsLabel(isNotBlank(getResolvedDnsLabel().orNull) ? getResolvedDnsLabel().get() : getResolvedInstanceName().get())
-        String internetGatewayDisplayName = getResolvedInstanceName().get() + '-internet-gateway'
-        String kmsKeyId = ''
-
         IdentityClient identityClient = createIdentityClient()
         VirtualNetworkClient vcnClient = createVirtualNetworkClient()
         BlockstorageClient blockstorageClient = createBlockstorageClient()
 
-        Vcn vcn = maybeCreateVcn(this,
-            vcnClient,
-            getResolvedCompartmentId().get(),
-            vcnDisplayName,
-            dnsLabel,
-            networkCidrBlock,
-            true,
-            getResolvedVerbose().get())
+        Image _image = validateImage(computeClient, getResolvedCompartmentId().get())
+        Shape _shape = validateShape(computeClient, getResolvedCompartmentId().get())
+
+        File publicKeyFile = getResolvedPublicKeyFile().get().asFile
+        File userDataFile = getResolvedUserDataFile()?.get()?.asFile
+        String internetGatewayDisplayName = getResolvedInstanceName().get() + '-internet-gateway'
+        String kmsKeyId = ''
+
+        AvailabilityDomain availabilityDomain = null
+        Subnet subnet = null
+        Vcn vcn = null
+
+        if (isNotBlank(getResolvedAvailabilityDomain().orNull)) {
+            for (AvailabilityDomain ad : identityClient.listAvailabilityDomains(ListAvailabilityDomainsRequest.builder()
+                .compartmentId(getResolvedCompartmentId().get())
+                .build()).items) {
+                if (ad.id == getResolvedAvailabilityDomain().get()) {
+                    availabilityDomain = ad
+                    break
+                }
+            }
+        } else if (isNotBlank(getResolvedSubnetId().orNull)) {
+            try {
+                subnet = vcnClient.getSubnet(GetSubnetRequest.builder()
+                    .subnetId(getResolvedSubnetId().get())
+                    .build())
+                    .subnet
+
+                vcn = vcnClient.getVcn(GetVcnRequest.builder()
+                    .vcnId(subnet.vcnId)
+                    .build())
+                    .vcn
+            } catch (Exception ignored) {
+                // ignored
+            }
+        }
+
+        if (!subnet) {
+            String networkCidrBlock = '10.0.0.0/16'
+            String vcnDisplayName = getResolvedInstanceName().get() + '-vcn'
+            String dnsLabel = normalizeDnsLabel(isNotBlank(getResolvedDnsLabel().orNull) ? getResolvedDnsLabel().get() : getResolvedInstanceName().get())
+            vcn = maybeCreateVcn(this,
+                vcnClient,
+                getResolvedCompartmentId().get(),
+                vcnDisplayName,
+                dnsLabel,
+                networkCidrBlock,
+                true,
+                getResolvedVerbose().get())
+        }
+
         props.put('vcn.id', vcn.id)
         props.put('vcn.name', vcn.displayName)
         props.put('vcn.security-list.id', vcn.defaultSecurityListId)
@@ -151,32 +189,49 @@ class SetupInstanceTask extends AbstractOCITask implements CompartmentIdAwareTra
             getResolvedVerbose().get())
         props.put('internet-gateway.id', internetGateway.id)
 
-        Subnet subnet = null
-        int subnetIndex = 0
-        // create a Subnet per AvailabilityDomain
-        List<AvailabilityDomain> availabilityDomains = identityClient.listAvailabilityDomains(ListAvailabilityDomainsRequest.builder()
-            .compartmentId(getResolvedCompartmentId().get())
-            .build()).items
-        props.put('vcn.subnets', availabilityDomains.size().toString())
-        for (AvailabilityDomain domain : availabilityDomains) {
-            String subnetDnsLabel = 'sub' + HashUtil.sha1(vcn.id.bytes).asHexString()[0..8] + (subnetIndex.toString().padLeft(3, '0'))
+        if (!subnet) {
+            if (availabilityDomain) {
+                for (Subnet s : vcnClient.listSubnets(ListSubnetsRequest.builder()
+                    .compartmentId(getResolvedCompartmentId().get())
+                    .vcnId(vcn.id)
+                    .build()).items) {
+                    if (s.availabilityDomain == availabilityDomain.name) {
+                        subnet = s
+                        props.put('vcn.subnets', '1')
+                        props.put('subnet.0.id'.toString(), s.id)
+                        props.put('subnet.0.name'.toString(), s.displayName)
+                        break
+                    }
+                }
+            } else {
+                int subnetIndex = 0
+                // create a Subnet per AvailabilityDomain
+                List<AvailabilityDomain> availabilityDomains = identityClient.listAvailabilityDomains(ListAvailabilityDomainsRequest.builder()
+                    .compartmentId(getResolvedCompartmentId().get())
+                    .build()).items
+                props.put('vcn.subnets', availabilityDomains.size().toString())
+                for (AvailabilityDomain domain : availabilityDomains) {
+                    String subnetDnsLabel = 'sub' + HashUtil.sha1(vcn.id.bytes).asHexString()[0..8] + (subnetIndex.toString().padLeft(3, '0'))
 
-            Subnet s = maybeCreateSubnet(this,
-                vcnClient,
-                getResolvedCompartmentId().get(),
-                vcn.id,
-                subnetDnsLabel,
-                domain.name,
-                'Subnet ' + domain.name,
-                "10.0.${subnetIndex}.0/24".toString(),
-                true,
-                getResolvedVerbose().get())
-            props.put("subnet.${subnetIndex}.id".toString(), s.id)
-            props.put("subnet.${subnetIndex}.name".toString(), s.displayName)
+                    Subnet s = maybeCreateSubnet(this,
+                        vcnClient,
+                        getResolvedCompartmentId().get(),
+                        vcn.id,
+                        subnetDnsLabel,
+                        domain.name,
+                        'Subnet ' + domain.name,
+                        "10.0.${subnetIndex}.0/24".toString(),
+                        true,
+                        getResolvedVerbose().get())
+                    props.put("subnet.${subnetIndex}.id".toString(), s.id)
+                    props.put("subnet.${subnetIndex}.name".toString(), s.displayName)
 
-            // save the first one
-            if (subnet == null) subnet = s
-            subnetIndex++
+                    // save the first one
+                    if (subnet == null) subnet = s
+                    if (availabilityDomain == null) availabilityDomain = domain
+                    subnetIndex++
+                }
+            }
         }
 
         Instance instance = maybeCreateInstance(this,
@@ -188,6 +243,7 @@ class SetupInstanceTask extends AbstractOCITask implements CompartmentIdAwareTra
             getResolvedInstanceName().get(),
             _image,
             _shape,
+            availabilityDomain,
             subnet,
             publicKeyFile,
             userDataFile,

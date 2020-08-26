@@ -31,7 +31,7 @@ import org.kordamp.gradle.plugin.oci.tasks.traits.OptionalPageAwareTrait
 import org.kordamp.gradle.plugin.oci.tasks.traits.VerboseAwareTrait
 import org.kordamp.jipsy.TypeProviderFor
 
-import static org.kordamp.gradle.StringUtils.isNotBlank
+import static org.kordamp.gradle.util.StringUtils.isNotBlank
 import static org.kordamp.gradle.plugin.oci.tasks.printers.BucketSummaryPrinter.printBucketSummary
 
 /**

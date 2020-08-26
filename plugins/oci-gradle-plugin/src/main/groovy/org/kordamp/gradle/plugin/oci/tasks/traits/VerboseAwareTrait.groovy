@@ -23,9 +23,10 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.options.Option
-import org.kordamp.gradle.plugin.oci.tasks.interfaces.PathAware
 import org.kordamp.gradle.plugin.oci.tasks.interfaces.ProjectAware
-import org.kordamp.gradle.plugin.oci.tasks.traits.states.BooleanState
+import org.kordamp.gradle.property.BooleanState
+import org.kordamp.gradle.property.PathAware
+import org.kordamp.gradle.property.SimpleBooleanState
 
 /**
  * @author Andres Almiray
@@ -33,7 +34,7 @@ import org.kordamp.gradle.plugin.oci.tasks.traits.states.BooleanState
  */
 @CompileStatic
 trait VerboseAwareTrait implements PathAware, ProjectAware {
-    private final BooleanState state = new BooleanState(project, this, 'OCI_VERBOSE', 'oci.verbose')
+    private final BooleanState state = SimpleBooleanState.of(project, this, 'oci.verbose')
 
     @Internal
     Property<Boolean> getVerbose() {

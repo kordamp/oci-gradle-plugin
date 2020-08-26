@@ -549,15 +549,17 @@ NOTE: Valid values for `action` are: `RESET`, `SOFTRESET`, `SOFTSTOP`, `START`, 
 .setupInstance
 [options="header", cols="6*<,^"]
 |===
-| Property          | Type    | Option              | System                  | Environment             | Default | Required
-| compartmentId     | String  | compartment-id      | oci.compartment.id      | OCI_COMPARTMENT_ID      |         | icon:check[role="green"]
-| image             | String  | image               | oci.image               | OCI_IMAGE               |         | icon:check[role="green"]
-| instanceName      | String  | instance-name       | oci.instance.name       | OCI_INSTANCE_NAME       |         | icon:check[role="green"]
-| publicKeyFile     | File    | public-key-file     | oci.public.key.file     | OCI_PUBLIC_KEY_FILE     |         | icon:check[role="green"]
-| shape             | String  | shape               | oci.shape               | OCI_SHAPE               |         | icon:check[role="green"]
-| userDataFile      | File    | user-data-file      | oci.user.data.file      | OCI_USER_DATA_FILE      |         | icon:check[role="green"]
-| verbose           | boolean | verbose             | oci.verbose             | OCI_VERBOSE             | false   | icon:times[role="red"]
-| waitForCompletion | boolean | wait-for-completion | oci.wait.for.completion | OCI_WAIT_FOR_COMPLETION | false   | icon:times[role="red"]
+| Property           | Type    | Option              | System                  | Environment             | Default | Required
+| availabilityDomain | String  | availability-domain | oci.availability.domain | OCI_AVAILABILITY_DOMAIN |         | icon:times[role="red"]
+| compartmentId      | String  | compartment-id      | oci.compartment.id      | OCI_COMPARTMENT_ID      |         | icon:check[role="green"]
+| image              | String  | image               | oci.image               | OCI_IMAGE               |         | icon:check[role="green"]
+| instanceName       | String  | instance-name       | oci.instance.name       | OCI_INSTANCE_NAME       |         | icon:check[role="green"]
+| publicKeyFile      | File    | public-key-file     | oci.public.key.file     | OCI_PUBLIC_KEY_FILE     |         | icon:check[role="green"]
+| shape              | String  | shape               | oci.shape               | OCI_SHAPE               |         | icon:check[role="green"]
+| subnetId           | String  | subnet-id           | oci.subnet.id           | OCI_SUBNET_ID           |         | icon:times[role="red"]
+| userDataFile       | File    | user-data-file      | oci.user.data.file      | OCI_USER_DATA_FILE      |         | icon:check[role="green"]
+| verbose            | boolean | verbose             | oci.verbose             | OCI_VERBOSE             | false   | icon:times[role="red"]
+| waitForCompletion  | boolean | wait-for-completion | oci.wait.for.completion | OCI_WAIT_FOR_COMPLETION | false   | icon:times[role="red"]
 |===
 <<_oci_instance_,icon:arrow-up[] top>>
 

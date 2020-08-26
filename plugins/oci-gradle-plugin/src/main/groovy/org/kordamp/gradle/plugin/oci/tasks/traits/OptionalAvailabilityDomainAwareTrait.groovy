@@ -17,6 +17,10 @@
  */
 package org.kordamp.gradle.plugin.oci.tasks.traits
 
+import com.oracle.bmc.identity.IdentityClient
+import com.oracle.bmc.identity.model.AvailabilityDomain
+import com.oracle.bmc.identity.requests.ListAvailabilityDomainsRequest
+import com.oracle.bmc.identity.responses.ListAvailabilityDomainsResponse
 import groovy.transform.CompileStatic
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
@@ -31,25 +35,34 @@ import org.kordamp.gradle.property.StringState
 
 /**
  * @author Andres Almiray
- * @since 0.3.0
+ * @since 0.5.0
  */
 @CompileStatic
-trait OptionalContentLanguageAwareTrait implements PathAware, ProjectAware {
-    private final StringState state = SimpleStringState.of(project, this, 'oci.content.language')
+trait OptionalAvailabilityDomainAwareTrait implements PathAware, ProjectAware {
+    private final StringState state = SimpleStringState.of(project, this, 'oci.availability.domain')
 
     @Internal
-    Property<String> getContentLanguage() {
+    Property<String> getAvailabilityDomain() {
         state.property
     }
 
     @Input
     @Optional
-    Provider<String> getResolvedContentLanguage() {
+    Provider<String> getResolvedAvailabilityDomain() {
         state.provider
     }
 
-    @Option(option = 'content-language', description = 'The content language of the Object (OPTIONAL).')
-    void setContentLanguage(String contentLanguage) {
-        getContentLanguage().set(contentLanguage)
+    @Option(option = 'availability-domain', description = 'The AvailabilityDomain (OPTIONAL).')
+    void setAvailabilityDomain(String availabilityDomain) {
+        getAvailabilityDomain().set(availabilityDomain)
+    }
+
+    AvailabilityDomain validateAvailabilityDomain(IdentityClient identityClient, String compartmentId) {
+        ListAvailabilityDomainsResponse response = identityClient.listAvailabilityDomains(ListAvailabilityDomainsRequest.builder()
+            .compartmentId(compartmentId)
+            .build())
+        AvailabilityDomain ad = response.items.find { AvailabilityDomain ad -> ad.name == getResolvedAvailabilityDomain().get() }
+        if (!ad) throw new IllegalStateException("Invalid availability domain ${getResolvedAvailabilityDomain().get()}")
+        ad
     }
 }

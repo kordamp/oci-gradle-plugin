@@ -24,9 +24,10 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.options.Option
-import org.kordamp.gradle.plugin.oci.tasks.interfaces.PathAware
 import org.kordamp.gradle.plugin.oci.tasks.interfaces.ProjectAware
-import org.kordamp.gradle.plugin.oci.tasks.traits.states.RegularFileState
+import org.kordamp.gradle.property.PathAware
+import org.kordamp.gradle.property.RegularFileState
+import org.kordamp.gradle.property.SimpleRegularFileState
 
 /**
  * @author Andres Almiray
@@ -34,7 +35,7 @@ import org.kordamp.gradle.plugin.oci.tasks.traits.states.RegularFileState
  */
 @CompileStatic
 trait PublicKeyFileAwareTrait implements PathAware, ProjectAware {
-    private final RegularFileState state = new RegularFileState(project, this, 'OCI_PUBLIC_KEY_FILE', 'oci.public.key.file')
+    private final RegularFileState state = SimpleRegularFileState.of(project, this, 'oci.public.key.file')
 
     @Internal
     RegularFileProperty getPublicKeyFile() {

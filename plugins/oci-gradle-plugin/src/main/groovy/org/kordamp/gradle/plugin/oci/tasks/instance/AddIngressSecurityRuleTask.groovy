@@ -45,8 +45,8 @@ import java.util.regex.Matcher
 import java.util.regex.Pattern
 
 import static org.kordamp.gradle.PropertyUtils.resolveValue
-import static org.kordamp.gradle.StringUtils.isBlank
-import static org.kordamp.gradle.StringUtils.isNotBlank
+import static org.kordamp.gradle.util.StringUtils.isBlank
+import static org.kordamp.gradle.util.StringUtils.isNotBlank
 
 /**
  * @author Andres Almiray

@@ -50,9 +50,14 @@ class ListInstancesTask extends AbstractOCITask implements CompartmentIdAwareTra
             .availabilityDomain(getResolvedAvailabilityDomain().get())
             .build())
 
-        println('Total Instances: ' + console.cyan(response.items.size().toString()))
+        // #3 filter Terminated instances
+        List<Instance> instances = response.items.findAll {
+            it.lifecycleState != Instance.LifecycleState.Terminated
+        }
+
+        println('Total Instances: ' + console.cyan(instances.size().toString()))
         println(' ')
-        for (Instance instance : response.items) {
+        for (Instance instance : instances) {
             println(instance.displayName + (getResolvedVerbose().get() ? ':' : ''))
             if (getResolvedVerbose().get()) {
                 printInstance(this, instance, 0)

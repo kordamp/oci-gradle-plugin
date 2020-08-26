@@ -24,12 +24,13 @@ import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.options.Option
-import org.kordamp.gradle.plugin.oci.tasks.interfaces.PathAware
 import org.kordamp.gradle.plugin.oci.tasks.interfaces.ProjectAware
-import org.kordamp.gradle.plugin.oci.tasks.traits.states.StringState
+import org.kordamp.gradle.property.PathAware
+import org.kordamp.gradle.property.SimpleStringState
+import org.kordamp.gradle.property.StringState
 
 import static com.oracle.bmc.OCID.isValid
-import static org.kordamp.gradle.StringUtils.isNotBlank
+import static org.kordamp.gradle.util.StringUtils.isNotBlank
 
 /**
  * @author Andres Almiray
@@ -37,7 +38,7 @@ import static org.kordamp.gradle.StringUtils.isNotBlank
  */
 @CompileStatic
 trait OptionalInstanceIdAwareTrait implements PathAware, ProjectAware {
-    private final StringState state = new StringState(project, this, 'OCI_INSTANCE_ID', 'oci.instance.id')
+    private final StringState state = SimpleStringState.of(project, this, 'oci.instance.id')
 
     @Internal
     Property<String> getInstanceId() {

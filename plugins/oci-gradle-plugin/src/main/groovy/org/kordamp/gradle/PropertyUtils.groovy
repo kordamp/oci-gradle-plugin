@@ -25,12 +25,12 @@ import org.gradle.api.file.RegularFile
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
-import org.kordamp.gradle.plugin.oci.tasks.interfaces.PathAware
+import org.kordamp.gradle.property.PathAware
 
 import java.nio.file.Paths
 
-import static org.kordamp.gradle.StringUtils.isBlank
-import static org.kordamp.gradle.StringUtils.isNotBlank
+import static org.kordamp.gradle.util.StringUtils.isBlank
+import static org.kordamp.gradle.util.StringUtils.isNotBlank
 
 /**
  * @author Andres Almiray

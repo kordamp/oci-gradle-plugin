@@ -24,9 +24,10 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.options.Option
-import org.kordamp.gradle.plugin.oci.tasks.interfaces.PathAware
 import org.kordamp.gradle.plugin.oci.tasks.interfaces.ProjectAware
-import org.kordamp.gradle.plugin.oci.tasks.traits.states.DirectoryState
+import org.kordamp.gradle.property.DirectoryState
+import org.kordamp.gradle.property.PathAware
+import org.kordamp.gradle.property.SimpleDirectoryState
 
 /**
  * @author Andres Almiray
@@ -34,7 +35,7 @@ import org.kordamp.gradle.plugin.oci.tasks.traits.states.DirectoryState
  */
 @CompileStatic
 trait DestinationDirAwareTrait implements PathAware, ProjectAware {
-    private final DirectoryState state = new DirectoryState(project, this, 'OCI_DESTINATION_DIR', 'oci.destination.dir')
+    private final DirectoryState state = SimpleDirectoryState.of(project, this, 'oci.destination.dir')
 
     @Internal
     private DirectoryProperty getDestinationDir() {

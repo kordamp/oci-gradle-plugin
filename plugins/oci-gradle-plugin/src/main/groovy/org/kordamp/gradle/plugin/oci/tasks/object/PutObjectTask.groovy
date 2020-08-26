@@ -33,7 +33,7 @@ import org.kordamp.gradle.plugin.oci.tasks.traits.OptionalContentMD5AwareTrait
 import org.kordamp.gradle.plugin.oci.tasks.traits.OptionalContentTypeAwareTrait
 import org.kordamp.jipsy.TypeProviderFor
 
-import static org.kordamp.gradle.StringUtils.isNotBlank
+import static org.kordamp.gradle.util.StringUtils.isNotBlank
 
 /**
  * @author Andres Almiray

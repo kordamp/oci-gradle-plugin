@@ -18,7 +18,7 @@
 package org.kordamp.gradle.plugin.oci.tasks.interfaces
 
 import org.gradle.api.tasks.Internal
-import org.kordamp.gradle.AnsiConsole
+import org.kordamp.gradle.util.AnsiConsole
 
 /**
  * @author Andres Almiray

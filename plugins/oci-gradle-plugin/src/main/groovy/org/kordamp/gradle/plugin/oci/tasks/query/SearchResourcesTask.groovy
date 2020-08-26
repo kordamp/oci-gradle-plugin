@@ -36,7 +36,7 @@ import org.kordamp.gradle.plugin.oci.tasks.interfaces.OCITask
 import org.kordamp.jipsy.TypeProviderFor
 
 import static org.kordamp.gradle.PropertyUtils.stringProvider
-import static org.kordamp.gradle.StringUtils.isBlank
+import static org.kordamp.gradle.util.StringUtils.isBlank
 
 /**
  * @author Andres Almiray

@@ -18,6 +18,7 @@
 package org.kordamp.gradle.plugin.oci.tasks.interfaces
 
 import org.gradle.api.Task
+import org.kordamp.gradle.property.PathAware
 
 /**
  * @author Andres Almiray

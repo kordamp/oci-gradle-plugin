@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: Apache-2.0
  *
- * Copyright 2019-2020 Andres Almiray.
+ * Copyright 2019-2021 Andres Almiray.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,7 +35,7 @@ import static org.kordamp.gradle.plugin.oci.tasks.printers.RouteTablePrinter.pri
 @CompileStatic
 @TypeProviderFor(OCITask)
 class GetRouteTableTask extends AbstractOCITask implements RouteTableIdAwareTrait {
-    static final String TASK_DESCRIPTION = 'Displays information for an specific RouteTable.'
+    static final String TASK_DESCRIPTION = 'Displays information for a specific RouteTable.'
 
     @Override
     protected void doExecuteTask() {

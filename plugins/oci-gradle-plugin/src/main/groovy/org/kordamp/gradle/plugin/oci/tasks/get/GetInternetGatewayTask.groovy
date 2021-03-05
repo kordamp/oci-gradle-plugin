@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: Apache-2.0
  *
- * Copyright 2019-2020 Andres Almiray.
+ * Copyright 2019-2021 Andres Almiray.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,7 +35,7 @@ import static org.kordamp.gradle.plugin.oci.tasks.printers.InternetGatewayPrinte
 @CompileStatic
 @TypeProviderFor(OCITask)
 class GetInternetGatewayTask extends AbstractOCITask implements InternetGatewayIdAwareTrait {
-    static final String TASK_DESCRIPTION = 'Displays information for an specific InternetGateway.'
+    static final String TASK_DESCRIPTION = 'Displays information for a specific InternetGateway.'
 
     @Override
     protected void doExecuteTask() {

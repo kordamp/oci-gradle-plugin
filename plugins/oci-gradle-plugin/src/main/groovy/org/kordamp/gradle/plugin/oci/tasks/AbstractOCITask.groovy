@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: Apache-2.0
  *
- * Copyright 2019-2020 Andres Almiray.
+ * Copyright 2019-2021 Andres Almiray.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,12 +20,15 @@ package org.kordamp.gradle.plugin.oci.tasks
 import com.google.common.base.Supplier
 import com.oracle.bmc.ConfigFileReader
 import com.oracle.bmc.Region
+import com.oracle.bmc.apigateway.DeploymentClient
+import com.oracle.bmc.apigateway.GatewayClient
 import com.oracle.bmc.auth.AuthenticationDetailsProvider
 import com.oracle.bmc.auth.ConfigFileAuthenticationDetailsProvider
 import com.oracle.bmc.auth.SimpleAuthenticationDetailsProvider
 import com.oracle.bmc.core.BlockstorageClient
 import com.oracle.bmc.core.ComputeClient
 import com.oracle.bmc.core.VirtualNetworkClient
+import com.oracle.bmc.database.DatabaseClient
 import com.oracle.bmc.identity.IdentityClient
 import com.oracle.bmc.objectstorage.ObjectStorageAsyncClient
 import com.oracle.bmc.objectstorage.ObjectStorageClient
@@ -299,6 +302,33 @@ abstract class AbstractOCITask extends AbstractReportingTask implements OCITask 
 
     protected ObjectStorageAsyncClient createObjectStorageAsyncClient() {
         ObjectStorageAsyncClient client = new ObjectStorageAsyncClient(resolveAuthenticationDetailsProvider())
+        if (isNotBlank(getResolvedRegion().orNull)) {
+            client.setRegion(getResolvedRegion().get())
+        }
+        closeables << client
+        client
+    }
+
+    protected DatabaseClient createDatabaseClient() {
+        DatabaseClient client = new DatabaseClient(resolveAuthenticationDetailsProvider())
+        if (isNotBlank(getResolvedRegion().orNull)) {
+            client.setRegion(getResolvedRegion().get())
+        }
+        closeables << client
+        client
+    }
+
+    protected GatewayClient createGatewayClient() {
+        GatewayClient client = new GatewayClient(resolveAuthenticationDetailsProvider())
+        if (isNotBlank(getResolvedRegion().orNull)) {
+            client.setRegion(getResolvedRegion().get())
+        }
+        closeables << client
+        client
+    }
+
+    protected DeploymentClient createDeploymentClient() {
+        DeploymentClient client = new DeploymentClient(resolveAuthenticationDetailsProvider())
         if (isNotBlank(getResolvedRegion().orNull)) {
             client.setRegion(getResolvedRegion().get())
         }

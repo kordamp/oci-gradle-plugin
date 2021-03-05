@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: Apache-2.0
  *
- * Copyright 2019-2020 Andres Almiray.
+ * Copyright 2019-2021 Andres Almiray.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,6 +38,10 @@ class OCIPlugin extends AbstractKordampPlugin {
     }
 
     Project project
+
+    OCIPlugin() {
+        super('org.kordamp.gradle.oci')
+    }
 
     void apply(Project project) {
         Banner.display(project)

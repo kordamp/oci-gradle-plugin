@@ -376,18 +376,18 @@ NOTE: Either `vcnId` or `vcnName` must be specified.
 === OCI Get
 
 [horizontal]
-<<getBucket>>:: Displays information for an specific Bucket.
-<<getCompartment>>:: Displays information for an specific Compartment.
-<<getInstanceConsoleConnection>>:: Displays information for an specific InstanceConsoleConnection.
+<<getBucket>>:: Displays information for a specific Bucket.
+<<getCompartment>>:: Displays information for a specific Compartment.
+<<getInstanceConsoleConnection>>:: Displays information for a specific InstanceConsoleConnection.
 <<getInstancePublicIp>>:: Displays public Ip addresses for a particular Instance.
-<<getInstance>>:: Displays information for an specific Instance.
-<<getInternetGateway>>:: Displays information for an specific InternetGateway.
-<<getNamespace>>:: Displays information for an specific Namespace.
-<<getObject>>:: Displays information for an specific Object.
-<<getRouteTable>>:: Displays information for an specific RouteTable.
-<<getSecurityList>>:: Displays information for an specific SecurityList.
-<<getSubnet>>:: Displays information for an specific Subnet.
-<<getVcn>>:: Displays information for an specific Vcn.
+<<getInstance>>:: Displays information for a specific Instance.
+<<getInternetGateway>>:: Displays information for a specific InternetGateway.
+<<getNamespace>>:: Displays information for a specific Namespace.
+<<getObject>>:: Displays information for a specific Object.
+<<getRouteTable>>:: Displays information for a specific RouteTable.
+<<getSecurityList>>:: Displays information for a specific SecurityList.
+<<getSubnet>>:: Displays information for a specific Subnet.
+<<getVcn>>:: Displays information for a specific Vcn.
 
 [[getBucket]]
 .getBucket
@@ -769,9 +769,9 @@ NOTE: Either `instanceId` or `instanceName` must be specified. If `regex` is tru
 [horizontal]
 <<clearBucket>>:: Clears a Bucket.
 <<copyObject>>:: Copies an Object.
-<<downloadObject>>:: Downloads an Object to an specific location.
-<<headBucket>>:: Heads an specific Bucket.
-<<headObject>>:: Heads an specific Object.
+<<downloadObject>>:: Downloads an Object to a specific location.
+<<headBucket>>:: Heads a specific Bucket.
+<<headObject>>:: Heads a specific Object.
 <<putObject>>:: Puts an Object on a Bucket.
 
 [[clearBucket]]

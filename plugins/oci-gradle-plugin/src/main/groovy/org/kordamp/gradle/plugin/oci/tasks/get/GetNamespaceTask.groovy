@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: Apache-2.0
  *
- * Copyright 2019-2020 Andres Almiray.
+ * Copyright 2019-2021 Andres Almiray.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,7 +34,7 @@ import static org.kordamp.gradle.util.StringUtils.isNotBlank
 @CompileStatic
 @TypeProviderFor(OCITask)
 class GetNamespaceTask extends AbstractOCITask implements OptionalCompartmentIdAwareTrait {
-    static final String TASK_DESCRIPTION = 'Displays information for an specific Namespace.'
+    static final String TASK_DESCRIPTION = 'Displays information for a specific Namespace.'
 
     @Override
     protected void doExecuteTask() {

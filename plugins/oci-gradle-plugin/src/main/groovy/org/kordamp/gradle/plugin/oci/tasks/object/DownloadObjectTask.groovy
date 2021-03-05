@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: Apache-2.0
  *
- * Copyright 2019-2020 Andres Almiray.
+ * Copyright 2019-2021 Andres Almiray.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,7 +44,7 @@ class DownloadObjectTask extends AbstractOCITask implements NamespaceNameAwareTr
     BucketNameAwareTrait,
     ObjectNameAwareTrait,
     DestinationDirAwareTrait {
-    static final String TASK_DESCRIPTION = 'Downloads an Object to an specific location.'
+    static final String TASK_DESCRIPTION = 'Downloads an Object to a specific location.'
 
     @Override
     protected void doExecuteTask() {

@@ -15,12 +15,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-config {
-    bintray {
-        enabled       = true
-        skipMavenSync = true
-    }
+plugins {
+    id 'java-library'
+    id 'groovy'
+    id 'org.kordamp.gradle.plugin'
+}
 
+config {
     plugins {
         plugin {
             name                = 'oci'

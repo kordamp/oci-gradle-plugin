@@ -1,0 +1,16 @@
+name: 'Early Access'
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  earlyaccess:
+    name: 'Early Access'
+    if: github.repository == 'kordamp/oci-gradle-plugin' && startsWith(github.event.head_commit.message, 'Releasing version') != true
+    uses: kordamp/kordamp-gradle-plugin-workflow/.github/workflows/early-access.yml@main
+    secrets:
+      github-token: ${{ secrets.GIT_ACCESS_TOKEN }}
+      gpg-passphrase: ${{ secrets.GPG_PASSPHRASE }}
+      gpg-public-key: ${{ secrets.GPG_PUBLIC_KEY }}
+      gpg-secret-key: ${{ secrets.GPG_SECRET_KEY }}

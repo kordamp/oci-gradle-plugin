@@ -1,0 +1,8 @@
+name: Build
+
+on:
+  pull_request:
+
+jobs:
+  build:
+    uses: kordamp/kordamp-gradle-plugin-workflow/.github/workflows/build.yml@main

@@ -48,13 +48,17 @@ enforce {
         r.exclude('org.glassfish.hk2.external:javax.inject')
     }
     rule(enforcer.rules.ForceDependencies) { r ->
-        r.dependencies.addAll "com.fasterxml.jackson.core:jackson-annotations:$jacksonVersion",
+        r.dependencies.addAll "com.fasterxml.jackson.core:jackson-bom:$jacksonVersion",
+            "com.fasterxml.jackson.core:jackson-annotations:$jacksonVersion",
             "com.fasterxml.jackson.core:jackson-core:$jacksonVersion",
             "com.fasterxml.jackson.core:jackson-databind:$jacksonVersion",
+            "com.fasterxml.jackson.datatype:jackson-datatype-jdk8:$jacksonVersion",
+            "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion",
             "com.fasterxml.jackson.module:jackson-module-jaxb-annotations:$jacksonVersion",
             "org.slf4j:slf4j-api:$slf4jVersion",
             "commons-io:commons-io:$commonsIoVersion",
             "commons-codec:commons-codec:$commonsCodecVersion",
-            'io.vavr:vavr:0.10.2'
+            'io.vavr:vavr:0.10.2',
+            'jakarta.activation:jakarta.activation-api:1.2.2'
     }
 }

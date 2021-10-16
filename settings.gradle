@@ -54,6 +54,7 @@ enforce {
             "com.fasterxml.jackson.module:jackson-module-jaxb-annotations:$jacksonVersion",
             "org.slf4j:slf4j-api:$slf4jVersion",
             "commons-io:commons-io:$commonsIoVersion",
+            "commons-codec:commons-codec:$commonsCodecVersion",
             'io.vavr:vavr:0.10.2'
     }
 }

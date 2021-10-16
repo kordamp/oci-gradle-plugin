@@ -39,7 +39,7 @@ import org.kordamp.gradle.plugin.oci.tasks.traits.GatewayNameAwareTrait
 import org.kordamp.gradle.plugin.oci.tasks.traits.SubnetIdAwareTrait
 import org.kordamp.gradle.plugin.oci.tasks.traits.VerboseAwareTrait
 import org.kordamp.gradle.plugin.oci.tasks.traits.WaitForCompletionAwareTrait
-import org.kordamp.jipsy.TypeProviderFor
+import org.kordamp.jipsy.annotations.TypeProviderFor
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank
 import static org.kordamp.gradle.PropertyUtils.resolveValue

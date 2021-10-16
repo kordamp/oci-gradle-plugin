@@ -33,7 +33,7 @@ import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.options.Option
 import org.kordamp.gradle.plugin.oci.tasks.AbstractOCITask
 import org.kordamp.gradle.plugin.oci.tasks.interfaces.OCITask
-import org.kordamp.jipsy.TypeProviderFor
+import org.kordamp.jipsy.annotations.TypeProviderFor
 
 import static org.kordamp.gradle.PropertyUtils.stringProvider
 import static org.kordamp.gradle.util.StringUtils.isBlank

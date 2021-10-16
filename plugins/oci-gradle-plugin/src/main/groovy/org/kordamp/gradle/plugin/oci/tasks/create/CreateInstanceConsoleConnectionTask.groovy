@@ -33,7 +33,7 @@ import org.kordamp.gradle.plugin.oci.tasks.traits.InstanceIdAwareTrait
 import org.kordamp.gradle.plugin.oci.tasks.traits.PublicKeyFileAwareTrait
 import org.kordamp.gradle.plugin.oci.tasks.traits.VerboseAwareTrait
 import org.kordamp.gradle.plugin.oci.tasks.traits.WaitForCompletionAwareTrait
-import org.kordamp.jipsy.TypeProviderFor
+import org.kordamp.jipsy.annotations.TypeProviderFor
 
 import static org.kordamp.gradle.plugin.oci.tasks.printers.InstanceConsoleConnectionPrinter.printInstanceConsoleConnection
 

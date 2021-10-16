@@ -36,7 +36,7 @@ import org.kordamp.gradle.plugin.oci.tasks.traits.OptionalCpuCoreCountAwareTrait
 import org.kordamp.gradle.plugin.oci.tasks.traits.OptionalDataStorageSizeAwareTrait
 import org.kordamp.gradle.plugin.oci.tasks.traits.VerboseAwareTrait
 import org.kordamp.gradle.plugin.oci.tasks.traits.WaitForCompletionAwareTrait
-import org.kordamp.jipsy.TypeProviderFor
+import org.kordamp.jipsy.annotations.TypeProviderFor
 
 import static org.kordamp.gradle.plugin.oci.tasks.printers.AutonomousDatabasePrinter.printAutonomousDatabase
 

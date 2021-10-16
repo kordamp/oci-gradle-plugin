@@ -24,7 +24,7 @@ import groovy.transform.CompileStatic
 import org.kordamp.gradle.plugin.oci.tasks.AbstractOCITask
 import org.kordamp.gradle.plugin.oci.tasks.interfaces.OCITask
 import org.kordamp.gradle.plugin.oci.tasks.traits.SecurityListIdAwareTrait
-import org.kordamp.jipsy.TypeProviderFor
+import org.kordamp.jipsy.annotations.TypeProviderFor
 
 import static org.kordamp.gradle.plugin.oci.tasks.printers.SecurityListPrinter.printSecurityList
 

@@ -30,7 +30,7 @@ import org.kordamp.gradle.plugin.oci.tasks.traits.OptionalInstanceIdAwareTrait
 import org.kordamp.gradle.plugin.oci.tasks.traits.OptionalInstanceNameAwareTrait
 import org.kordamp.gradle.plugin.oci.tasks.traits.RegexAwareTrait
 import org.kordamp.gradle.plugin.oci.tasks.traits.WaitForCompletionAwareTrait
-import org.kordamp.jipsy.TypeProviderFor
+import org.kordamp.jipsy.annotations.TypeProviderFor
 
 import static org.kordamp.gradle.util.StringUtils.isBlank
 import static org.kordamp.gradle.util.StringUtils.isNotBlank

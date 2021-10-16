@@ -34,7 +34,7 @@ import org.kordamp.gradle.plugin.oci.tasks.AbstractOCITask
 import org.kordamp.gradle.plugin.oci.tasks.interfaces.OCITask
 import org.kordamp.gradle.plugin.oci.tasks.traits.CompartmentIdAwareTrait
 import org.kordamp.gradle.plugin.oci.tasks.traits.InstanceIdAwareTrait
-import org.kordamp.jipsy.TypeProviderFor
+import org.kordamp.jipsy.annotations.TypeProviderFor
 
 /**
  * @author Andres Almiray

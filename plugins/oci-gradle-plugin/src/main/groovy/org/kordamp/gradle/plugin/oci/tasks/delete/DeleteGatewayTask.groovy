@@ -30,7 +30,7 @@ import org.kordamp.gradle.plugin.oci.tasks.traits.CompartmentIdAwareTrait
 import org.kordamp.gradle.plugin.oci.tasks.traits.OptionalGatewayIdAwareTrait
 import org.kordamp.gradle.plugin.oci.tasks.traits.OptionalGatewayNameAwareTrait
 import org.kordamp.gradle.plugin.oci.tasks.traits.WaitForCompletionAwareTrait
-import org.kordamp.jipsy.TypeProviderFor
+import org.kordamp.jipsy.annotations.TypeProviderFor
 
 import static org.kordamp.gradle.util.StringUtils.isBlank
 import static org.kordamp.gradle.util.StringUtils.isNotBlank

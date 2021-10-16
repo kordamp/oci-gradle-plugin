@@ -39,7 +39,7 @@ import org.kordamp.gradle.plugin.oci.tasks.AbstractOCITask
 import org.kordamp.gradle.plugin.oci.tasks.interfaces.OCITask
 import org.kordamp.gradle.plugin.oci.tasks.printers.SecurityListPrinter
 import org.kordamp.gradle.plugin.oci.tasks.traits.SecurityListIdAwareTrait
-import org.kordamp.jipsy.TypeProviderFor
+import org.kordamp.jipsy.annotations.TypeProviderFor
 
 import java.util.regex.Matcher
 import java.util.regex.Pattern

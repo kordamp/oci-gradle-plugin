@@ -31,7 +31,7 @@ import org.kordamp.gradle.plugin.oci.tasks.traits.OptionalContentEncodingAwareTr
 import org.kordamp.gradle.plugin.oci.tasks.traits.OptionalContentLanguageAwareTrait
 import org.kordamp.gradle.plugin.oci.tasks.traits.OptionalContentMD5AwareTrait
 import org.kordamp.gradle.plugin.oci.tasks.traits.OptionalContentTypeAwareTrait
-import org.kordamp.jipsy.TypeProviderFor
+import org.kordamp.jipsy.annotations.TypeProviderFor
 
 import static org.kordamp.gradle.util.StringUtils.isNotBlank
 

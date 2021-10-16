@@ -27,7 +27,7 @@ import org.kordamp.gradle.plugin.oci.tasks.traits.BucketNameAwareTrait
 import org.kordamp.gradle.plugin.oci.tasks.traits.DestinationDirAwareTrait
 import org.kordamp.gradle.plugin.oci.tasks.traits.NamespaceNameAwareTrait
 import org.kordamp.gradle.plugin.oci.tasks.traits.ObjectNameAwareTrait
-import org.kordamp.jipsy.TypeProviderFor
+import org.kordamp.jipsy.annotations.TypeProviderFor
 
 import java.nio.file.Files
 import java.nio.file.StandardCopyOption

@@ -25,7 +25,7 @@ import org.kordamp.gradle.plugin.oci.tasks.interfaces.OCITask
 import org.kordamp.gradle.plugin.oci.tasks.traits.BucketNameAwareTrait
 import org.kordamp.gradle.plugin.oci.tasks.traits.NamespaceNameAwareTrait
 import org.kordamp.gradle.plugin.oci.tasks.traits.WaitForCompletionAwareTrait
-import org.kordamp.jipsy.TypeProviderFor
+import org.kordamp.jipsy.annotations.TypeProviderFor
 
 /**
  * @author Andres Almiray

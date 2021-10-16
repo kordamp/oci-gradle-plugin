@@ -52,7 +52,7 @@ import org.kordamp.gradle.plugin.oci.tasks.traits.OptionalUserDataFileAwareTrait
 import org.kordamp.gradle.plugin.oci.tasks.traits.PublicKeyFileAwareTrait
 import org.kordamp.gradle.plugin.oci.tasks.traits.ShapeAwareTrait
 import org.kordamp.gradle.plugin.oci.tasks.traits.VerboseAwareTrait
-import org.kordamp.jipsy.TypeProviderFor
+import org.kordamp.jipsy.annotations.TypeProviderFor
 
 import static org.kordamp.gradle.plugin.oci.tasks.create.CreateInstanceTask.maybeCreateInstance
 import static org.kordamp.gradle.plugin.oci.tasks.create.CreateInternetGatewayTask.maybeCreateInternetGateway

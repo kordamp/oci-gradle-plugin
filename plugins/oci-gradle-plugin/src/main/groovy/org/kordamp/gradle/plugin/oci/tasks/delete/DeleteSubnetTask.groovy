@@ -30,7 +30,7 @@ import org.kordamp.gradle.plugin.oci.tasks.traits.OptionalSubnetIdAwareTrait
 import org.kordamp.gradle.plugin.oci.tasks.traits.OptionalSubnetNameAwareTrait
 import org.kordamp.gradle.plugin.oci.tasks.traits.VcnIdAwareTrait
 import org.kordamp.gradle.plugin.oci.tasks.traits.WaitForCompletionAwareTrait
-import org.kordamp.jipsy.TypeProviderFor
+import org.kordamp.jipsy.annotations.TypeProviderFor
 
 import static org.kordamp.gradle.util.StringUtils.isBlank
 import static org.kordamp.gradle.util.StringUtils.isNotBlank

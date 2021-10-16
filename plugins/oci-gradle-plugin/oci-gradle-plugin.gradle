@@ -33,9 +33,9 @@ config {
 
 dependencies {
     compileOnly gradleApi()
-	
+
     api         "org.kordamp.jipsy:jipsy-util:$jipsyVersion"
-    compileOnly "org.kordamp.jipsy:jipsy-annotations:$jipsyVersion"
+    compileOnly "org.kordamp.jipsy:jipsy-annotations:${jipsyVersion}"
     compileOnly "org.kordamp.gipsy:gipsy:$jipsyVersion"
 
     api "org.kordamp.gradle:base-gradle-plugin:$kordampPluginVersion"

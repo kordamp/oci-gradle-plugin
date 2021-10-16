@@ -27,7 +27,7 @@ import org.kordamp.gradle.plugin.oci.tasks.interfaces.OCITask
 import org.kordamp.gradle.plugin.oci.tasks.traits.AvailabilityDomainAwareTrait
 import org.kordamp.gradle.plugin.oci.tasks.traits.CompartmentIdAwareTrait
 import org.kordamp.gradle.plugin.oci.tasks.traits.VerboseAwareTrait
-import org.kordamp.jipsy.TypeProviderFor
+import org.kordamp.jipsy.annotations.TypeProviderFor
 
 import static org.kordamp.gradle.plugin.oci.tasks.printers.InstancePrinter.printInstance
 

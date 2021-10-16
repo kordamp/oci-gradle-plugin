@@ -35,7 +35,7 @@ import org.kordamp.gradle.plugin.oci.tasks.traits.ObjectNameAwareTrait
 import org.kordamp.gradle.plugin.oci.tasks.traits.OptionalDestinationBucketNameAwareTrait
 import org.kordamp.gradle.plugin.oci.tasks.traits.OptionalDestinationNamespaceNameAwareTrait
 import org.kordamp.gradle.plugin.oci.tasks.traits.OptionalDestinationRegionAwareTrait
-import org.kordamp.jipsy.TypeProviderFor
+import org.kordamp.jipsy.annotations.TypeProviderFor
 
 import static org.kordamp.gradle.plugin.oci.tasks.object.HeadObjectTask.headObject
 

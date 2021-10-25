@@ -42,35 +42,35 @@ dependencies {
     api "commons-io:commons-io:$commonsIoVersion"
 
     api platform("com.oracle.oci.sdk:oci-java-sdk-bom:$ociJavaSdkVersion")
-    api 'com.oracle.oci.sdk:oci-java-sdk-common'
-    api 'com.oracle.oci.sdk:oci-java-sdk-apigateway'
-    api 'com.oracle.oci.sdk:oci-java-sdk-audit'
-    api 'com.oracle.oci.sdk:oci-java-sdk-containerengine'
-    api 'com.oracle.oci.sdk:oci-java-sdk-core'
-    api 'com.oracle.oci.sdk:oci-java-sdk-database'
-    api 'com.oracle.oci.sdk:oci-java-sdk-dns'
-    api 'com.oracle.oci.sdk:oci-java-sdk-email'
-    api 'com.oracle.oci.sdk:oci-java-sdk-filestorage'
-    api 'com.oracle.oci.sdk:oci-java-sdk-identity'
-    api 'com.oracle.oci.sdk:oci-java-sdk-loadbalancer'
-    api 'com.oracle.oci.sdk:oci-java-sdk-objectstorage'
-    api 'com.oracle.oci.sdk:oci-java-sdk-resourcesearch'
-    api 'com.oracle.oci.sdk:oci-java-sdk-keymanagement'
-    api 'com.oracle.oci.sdk:oci-java-sdk-announcementsservice'
-    api 'com.oracle.oci.sdk:oci-java-sdk-healthchecks'
-    api 'com.oracle.oci.sdk:oci-java-sdk-waas'
-    api 'com.oracle.oci.sdk:oci-java-sdk-streaming'
-    api 'com.oracle.oci.sdk:oci-java-sdk-resourcemanager'
-    api 'com.oracle.oci.sdk:oci-java-sdk-monitoring'
-    api 'com.oracle.oci.sdk:oci-java-sdk-ons'
-    api 'com.oracle.oci.sdk:oci-java-sdk-autoscaling'
-    api 'com.oracle.oci.sdk:oci-java-sdk-budget'
-    api 'com.oracle.oci.sdk:oci-java-sdk-workrequests'
-    api 'com.oracle.oci.sdk:oci-java-sdk-limits'
-    api 'com.oracle.oci.sdk:oci-java-sdk-functions'
-    api 'com.oracle.oci.sdk:oci-java-sdk-events'
-    api 'com.oracle.oci.sdk:oci-java-sdk-dts'
-    api 'com.oracle.oci.sdk:oci-java-sdk-oce'
+    api "com.oracle.oci.sdk:oci-java-sdk-common:$ociJavaSdkVersion"
+    api "com.oracle.oci.sdk:oci-java-sdk-apigateway:$ociJavaSdkVersion"
+    api "com.oracle.oci.sdk:oci-java-sdk-audit:$ociJavaSdkVersion"
+    api "com.oracle.oci.sdk:oci-java-sdk-containerengine:$ociJavaSdkVersion"
+    api "com.oracle.oci.sdk:oci-java-sdk-core:$ociJavaSdkVersion"
+    api "com.oracle.oci.sdk:oci-java-sdk-database:$ociJavaSdkVersion"
+    api "com.oracle.oci.sdk:oci-java-sdk-dns:$ociJavaSdkVersion"
+    api "com.oracle.oci.sdk:oci-java-sdk-email:$ociJavaSdkVersion"
+    api "com.oracle.oci.sdk:oci-java-sdk-filestorage:$ociJavaSdkVersion"
+    api "com.oracle.oci.sdk:oci-java-sdk-identity:$ociJavaSdkVersion"
+    api "com.oracle.oci.sdk:oci-java-sdk-loadbalancer:$ociJavaSdkVersion"
+    api "com.oracle.oci.sdk:oci-java-sdk-objectstorage:$ociJavaSdkVersion"
+    api "com.oracle.oci.sdk:oci-java-sdk-resourcesearch:$ociJavaSdkVersion"
+    api "com.oracle.oci.sdk:oci-java-sdk-keymanagement:$ociJavaSdkVersion"
+    api "com.oracle.oci.sdk:oci-java-sdk-announcementsservice:$ociJavaSdkVersion"
+    api "com.oracle.oci.sdk:oci-java-sdk-healthchecks:$ociJavaSdkVersion"
+    api "com.oracle.oci.sdk:oci-java-sdk-waas:$ociJavaSdkVersion"
+    api "com.oracle.oci.sdk:oci-java-sdk-streaming:$ociJavaSdkVersion"
+    api "com.oracle.oci.sdk:oci-java-sdk-resourcemanager:$ociJavaSdkVersion"
+    api "com.oracle.oci.sdk:oci-java-sdk-monitoring:$ociJavaSdkVersion"
+    api "com.oracle.oci.sdk:oci-java-sdk-ons:$ociJavaSdkVersion"
+    api "com.oracle.oci.sdk:oci-java-sdk-autoscaling:$ociJavaSdkVersion"
+    api "com.oracle.oci.sdk:oci-java-sdk-budget:$ociJavaSdkVersion"
+    api "com.oracle.oci.sdk:oci-java-sdk-workrequests:$ociJavaSdkVersion"
+    api "com.oracle.oci.sdk:oci-java-sdk-limits:$ociJavaSdkVersion"
+    api "com.oracle.oci.sdk:oci-java-sdk-functions:$ociJavaSdkVersion"
+    api "com.oracle.oci.sdk:oci-java-sdk-events:$ociJavaSdkVersion"
+    api "com.oracle.oci.sdk:oci-java-sdk-dts:$ociJavaSdkVersion"
+    api "com.oracle.oci.sdk:oci-java-sdk-oce:$ociJavaSdkVersion"
 }
 
 processResources {

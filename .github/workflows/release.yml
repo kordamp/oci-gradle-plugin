@@ -11,7 +11,7 @@ jobs:
   release:
     name: Release
     uses: kordamp/kordamp-gradle-plugin-workflow/.github/workflows/release.yml@main
-    inputs:
+    with:
       branch: master
       version: ${{ github.event.inputs.version }}
     secrets:

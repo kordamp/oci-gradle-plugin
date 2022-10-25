@@ -41,9 +41,9 @@ import org.kordamp.gradle.plugin.oci.tasks.traits.VerboseAwareTrait
 import org.kordamp.gradle.plugin.oci.tasks.traits.WaitForCompletionAwareTrait
 import org.kordamp.jipsy.annotations.TypeProviderFor
 
-import static org.apache.commons.lang3.StringUtils.isNotBlank
 import static org.kordamp.gradle.PropertyUtils.resolveValue
 import static org.kordamp.gradle.plugin.oci.tasks.printers.GatewayPrinter.printGateway
+import static org.kordamp.gradle.util.StringUtils.isNotBlank
 
 /**
  * @author Andres Almiray

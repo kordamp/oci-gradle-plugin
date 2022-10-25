@@ -44,6 +44,9 @@ apply plugin: 'org.kordamp.gradle.kordamp-parentbuild'
 rootProject.name = 'oci-gradle-plugin'
 
 enforce {
+    rule(enforcer.rules.BanDuplicateClasses) { r ->
+        r.enabled = false
+    }
     rule(enforcer.rules.ExcludeDependencies) { r ->
         r.exclude('org.glassfish.hk2.external:javax.inject')
     }

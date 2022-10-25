@@ -29,7 +29,7 @@ buildscript {
         gradlePluginPortal()
     }
     dependencies {
-        classpath '{project-group}:{project-name}:{plugin-version}'
+        classpath '{project-group}:{project-name}:{project-version}'
     }
 }
 apply plugin: '{project-group}.oci'
@@ -40,7 +40,7 @@ Option #2
 [subs="attributes"]
 ----
 plugins {
-    id '{project-group}.oci' version '{plugin-version}'
+    id '{project-group}.oci' version '{project-version}'
 }
 ----
 

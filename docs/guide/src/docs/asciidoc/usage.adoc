@@ -124,10 +124,11 @@ All tasks share the following properties
 
 [options="header", cols="6*<,^"]
 |===
-| Property    | Type    | Option       | System      | Environment | Default | Required
-| profile     | String  | oci-profile  | oci.profile | OCI_PROFILE | DEFAULT | icon:times[role="red"]
-| region      | String  | region       | oci.region  | OCI_REGION  |         | icon:times[role="red"]
-| showSecrets | boolean | show-secrets |             |             | false   | icon:times[role="red"]
+| Property          | Type    | Option              | System                  | Environment             | Default | Required
+| profile           | String  | oci-profile         | oci.profile             | OCI_PROFILE             | DEFAULT | icon:times[role="red"]
+| region            | String  | region              | oci.region              | OCI_REGION              |         | icon:times[role="red"]
+| showSecrets       | boolean | show-secrets        |                         |                         | false   | icon:times[role="red"]
+| displayStreamLogs | boolean | display-stream-logs | oci.display.stream.logs | OCI_DISPLAY_STREAM_LOGS | false   | icon:times[role="red"]
 |===
 
 Where each column defines

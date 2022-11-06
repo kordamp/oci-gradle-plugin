@@ -49,6 +49,7 @@ import org.kordamp.gradle.util.AnsiConsole
 import java.text.SimpleDateFormat
 
 import static org.kordamp.gradle.PropertyUtils.stringProvider
+import static org.kordamp.gradle.property.PropertyUtils.booleanProvider
 import static org.kordamp.gradle.util.StringUtils.isNotBlank
 
 /**
@@ -93,6 +94,18 @@ abstract class AbstractOCITask extends AbstractReportingTask implements OCITask 
         project,
         this)
 
+    @Internal
+    final Property<Boolean> displayStreamLogs = project.objects.property(Boolean)
+
+    @Input
+    @Optional
+    final Provider<Boolean> resolvedDisplayStreamLogs = booleanProvider(
+        'OCI_DISPLAY_STREAM_LOGS',
+        'oci.display.stream.logs',
+        displayStreamLogs,
+        project,
+        this)
+
     @Option(option = 'oci-profile', description = 'The profile to use. Defaults to DEFAULT (OPTIONAL).')
     void setProfile(String profile) {
         this.profile.set(profile)
@@ -101,6 +114,11 @@ abstract class AbstractOCITask extends AbstractReportingTask implements OCITask 
     @Option(option = 'region', description = 'The region to use (OPTIONAL).')
     void setRegion(String region) {
         this.region.set(region)
+    }
+
+    @Option(option = 'display-stream-logs', description = 'Display extra stream log warnings (OPTIONAL).')
+    void setDisplayStreamLogs(Boolean displayStreamLogs) {
+        this.displayStreamLogs.set(displayStreamLogs)
     }
 
     @Internal
@@ -112,6 +130,7 @@ abstract class AbstractOCITask extends AbstractReportingTask implements OCITask 
     @TaskAction
     void executeTask() {
         System.setProperty('sun.net.http.allowRestrictedHeaders', 'true')
+        System.setProperty('oci.javasdk.extra.stream.logs.enabled', resolvedDisplayStreamLogs.getOrElse(false).toString())
 
         doExecuteTask()
 

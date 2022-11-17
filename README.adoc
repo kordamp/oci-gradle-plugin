@@ -4,7 +4,7 @@
 :project-name:    kordamp-parentpom
 :project-name:    oci-gradle-plugin
 :project-group:   org.kordamp.gradle
-:project-version: 0.7.0
+:project-version: 0.8.0
 :plugin-path:  org/kordamp/gradle/oci
 :plugin-id:    org.kordamp.gradle.oci
 

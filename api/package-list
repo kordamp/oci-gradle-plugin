@@ -1,6 +1,7 @@
 org.kordamp.gradle
 org.kordamp.gradle.plugin.oci
 org.kordamp.gradle.plugin.oci.tasks
+org.kordamp.gradle.plugin.oci.tasks.autonomous
 org.kordamp.gradle.plugin.oci.tasks.create
 org.kordamp.gradle.plugin.oci.tasks.delete
 org.kordamp.gradle.plugin.oci.tasks.get
@@ -11,4 +12,3 @@ org.kordamp.gradle.plugin.oci.tasks.object
 org.kordamp.gradle.plugin.oci.tasks.printers
 org.kordamp.gradle.plugin.oci.tasks.query
 org.kordamp.gradle.plugin.oci.tasks.traits
-org.kordamp.gradle.plugin.oci.tasks.traits.states

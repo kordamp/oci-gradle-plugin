@@ -32,7 +32,7 @@ DownloadObjectTask.groovy
 <a name="1"><font color="#808080">01</font>&nbsp;</a><font color="#008000">/*</font><br />
 <a name="2"><font color="#808080">02</font>&nbsp;</a><font color="#ffffff">&nbsp;</font><font color="#008000">*&nbsp;SPDX-License-Identifier:&nbsp;Apache-2.0</font><br />
 <a name="3"><font color="#808080">03</font>&nbsp;</a><font color="#ffffff">&nbsp;</font><font color="#008000">*</font><br />
-<a name="4"><font color="#808080">04</font>&nbsp;</a><font color="#ffffff">&nbsp;</font><font color="#008000">*&nbsp;Copyright&nbsp;2019-2020&nbsp;Andres&nbsp;Almiray.</font><br />
+<a name="4"><font color="#808080">04</font>&nbsp;</a><font color="#ffffff">&nbsp;</font><font color="#008000">*&nbsp;Copyright&nbsp;2019-2022&nbsp;Andres&nbsp;Almiray.</font><br />
 <a name="5"><font color="#808080">05</font>&nbsp;</a><font color="#ffffff">&nbsp;</font><font color="#008000">*</font><br />
 <a name="6"><font color="#808080">06</font>&nbsp;</a><font color="#ffffff">&nbsp;</font><font color="#008000">*&nbsp;Licensed&nbsp;under&nbsp;the&nbsp;Apache&nbsp;License,&nbsp;Version&nbsp;2.0&nbsp;(the&nbsp;&#34;License&#34;);</font><br />
 <a name="7"><font color="#808080">07</font>&nbsp;</a><font color="#ffffff">&nbsp;</font><font color="#008000">*&nbsp;you&nbsp;may&nbsp;not&nbsp;use&nbsp;this&nbsp;file&nbsp;except&nbsp;in&nbsp;compliance&nbsp;with&nbsp;the&nbsp;License.</font><br />
@@ -58,7 +58,7 @@ DownloadObjectTask.groovy
 <a name="27"><font color="#808080">27</font>&nbsp;</a><font color="#0000c0"><b>import&nbsp;</b></font><font color="#000000">org.kordamp.gradle.plugin.oci.tasks.traits.DestinationDirAwareTrait</font><br />
 <a name="28"><font color="#808080">28</font>&nbsp;</a><font color="#0000c0"><b>import&nbsp;</b></font><font color="#000000">org.kordamp.gradle.plugin.oci.tasks.traits.NamespaceNameAwareTrait</font><br />
 <a name="29"><font color="#808080">29</font>&nbsp;</a><font color="#0000c0"><b>import&nbsp;</b></font><font color="#000000">org.kordamp.gradle.plugin.oci.tasks.traits.ObjectNameAwareTrait</font><br />
-<a name="30"><font color="#808080">30</font>&nbsp;</a><font color="#0000c0"><b>import&nbsp;</b></font><font color="#000000">org.kordamp.jipsy.TypeProviderFor</font><br />
+<a name="30"><font color="#808080">30</font>&nbsp;</a><font color="#0000c0"><b>import&nbsp;</b></font><font color="#000000">org.kordamp.jipsy.annotations.TypeProviderFor</font><br />
 <a name="31"><font color="#808080">31</font>&nbsp;</a><font color="#ffffff"></font><br />
 <a name="32"><font color="#808080">32</font>&nbsp;</a><font color="#0000c0"><b>import&nbsp;</b></font><font color="#000000">java.nio.file.Files</font><br />
 <a name="33"><font color="#808080">33</font>&nbsp;</a><font color="#0000c0"><b>import&nbsp;</b></font><font color="#000000">java.nio.file.StandardCopyOption</font><br />
@@ -75,7 +75,7 @@ DownloadObjectTask.groovy
 <a name="44"><font color="#808080">44</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">BucketNameAwareTrait,</font><br />
 <a name="45"><font color="#808080">45</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">ObjectNameAwareTrait,</font><br />
 <a name="46"><font color="#808080">46</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">DestinationDirAwareTrait&nbsp;</font><font color="#000000">{</font><br />
-<a name="47"><font color="#808080">47</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#0000c0"><b>static&nbsp;final&nbsp;</b></font><font color="#000000">String&nbsp;TASK_DESCRIPTION&nbsp;=&nbsp;</font><font color="#ff6100">'Do</font><font color="#000000">wnloads&nbsp;an&nbsp;Object&nbsp;to&nbsp;an&nbsp;specific&nbsp;location.</font><font color="#ff6100">'</font><br />
+<a name="47"><font color="#808080">47</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#0000c0"><b>static&nbsp;final&nbsp;</b></font><font color="#000000">String&nbsp;TASK_DESCRIPTION&nbsp;=&nbsp;</font><font color="#ff6100">'Do</font><font color="#000000">wnloads&nbsp;an&nbsp;Object&nbsp;to&nbsp;a&nbsp;specific&nbsp;location.</font><font color="#ff6100">'</font><br />
 <a name="48"><font color="#808080">48</font>&nbsp;</a><font color="#ffffff"></font><br />
 <a name="49"><font color="#808080">49</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#646464">@Override</font><br />
 <a name="50"><font color="#808080">50</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#0000c0"><b>protected&nbsp;</b></font><font color="#c00000"><b>void&nbsp;</b></font><font color="#000000">doExecuteTask</font><font color="#000000">()&nbsp;{</font><br />

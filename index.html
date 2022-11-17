@@ -10,13 +10,89 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <link rel="stylesheet" href="./asciidoctor.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<style>
+.hidden {
+    display: none;
+}
+
+.switch {
+    border-width: 1px 1px 0 1px;
+    border-style: solid;
+    border-color: #7a2518;
+    display: inline-block;
+}
+
+.switch--item {
+    padding: 10px;
+    background-color: #ffffff;
+    color: #7a2518;
+    display: inline-block;
+    cursor: pointer;
+}
+
+.switch--item.selected {
+    background-color: #7a2519;
+    color: #ffffff;
+}
+
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/zepto/1.2.0/zepto.min.js"></script>
+<script type="text/javascript">
+function addBlockSwitches() {
+    $('.primary').each(function() {
+        primary = $(this);
+        createSwitchItem(primary, createBlockSwitch(primary)).item.addClass("selected");
+        primary.children('.title').remove();
+    });
+    $('.secondary').each(function(idx, node) {
+        secondary = $(node);
+        primary = findPrimary(secondary);
+        switchItem = createSwitchItem(secondary, primary.children('.switch'));
+        switchItem.content.addClass('hidden');
+        findPrimary(secondary).append(switchItem.content);
+        secondary.remove();
+    });
+}
+
+function createBlockSwitch(primary) {
+    blockSwitch = $('<div class="switch"></div>');
+    primary.prepend(blockSwitch);
+    return blockSwitch;
+}
+
+function findPrimary(secondary) {
+    candidate = secondary.prev();
+    while (!candidate.is('.primary')) {
+        candidate = candidate.prev();
+    }
+    return candidate;
+}
+
+function createSwitchItem(block, blockSwitch) {
+    blockName = block.children('.title').text();
+    content = block.children('.content').first().append(block.next('.colist'));
+    item = $('<div class="switch--item">' + blockName + '</div>');
+    item.on('click', '', content, function(e) {
+        $(this).addClass('selected');
+        $(this).siblings().removeClass('selected');
+        e.data.siblings('.content').addClass('hidden');
+        e.data.removeClass('hidden');
+    });
+    blockSwitch.append(item);
+    return {'item': item, 'content': content};
+}
+
+$(addBlockSwitches);
+
+</script>
+
 </head>
 <body class="book toc2 toc-left">
 <div id="header">
 <h1>OCI Java SDK Gradle Plugin</h1>
 <div class="details">
 <span id="author" class="author">Andres Almiray</span><br>
-<span id="revnumber">version 0.4.0</span>
+<span id="revnumber">version 0.8.0</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -60,7 +136,7 @@
 <p>A Gradle plugin for the <a href="http://github.com/oracle/oci-java-sdk">Oracle Cloud Infrastructure Java SDK</a>.</p>
 </div>
 <div class="paragraph">
-<p>Currently supported OCI Java SDK version is <strong><code>1.15.2</code></strong>.</p>
+<p>Currently supported OCI Java SDK version is <strong><code>3.0.1</code></strong>.</p>
 </div>
 <div class="admonitionblock warning">
 <table>
@@ -106,7 +182,7 @@ This plugin is not endorsed by Oracle nor does the company provide any support f
         gradlePluginPortal()
     }
     dependencies {
-        classpath 'org.kordamp.gradle:oci-gradle-plugin:0.4.0'
+        classpath 'org.kordamp.gradle:oci-gradle-plugin:0.8.0'
     }
 }
 apply plugin: 'org.kordamp.gradle.oci'</code></pre>
@@ -118,7 +194,7 @@ apply plugin: 'org.kordamp.gradle.oci'</code></pre>
 <div class="listingblock">
 <div class="content">
 <pre class="prettyprint highlight"><code data-lang="groovy">plugins {
-    id 'org.kordamp.gradle.oci' version '0.4.0'
+    id 'org.kordamp.gradle.oci' version '0.8.0'
 }</code></pre>
 </div>
 </div>
@@ -279,6 +355,15 @@ All tasks share the following properties</p>
 <td class="tableblock halign-left valign-top"><p class="tableblock">show-secrets</p></td>
 <td class="tableblock halign-left valign-top"></td>
 <td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><span class="icon red"><i class="fa fa-times"></i></span></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">displayStreamLogs</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">display-stream-logs</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">oci.display.stream.logs</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OCI_DISPLAY_STREAM_LOGS</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
 <td class="tableblock halign-center valign-top"><p class="tableblock"><span class="icon red"><i class="fa fa-times"></i></span></p></td>
 </tr>
@@ -1520,7 +1605,7 @@ Either <code>vcnId</code> or <code>vcnName</code> must be specified.
 <a href="#getBucket">getBucket</a>
 </td>
 <td class="hdlist2">
-<p>Displays information for an specific Bucket.</p>
+<p>Displays information for a specific Bucket.</p>
 </td>
 </tr>
 <tr>
@@ -1528,7 +1613,7 @@ Either <code>vcnId</code> or <code>vcnName</code> must be specified.
 <a href="#getCompartment">getCompartment</a>
 </td>
 <td class="hdlist2">
-<p>Displays information for an specific Compartment.</p>
+<p>Displays information for a specific Compartment.</p>
 </td>
 </tr>
 <tr>
@@ -1536,7 +1621,7 @@ Either <code>vcnId</code> or <code>vcnName</code> must be specified.
 <a href="#getInstanceConsoleConnection">getInstanceConsoleConnection</a>
 </td>
 <td class="hdlist2">
-<p>Displays information for an specific InstanceConsoleConnection.</p>
+<p>Displays information for a specific InstanceConsoleConnection.</p>
 </td>
 </tr>
 <tr>
@@ -1552,7 +1637,7 @@ Either <code>vcnId</code> or <code>vcnName</code> must be specified.
 <a href="#getInstance">getInstance</a>
 </td>
 <td class="hdlist2">
-<p>Displays information for an specific Instance.</p>
+<p>Displays information for a specific Instance.</p>
 </td>
 </tr>
 <tr>
@@ -1560,7 +1645,7 @@ Either <code>vcnId</code> or <code>vcnName</code> must be specified.
 <a href="#getInternetGateway">getInternetGateway</a>
 </td>
 <td class="hdlist2">
-<p>Displays information for an specific InternetGateway.</p>
+<p>Displays information for a specific InternetGateway.</p>
 </td>
 </tr>
 <tr>
@@ -1568,7 +1653,7 @@ Either <code>vcnId</code> or <code>vcnName</code> must be specified.
 <a href="#getNamespace">getNamespace</a>
 </td>
 <td class="hdlist2">
-<p>Displays information for an specific Namespace.</p>
+<p>Displays information for a specific Namespace.</p>
 </td>
 </tr>
 <tr>
@@ -1576,7 +1661,7 @@ Either <code>vcnId</code> or <code>vcnName</code> must be specified.
 <a href="#getObject">getObject</a>
 </td>
 <td class="hdlist2">
-<p>Displays information for an specific Object.</p>
+<p>Displays information for a specific Object.</p>
 </td>
 </tr>
 <tr>
@@ -1584,7 +1669,7 @@ Either <code>vcnId</code> or <code>vcnName</code> must be specified.
 <a href="#getRouteTable">getRouteTable</a>
 </td>
 <td class="hdlist2">
-<p>Displays information for an specific RouteTable.</p>
+<p>Displays information for a specific RouteTable.</p>
 </td>
 </tr>
 <tr>
@@ -1592,7 +1677,7 @@ Either <code>vcnId</code> or <code>vcnName</code> must be specified.
 <a href="#getSecurityList">getSecurityList</a>
 </td>
 <td class="hdlist2">
-<p>Displays information for an specific SecurityList.</p>
+<p>Displays information for a specific SecurityList.</p>
 </td>
 </tr>
 <tr>
@@ -1600,7 +1685,7 @@ Either <code>vcnId</code> or <code>vcnName</code> must be specified.
 <a href="#getSubnet">getSubnet</a>
 </td>
 <td class="hdlist2">
-<p>Displays information for an specific Subnet.</p>
+<p>Displays information for a specific Subnet.</p>
 </td>
 </tr>
 <tr>
@@ -1608,7 +1693,7 @@ Either <code>vcnId</code> or <code>vcnName</code> must be specified.
 <a href="#getVcn">getVcn</a>
 </td>
 <td class="hdlist2">
-<p>Displays information for an specific Vcn.</p>
+<p>Displays information for a specific Vcn.</p>
 </td>
 </tr>
 </table>
@@ -2341,6 +2426,15 @@ Valid values for <code>action</code> are: <code>RESET</code>, <code>SOFTRESET</c
 </thead>
 <tbody>
 <tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">availabilityDomain</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">String</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">availability-domain</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">oci.availability.domain</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OCI_AVAILABILITY_DOMAIN</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><span class="icon red"><i class="fa fa-times"></i></span></p></td>
+</tr>
+<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">compartmentId</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">String</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">compartment-id</p></td>
@@ -2384,6 +2478,15 @@ Valid values for <code>action</code> are: <code>RESET</code>, <code>SOFTRESET</c
 <td class="tableblock halign-left valign-top"><p class="tableblock">OCI_SHAPE</p></td>
 <td class="tableblock halign-left valign-top"></td>
 <td class="tableblock halign-center valign-top"><p class="tableblock"><span class="icon green"><i class="fa fa-check"></i></span></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">subnetId</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">String</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">subnet-id</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">oci.subnet.id</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OCI_SUBNET_ID</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><span class="icon red"><i class="fa fa-times"></i></span></p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">userDataFile</p></td>
@@ -3471,7 +3574,7 @@ Either <code>instanceId</code> or <code>instanceName</code> must be specified. I
 <a href="#downloadObject">downloadObject</a>
 </td>
 <td class="hdlist2">
-<p>Downloads an Object to an specific location.</p>
+<p>Downloads an Object to a specific location.</p>
 </td>
 </tr>
 <tr>
@@ -3479,7 +3582,7 @@ Either <code>instanceId</code> or <code>instanceName</code> must be specified. I
 <a href="#headBucket">headBucket</a>
 </td>
 <td class="hdlist2">
-<p>Heads an specific Bucket.</p>
+<p>Heads a specific Bucket.</p>
 </td>
 </tr>
 <tr>
@@ -3487,7 +3590,7 @@ Either <code>instanceId</code> or <code>instanceName</code> must be specified. I
 <a href="#headObject">headObject</a>
 </td>
 <td class="hdlist2">
-<p>Heads an specific Object.</p>
+<p>Heads a specific Object.</p>
 </td>
 </tr>
 <tr>
@@ -3981,8 +4084,8 @@ Either <code>instanceId</code> or <code>instanceName</code> must be specified. I
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 0.4.0<br>
-Last updated 2019-09-13 17:33:43 +0200
+Version 0.8.0<br>
+Last updated 2019-09-13 18:33:43 +0300
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.min.css">

@@ -32,7 +32,7 @@ GetObjectTask.groovy
 <a name="1"><font color="#808080">01</font>&nbsp;</a><font color="#008000">/*</font><br />
 <a name="2"><font color="#808080">02</font>&nbsp;</a><font color="#ffffff">&nbsp;</font><font color="#008000">*&nbsp;SPDX-License-Identifier:&nbsp;Apache-2.0</font><br />
 <a name="3"><font color="#808080">03</font>&nbsp;</a><font color="#ffffff">&nbsp;</font><font color="#008000">*</font><br />
-<a name="4"><font color="#808080">04</font>&nbsp;</a><font color="#ffffff">&nbsp;</font><font color="#008000">*&nbsp;Copyright&nbsp;2019-2020&nbsp;Andres&nbsp;Almiray.</font><br />
+<a name="4"><font color="#808080">04</font>&nbsp;</a><font color="#ffffff">&nbsp;</font><font color="#008000">*&nbsp;Copyright&nbsp;2019-2022&nbsp;Andres&nbsp;Almiray.</font><br />
 <a name="5"><font color="#808080">05</font>&nbsp;</a><font color="#ffffff">&nbsp;</font><font color="#008000">*</font><br />
 <a name="6"><font color="#808080">06</font>&nbsp;</a><font color="#ffffff">&nbsp;</font><font color="#008000">*&nbsp;Licensed&nbsp;under&nbsp;the&nbsp;Apache&nbsp;License,&nbsp;Version&nbsp;2.0&nbsp;(the&nbsp;&#34;License&#34;);</font><br />
 <a name="7"><font color="#808080">07</font>&nbsp;</a><font color="#ffffff">&nbsp;</font><font color="#008000">*&nbsp;you&nbsp;may&nbsp;not&nbsp;use&nbsp;this&nbsp;file&nbsp;except&nbsp;in&nbsp;compliance&nbsp;with&nbsp;the&nbsp;License.</font><br />
@@ -57,7 +57,7 @@ GetObjectTask.groovy
 <a name="26"><font color="#808080">26</font>&nbsp;</a><font color="#0000c0"><b>import&nbsp;</b></font><font color="#000000">org.kordamp.gradle.plugin.oci.tasks.traits.BucketNameAwareTrait</font><br />
 <a name="27"><font color="#808080">27</font>&nbsp;</a><font color="#0000c0"><b>import&nbsp;</b></font><font color="#000000">org.kordamp.gradle.plugin.oci.tasks.traits.NamespaceNameAwareTrait</font><br />
 <a name="28"><font color="#808080">28</font>&nbsp;</a><font color="#0000c0"><b>import&nbsp;</b></font><font color="#000000">org.kordamp.gradle.plugin.oci.tasks.traits.ObjectNameAwareTrait</font><br />
-<a name="29"><font color="#808080">29</font>&nbsp;</a><font color="#0000c0"><b>import&nbsp;</b></font><font color="#000000">org.kordamp.jipsy.TypeProviderFor</font><br />
+<a name="29"><font color="#808080">29</font>&nbsp;</a><font color="#0000c0"><b>import&nbsp;</b></font><font color="#000000">org.kordamp.jipsy.annotations.TypeProviderFor</font><br />
 <a name="30"><font color="#808080">30</font>&nbsp;</a><font color="#ffffff"></font><br />
 <a name="31"><font color="#808080">31</font>&nbsp;</a><font color="#0000c0"><b>import&nbsp;static&nbsp;</b></font><font color="#000000">org.kordamp.gradle.plugin.oci.tasks.printers.GetObjectResponsePrinter.printObject</font><br />
 <a name="32"><font color="#808080">32</font>&nbsp;</a><font color="#ffffff"></font><br />
@@ -70,7 +70,7 @@ GetObjectTask.groovy
 <a name="39"><font color="#808080">39</font>&nbsp;</a><font color="#0000c0"><b>class&nbsp;</b></font><font color="#000000">GetObjectTask&nbsp;</font><font color="#0000c0"><b>extends&nbsp;</b></font><font color="#000000">AbstractOCITask&nbsp;</font><font color="#0000c0"><b>implements&nbsp;</b></font><font color="#000000">NamespaceNameAwareTrait,</font><br />
 <a name="40"><font color="#808080">40</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">BucketNameAwareTrait,</font><br />
 <a name="41"><font color="#808080">41</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">ObjectNameAwareTrait&nbsp;</font><font color="#000000">{</font><br />
-<a name="42"><font color="#808080">42</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#0000c0"><b>static&nbsp;final&nbsp;</b></font><font color="#000000">String&nbsp;TASK_DESCRIPTION&nbsp;=&nbsp;</font><font color="#ff6100">'Di</font><font color="#000000">splays&nbsp;information&nbsp;</font><font color="#0000c0"><b>for&nbsp;</b></font><font color="#000000">an&nbsp;specific&nbsp;Object.</font><font color="#ff6100">'</font><br />
+<a name="42"><font color="#808080">42</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#0000c0"><b>static&nbsp;final&nbsp;</b></font><font color="#000000">String&nbsp;TASK_DESCRIPTION&nbsp;=&nbsp;</font><font color="#ff6100">'Di</font><font color="#000000">splays&nbsp;information&nbsp;</font><font color="#0000c0"><b>for&nbsp;</b></font><font color="#000000">a&nbsp;specific&nbsp;Object.</font><font color="#ff6100">'</font><br />
 <a name="43"><font color="#808080">43</font>&nbsp;</a><font color="#ffffff"></font><br />
 <a name="44"><font color="#808080">44</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#646464">@Override</font><br />
 <a name="45"><font color="#808080">45</font>&nbsp;</a><font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#0000c0"><b>protected&nbsp;</b></font><font color="#c00000"><b>void&nbsp;</b></font><font color="#000000">doExecuteTask</font><font color="#000000">()&nbsp;{</font><br />

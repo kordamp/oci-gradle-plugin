@@ -32,7 +32,7 @@ AddIngressSecurityRuleTask.groovy
 <a name="1"><font color="#808080">001</font>&nbsp;</a><font color="#008000">/*</font><br />
 <a name="2"><font color="#808080">002</font>&nbsp;</a><font color="#ffffff">&nbsp;</font><font color="#008000">*&nbsp;SPDX-License-Identifier:&nbsp;Apache-2.0</font><br />
 <a name="3"><font color="#808080">003</font>&nbsp;</a><font color="#ffffff">&nbsp;</font><font color="#008000">*</font><br />
-<a name="4"><font color="#808080">004</font>&nbsp;</a><font color="#ffffff">&nbsp;</font><font color="#008000">*&nbsp;Copyright&nbsp;2019-2020&nbsp;Andres&nbsp;Almiray.</font><br />
+<a name="4"><font color="#808080">004</font>&nbsp;</a><font color="#ffffff">&nbsp;</font><font color="#008000">*&nbsp;Copyright&nbsp;2019-2022&nbsp;Andres&nbsp;Almiray.</font><br />
 <a name="5"><font color="#808080">005</font>&nbsp;</a><font color="#ffffff">&nbsp;</font><font color="#008000">*</font><br />
 <a name="6"><font color="#808080">006</font>&nbsp;</a><font color="#ffffff">&nbsp;</font><font color="#008000">*&nbsp;Licensed&nbsp;under&nbsp;the&nbsp;Apache&nbsp;License,&nbsp;Version&nbsp;2.0&nbsp;(the&nbsp;&#34;License&#34;);</font><br />
 <a name="7"><font color="#808080">007</font>&nbsp;</a><font color="#ffffff">&nbsp;</font><font color="#008000">*&nbsp;you&nbsp;may&nbsp;not&nbsp;use&nbsp;this&nbsp;file&nbsp;except&nbsp;in&nbsp;compliance&nbsp;with&nbsp;the&nbsp;License.</font><br />
@@ -70,14 +70,14 @@ AddIngressSecurityRuleTask.groovy
 <a name="39"><font color="#808080">039</font>&nbsp;</a><font color="#0000c0"><b>import&nbsp;</b></font><font color="#000000">org.kordamp.gradle.plugin.oci.tasks.interfaces.OCITask</font><br />
 <a name="40"><font color="#808080">040</font>&nbsp;</a><font color="#0000c0"><b>import&nbsp;</b></font><font color="#000000">org.kordamp.gradle.plugin.oci.tasks.printers.SecurityListPrinter</font><br />
 <a name="41"><font color="#808080">041</font>&nbsp;</a><font color="#0000c0"><b>import&nbsp;</b></font><font color="#000000">org.kordamp.gradle.plugin.oci.tasks.traits.SecurityListIdAwareTrait</font><br />
-<a name="42"><font color="#808080">042</font>&nbsp;</a><font color="#0000c0"><b>import&nbsp;</b></font><font color="#000000">org.kordamp.jipsy.TypeProviderFor</font><br />
+<a name="42"><font color="#808080">042</font>&nbsp;</a><font color="#0000c0"><b>import&nbsp;</b></font><font color="#000000">org.kordamp.jipsy.annotations.TypeProviderFor</font><br />
 <a name="43"><font color="#808080">043</font>&nbsp;</a><font color="#ffffff"></font><br />
 <a name="44"><font color="#808080">044</font>&nbsp;</a><font color="#0000c0"><b>import&nbsp;</b></font><font color="#000000">java.util.regex.Matcher</font><br />
 <a name="45"><font color="#808080">045</font>&nbsp;</a><font color="#0000c0"><b>import&nbsp;</b></font><font color="#000000">java.util.regex.Pattern</font><br />
 <a name="46"><font color="#808080">046</font>&nbsp;</a><font color="#ffffff"></font><br />
 <a name="47"><font color="#808080">047</font>&nbsp;</a><font color="#0000c0"><b>import&nbsp;static&nbsp;</b></font><font color="#000000">org.kordamp.gradle.PropertyUtils.resolveValue</font><br />
-<a name="48"><font color="#808080">048</font>&nbsp;</a><font color="#0000c0"><b>import&nbsp;static&nbsp;</b></font><font color="#000000">org.kordamp.gradle.StringUtils.isBlank</font><br />
-<a name="49"><font color="#808080">049</font>&nbsp;</a><font color="#0000c0"><b>import&nbsp;static&nbsp;</b></font><font color="#000000">org.kordamp.gradle.StringUtils.isNotBlank</font><br />
+<a name="48"><font color="#808080">048</font>&nbsp;</a><font color="#0000c0"><b>import&nbsp;static&nbsp;</b></font><font color="#000000">org.kordamp.gradle.util.StringUtils.isBlank</font><br />
+<a name="49"><font color="#808080">049</font>&nbsp;</a><font color="#0000c0"><b>import&nbsp;static&nbsp;</b></font><font color="#000000">org.kordamp.gradle.util.StringUtils.isNotBlank</font><br />
 <a name="50"><font color="#808080">050</font>&nbsp;</a><font color="#ffffff"></font><br />
 <a name="51"><font color="#808080">051</font>&nbsp;</a><font color="#008000">/**</font><br />
 <a name="52"><font color="#808080">052</font>&nbsp;</a><font color="#ffffff">&nbsp;</font><font color="#008000">*&nbsp;</font><font color="#005500">@author&nbsp;</font><font color="#008000">Andres&nbsp;Almiray</font><br />

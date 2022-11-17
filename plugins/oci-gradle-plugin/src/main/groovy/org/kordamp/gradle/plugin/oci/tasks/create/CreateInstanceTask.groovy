@@ -17,7 +17,6 @@
  */
 package org.kordamp.gradle.plugin.oci.tasks.create
 
-import com.google.common.base.Strings
 import com.oracle.bmc.core.BlockstorageClient
 import com.oracle.bmc.core.ComputeClient
 import com.oracle.bmc.core.VirtualNetworkClient
@@ -65,6 +64,7 @@ import static org.kordamp.gradle.plugin.oci.tasks.create.CreateInstanceConsoleCo
 import static org.kordamp.gradle.plugin.oci.tasks.get.GetInstancePublicIpTask.getInstancePublicIp
 import static org.kordamp.gradle.plugin.oci.tasks.printers.BootVolumePrinter.printBootVolume
 import static org.kordamp.gradle.plugin.oci.tasks.printers.InstancePrinter.printInstance
+import static org.kordamp.gradle.util.StringUtils.isBlank
 import static org.kordamp.gradle.util.StringUtils.isNotBlank
 
 /**
@@ -270,7 +270,7 @@ class CreateInstanceTask extends AbstractOCITask implements CompartmentIdAwareTr
         }
 
         InstanceSourceViaImageDetails details =
-            (Strings.isNullOrEmpty(kmsKeyId))
+            (isBlank(kmsKeyId))
                 ? InstanceSourceViaImageDetails.builder()
                 .imageId(imageId)
                 .build()

@@ -17,7 +17,6 @@
  */
 package org.kordamp.gradle.plugin.oci.tasks
 
-import com.google.common.base.Supplier
 import com.oracle.bmc.ConfigFileReader
 import com.oracle.bmc.Region
 import com.oracle.bmc.apigateway.DeploymentClient
@@ -47,6 +46,7 @@ import org.kordamp.gradle.plugin.oci.tasks.interfaces.OCITask
 import org.kordamp.gradle.util.AnsiConsole
 
 import java.text.SimpleDateFormat
+import java.util.function.Supplier
 
 import static org.kordamp.gradle.PropertyUtils.stringProvider
 import static org.kordamp.gradle.property.PropertyUtils.booleanProvider

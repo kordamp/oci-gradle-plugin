@@ -40,6 +40,7 @@ dependencies {
 
     api "org.kordamp.gradle:base-gradle-plugin:$kordampPluginVersion"
     api "commons-io:commons-io:$commonsIoVersion"
+    api "commons-codec:commons-codec:$commonsCodecVersion"
 
     api platform("com.oracle.oci.sdk:oci-java-sdk-bom:$ociJavaSdkVersion")
     api "com.oracle.oci.sdk:oci-java-sdk-common:$ociJavaSdkVersion"

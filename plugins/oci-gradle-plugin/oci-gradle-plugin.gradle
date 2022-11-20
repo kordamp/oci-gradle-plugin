@@ -72,6 +72,7 @@ dependencies {
     api "com.oracle.oci.sdk:oci-java-sdk-events:$ociJavaSdkVersion"
     api "com.oracle.oci.sdk:oci-java-sdk-dts:$ociJavaSdkVersion"
     api "com.oracle.oci.sdk:oci-java-sdk-oce:$ociJavaSdkVersion"
+    api "com.oracle.oci.sdk:oci-java-sdk-common-httpclient-jersey:$ociJavaSdkVersion"
 }
 
 processResources {

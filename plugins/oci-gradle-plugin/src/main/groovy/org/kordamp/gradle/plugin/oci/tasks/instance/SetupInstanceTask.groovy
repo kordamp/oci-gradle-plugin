@@ -128,7 +128,7 @@ class SetupInstanceTask extends AbstractOCITask implements CompartmentIdAwareTra
         Shape _shape = validateShape(computeClient, getResolvedCompartmentId().get())
 
         File publicKeyFile = getResolvedPublicKeyFile().get().asFile
-        File userDataFile = getResolvedUserDataFile()?.get()?.asFile
+        File userDataFile = getResolvedUserDataFile()?.getOrNull()?.asFile
         String internetGatewayDisplayName = getResolvedInstanceName().get() + '-internet-gateway'
         String kmsKeyId = ''
 

@@ -65,7 +65,7 @@ class ListObjectsTask extends AbstractOCITask implements NamespaceNameAwareTrait
             .namespaceName(getResolvedNamespaceName().get())
             .bucketName(getResolvedBucketName().get())
 
-        Integer limit = getResolvedLimit().get() ?: 1000
+        Integer limit = getResolvedLimit().getOrElse(1000)
         if (null != limit) {
             builder = builder.limit(limit)
         }

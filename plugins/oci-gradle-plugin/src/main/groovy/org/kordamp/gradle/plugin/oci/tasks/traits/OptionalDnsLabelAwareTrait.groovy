@@ -65,7 +65,7 @@ trait OptionalDnsLabelAwareTrait implements PathAware, ProjectAware {
     void validateDnsLabel(String seed) {
         if (isBlank(getResolvedDnsLabel().orNull)) {
             setDnsLabel('dns' + HashUtil.sha1(seed.bytes).asHexString()[0..11])
-            project.logger.warn("Missing value for 'dnsLabel' in $path. Value set to ${getResolvedDnsLabel().get()}")
+            project.logger.warn("Missing value for 'dnsLabel' in $path. Value set to ${getResolvedDnsLabel().orNull}")
         }
     }
 }

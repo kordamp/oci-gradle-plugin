@@ -80,7 +80,7 @@ class CreateSubnetTask extends AbstractOCITask implements CompartmentIdAwareTrai
             client,
             getResolvedCompartmentId().get(),
             getResolvedVcnId().get(),
-            getResolvedDnsLabel().get(),
+            getResolvedDnsLabel().orNull,
             _availabilityDomain.name,
             getResolvedSubnetName().get(),
             '10.0.0.0/24',

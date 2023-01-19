@@ -66,19 +66,19 @@ class PutObjectTask extends AbstractOCITask implements NamespaceNameAwareTrait,
             .contentLength(theFile.size())
             .putObjectBody(new FileInputStream(theFile))
 
-        String s = getResolvedContentEncoding().get()
+        String s = getResolvedContentEncoding().orNull
         if (isNotBlank(s)) {
             builder = builder.contentEncoding(s)
         }
-        s = getResolvedContentLanguage().get()
+        s = getResolvedContentLanguage().orNull
         if (isNotBlank(s)) {
             builder = builder.contentLanguage(s)
         }
-        s = getResolvedContentMD5().get()
+        s = getResolvedContentMD5().orNull
         if (isNotBlank(s)) {
             builder = builder.contentMD5(s)
         }
-        s = getResolvedContentType().get()
+        s = getResolvedContentType().orNull
         if (isNotBlank(s)) {
             builder = builder.contentType(s)
         }

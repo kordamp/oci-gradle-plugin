@@ -61,8 +61,8 @@ trait OptionalAvailabilityDomainAwareTrait implements PathAware, ProjectAware {
         ListAvailabilityDomainsResponse response = identityClient.listAvailabilityDomains(ListAvailabilityDomainsRequest.builder()
             .compartmentId(compartmentId)
             .build())
-        AvailabilityDomain ad = response.items.find { AvailabilityDomain ad -> ad.name == getResolvedAvailabilityDomain().get() }
-        if (!ad) throw new IllegalStateException("Invalid availability domain ${getResolvedAvailabilityDomain().get()}")
+        AvailabilityDomain ad = response.items.find { AvailabilityDomain ad -> ad.name == getResolvedAvailabilityDomain().orNull }
+        if (!ad) throw new IllegalStateException("Invalid availability domain ${getResolvedAvailabilityDomain().orNull}")
         ad
     }
 }

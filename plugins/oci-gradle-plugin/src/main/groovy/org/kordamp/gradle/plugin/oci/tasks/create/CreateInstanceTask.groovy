@@ -104,7 +104,7 @@ class CreateInstanceTask extends AbstractOCITask implements CompartmentIdAwareTr
         Shape _shape = validateShape(computeClient, getResolvedCompartmentId().get())
 
         File publicKeyFile = getResolvedPublicKeyFile().get().asFile
-        File userDataFile = getResolvedUserDataFile()?.get()?.asFile
+        File userDataFile = getResolvedUserDataFile()?.getOrNull()?.asFile
         String kmsKeyId = ''
 
         VirtualNetworkClient vcnClient = createVirtualNetworkClient()

@@ -14,10 +14,11 @@ release:
     overwrite: true
     milestone:
       name: '{{projectVersion}}'
+    issues:
+      enabled: true
     changelog:
       formatted: ALWAYS
       preset: conventional-commits
-      format: '- {{commitShortHash}} {{commitTitle}}'
       contributors:
         format: '- {{contributorName}}{{#contributorUsernameAsLink}} ({{.}}){{/contributorUsernameAsLink}}'
       labelers:
@@ -40,10 +41,10 @@ release:
 
 announce:
   twitter:
-    active: release
+    active: RELEASE
     status: 🚀 {{projectName}} {{projectVersion}} has been released! {{releaseNotesUrl}}
   mastodon:
-    active: release
+    active: RELEASE
     host: https://mastodon.social
     status: 🚀 {{projectName}} {{projectVersion}} has been released! {{releaseNotesUrl}}
 
